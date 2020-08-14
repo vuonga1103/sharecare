@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShareCare</title>
+  <script defer src="src/index.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav>
+    <h1>ShareCare</h1>
+    <p>ShareCare streamlines communication among caregivers in order to provide the best care to your loved one</p>
+  </nav>
+  <main>
+    <div id="login">
+      <form id="login-form">
+        <label for="login-username">Username:</label>
+        <input id="login-username" type="text">
+        <label for="login-email">Email:</label>
+        <input id="login-email" type="text">
+        <input type="submit" value="Login">
+      </form>
+      <button id="register-btn">Register</button>
+    </div>
+
+    <div id="register-div" hidden>
+      <form id="register-form">
+        <label for="register-username">Username:</label>
+        <input id="register-username" type="text">
+        <label for="register-email">Email:</label>
+        <input id="register-email" type="text">
+        <label for="register-name">Name:</label>
+        <input id="register-name" type="text">
+        <label for="register-role">Role:</label>
+        <input id="register-role" type="text" placeholder="i.e. Parent, child, teacher, etc.">
+        <input type="submit" value="Register">
+      </form>
+    </div>
+  </main>
+</body>
+</html>
