@@ -2,17 +2,26 @@ const registerBtn = document.querySelector("#register-btn"),
       loginDiv = document.querySelector("div#login"),
       registerDiv = document.querySelector("div#register-div"),
       registerForm = document.querySelector("form#register-form"),
-     signUpButton = document.getElementById("signUp"),
-     signInButton = document.getElementById("signIn"),
-     container = document.getElementById("container");
+      signUpButton = document.getElementById("signUp"),
+      signInButton = document.getElementById("signIn"),
+      container = document.getElementById("container");
 
- signUpButton.addEventListener("click",(evt) => {
-   container.classList.add("right-panel-active");
- })
- signInButton.addEventListener("click",(evt) => {
-   container.classList.remove("right-panel-active");
- })
 
+signUpButton.addEventListener("click", signUpLogInSlidingToggle);
+signInButton.addEventListener("click", signUpLogInSlidingToggle);
+
+// Allows for sliding toggles between signup and login
+function signUpLogInSlidingToggle() {
+  if (container.classList.contains("right-panel-active")) {
+    container.classList.remove("right-panel-active")
+    loginDiv.hidden = false;
+    registerDiv.hidden = true;
+  } else {
+    container.classList.add("right-panel-active");
+    loginDiv.hidden = true;
+    registerDiv.hidden = false;
+  }
+}
 
 
 
