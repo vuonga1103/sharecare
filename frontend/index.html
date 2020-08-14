@@ -13,30 +13,44 @@
     <p>ShareCare streamlines communication among caregivers in order to provide the best care to your loved one</p>
   </nav>
   <main>
-    <div id="login">
+    <div class="container" id="container">
+    <div class="form-container sign-in-container">
       <form id="login-form">
-        <label for="login-username">Username:</label>
-        <input id="login-username" type="text">
-        <label for="login-email">Email:</label>
-        <input id="login-email" type="text">
-        <input type="submit" value="Login">
+        <h1>Login</h1>
+        <input id="login-username" type="text" name="username" placeholder="Username">
+        <input id="login-email" type="text" name="email" placeholder="Email">
+        <input type="submit" class="submit" value="Login">
       </form>
       <button id="register-btn">Register</button>
     </div>
 
-    <div id="register-div" hidden>
+    <div class="form-container sign-up-container">
       <form id="register-form">
-        <label for="register-username">Username:</label>
-        <input id="register-username" type="text">
-        <label for="register-email">Email:</label>
-        <input id="register-email" type="text">
-        <label for="register-name">Name:</label>
-        <input id="register-name" type="text">
+        <h1>Create Account</h1>
+        <input id="register-username" type="text" placeholder="Username">
+        <input id="register-email" type="text" placeholder="Email">
+        <input id="register-name" type="text" placeholder="Name">
         <label for="register-role">Role:</label>
         <input id="register-role" type="text" placeholder="i.e. Parent, child, teacher, etc.">
-        <input type="submit" value="Register">
+        <input type="submit" class="submit" value="Register">
       </form>
     </div>
+    <div class="overlay-container">
+      <div class="overlay">
+        <div class="overlay-panel overlay-left">
+          <h1>Welcome Back!</h1>
+          <p>Login with your personal info!<p>
+          <button class="ghost" id="signIn">Sign In</button>
+        </div>
+
+        <div class="overlay-panel overlay-right">
+          <h1>Hello Friend!</h1>
+          <p>Enter your details to sign up!<p>
+          <button class="ghost" id="signUp">Sign Up</button>
+        </div>
+      </div>
+    </div>
+  </div>
   </main>
 </body>
 </html>
