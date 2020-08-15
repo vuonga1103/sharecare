@@ -27,6 +27,16 @@ class CareReceiversController < ApplicationController
     end
   end
 
+  #return important posts made by the caregivers associated with the caregivers
+  def important_posts
+    care_receiver_found = CareReceiver.find_by(id: params[:id])
+    important_posts_with_author = care_receiver_found.posts.where(priority: 'high').map do |post| 
+       {post: post, author: post.author}
+    end
+    render json: important_posts_with_author
+
+  end
+
   private
   # Params to that user input, used to create a new care receiver upon caregiver registration
   def care_receiver_params
