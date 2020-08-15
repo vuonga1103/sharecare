@@ -90,7 +90,23 @@ style=" fill:#000000;"><g fill="none" fill-rule="nonzero" stroke="none" stroke-w
       <div id="left-menu-container" class="dashboard-div">
         
       </div>
-      <div id="center-container" class="dashboard-div"></div>
+      <div id="center-container" class="dashboard-div">
+        <div id="new-post-form-container">
+          <form id="new-post-form">
+            <h3>Create a Post</h3>
+      
+            <input type="text" id="post-title" placeholder="Enter Title...">
+            <input type="checkbox" id="post-priority" name="post-priority">
+            <label for="post-priority">Important</label>
+            <input type="text" id="post-content" placeholder="Enter Post To Update Your Team...">
+            <input type="submit" value="Add Post">
+            
+          </form>
+        </div>
+
+        <div id="posts-container">
+        </div>
+      </div>
       <div id="right-menu-container" class="dashboard-div">
         <div id="priority-posts-container">
           <ul id="priority-posts"></ul>

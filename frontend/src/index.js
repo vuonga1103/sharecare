@@ -12,7 +12,10 @@ const registerBtn = document.querySelector("#register-btn"),
   rightMenuContainer = document.querySelector("div#right-menu-container"),
   firstShowScreen = document.querySelector("#first-show"),
   dashboard = document.querySelector("#dashboard"),
-  centerDashboardContainer = document.querySelector("#center-container");
+  centerDashboardContainer = document.querySelector("#center-container"),
+  postsContainer = centerDashboardContainer.querySelector("#posts-container"),
+  newPostFormContainer = centerDashboardContainer.querySelector("#new-post-form-container"),
+  newPostForm = newPostFormContainer.querySelector("#new-post-form")
 let loggedInCaregiver;
 
 dashboard.style.display = "none";
@@ -24,6 +27,7 @@ signUpButton.addEventListener("click", signUpLogInSlidingToggle);
 signInButton.addEventListener("click", signUpLogInSlidingToggle);
 registerForm.addEventListener("submit", createNewPrimaryCaregiver);
 loginForm.addEventListener("submit", findCaregiver);
+newPostForm.addEventListener("submit", createNewPost);
 
 // Allows for sliding toggle between sign up and log in forms
 function signUpLogInSlidingToggle() {
@@ -132,18 +136,18 @@ function createCareReceiver(evt, newPrimaryCaregiver) {
     });
 }
 
-// COMPLETE MEEEEEEEEEEEEEEEEE
-// displays dashboard for a caregiver
+// Displays dashboard for caregiver
 function displayDashboard(caregiver) {
   dashboard.style.display = "flex";
-  firstShowScreen.style.display = "none"
+  firstShowScreen.style.display = "none"; // Hides log-in/register elements
+
   // Assign global loggedInCaregiver to be the caregiver who just logged in
   loggedInCaregiver = caregiver;
-  dashboard.hidden = false;
+
+  dashboard.hidden = false; // Displays the dashboard
   displayPosts();
-  
-  
 }
+
 // Displays all posts associated with the logged in caregiver's carereceiver
 function displayPosts() {
   firstShowScreen.hidden = true;
@@ -153,12 +157,12 @@ function displayPosts() {
   fetch(`http://localhost:3000/care-receivers/${care_receiver_id}/posts`)
     .then(response => response.json())
     .then(posts => {
-      posts.forEach(post => addPostToContainer(post))
+      posts.forEach(post => addToPostsContainer(post))
     });
 }
 
 // Creates needed elements for post, add to main container
-function addPostToContainer(post){
+function addToPostsContainer(post){
 
   const postUl = document.createElement("ul"),
     postTitleLi = document.createElement("li"),
@@ -173,7 +177,7 @@ function addPostToContainer(post){
 
   postUl.append(postTitleLi, postContentLi, postPriorityLi, postAuthorLi)
 
-  centerDashboardContainer.append(postUl)
+  postsContainer.append(postUl)
 }
 
 // Find the caregiver by the username and email in the database, if not found, display login error, if found, take caregiver to dashboard
@@ -215,189 +219,12 @@ function displayCareReceiverError(error) {
   errorParagraph.innerText = error;
 }
 
-
-
-// ANH
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// DONAT CODE HERE
+// Creates a new post on form submission
+function createNewPost(evt) {
+  evt.preventDefault();
+  const titleInput = evt.target['post-title'].value,  
+        contentInput = evt.target['post-content'].value, 
+        priorityInput = evt.target['post-priority'].checked ? 'high' : 'low';
+
+  console.log(titleInput, priorityInput, contentInput)
+}
