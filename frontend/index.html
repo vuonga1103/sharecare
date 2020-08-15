@@ -96,15 +96,18 @@ style=" fill:#000000;"><g fill="none" fill-rule="nonzero" stroke="none" stroke-w
       </div>
       <div id="center-container" class="dashboard-div">
         <div id="new-post-form-container">
+          <ul id="post-errors"></ul>
           <form id="new-post-form">
             <h3>Create a Post</h3>
-      
-            <input type="text" id="post-title" placeholder="Enter Title...">
+            <div id="title-and-checkbox">
+            <input style="width:70%;" type="text" id="post-title" placeholder="Enter Title...">
+            <div style="display:flex; flex-direction: row; width:25%; align-items: center;">
             <input type="checkbox" id="post-priority" name="post-priority">
             <label for="post-priority">Important</label>
-            <input type="text" id="post-content" placeholder="Enter Post To Update Your Team...">
+            </div>
+          </div>
+            <input type="text" id="post-content" placeholder="Write a message to your team...">
             <input type="submit" value="Add Post">
-            
           </form>
         </div>
 

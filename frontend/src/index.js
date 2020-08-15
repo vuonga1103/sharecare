@@ -223,8 +223,40 @@ function displayCareReceiverError(error) {
 function createNewPost(evt) {
   evt.preventDefault();
   const titleInput = evt.target['post-title'].value,  
-        contentInput = evt.target['post-content'].value, 
-        priorityInput = evt.target['post-priority'].checked ? 'high' : 'low';
+    contentInput = evt.target['post-content'].value, 
+    priorityInput = evt.target['post-priority'].checked ? 'high' : 'low',
 
-  console.log(titleInput, priorityInput, contentInput)
+    newPost = {
+      title: titleInput,
+      content: contentInput,
+      priority: priorityInput,
+      author_id: loggedInCaregiver.id
+    };
+
+  fetch('http://localhost:3000/posts', {
+    method: 'POST',
+    headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+    body: JSON.stringify(newPost)
+  })
+    .then(response => response.json())
+    .then(errorOrPost => {
+      if (Array.isArray(errorOrPost)) {
+        displayPostErrors(errorOrPost)
+      } else {
+        addToPostsContainer(errorOrPost);
+        evt.target.reset();
+      }
+    });   
+}
+
+function displayPostErrors(errors) {
+  const postErrorUl = newPostFormContainer.querySelector("#post-errors")
+
+  postErrorUl.innerHTML = '';
+
+  errors.forEach(error => {
+    const postErrorLi = document.createElement("li");
+    postErrorLi.innerText = error;
+    postErrorUl.append(postErrorLi)
+  })
 }

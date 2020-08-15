@@ -5,4 +5,5 @@ Rails.application.routes.draw do
   post '/care-receivers', to: 'care_receivers#create'
   post '/caregivers/login', to: 'caregivers#login'
   get '/care-receivers/:id/posts', to: 'care_receivers#posts'
+  post '/posts', to: 'posts#create'
 end
