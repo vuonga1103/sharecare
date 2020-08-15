@@ -19,6 +19,7 @@
       <div class="container" id="container">
         <div class="form-container sign-in-container" id="login">
           <form id="login-form">
+            <p id="login-error"></p>
             <h1>Login</h1>
             <input
               id="login-username"
@@ -37,8 +38,9 @@
           <button id="register-btn">Register</button>
         </div>
 
-        <div class="form-container sign-up-container" id="register-div" hidden>
-          <form id="register-form">
+        <div class="form-container sign-up-container" id="register-div">
+          <form id="register-form" style="visibility: hidden;">
+            <ul id="register-errors"></ul>
             <h1>Create Account</h1>
             <input id="register-username" type="text" placeholder="Username" />
             <input id="register-email" type="text" placeholder="Email" />

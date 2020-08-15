@@ -4,7 +4,7 @@ class CreateCaregivers < ActiveRecord::Migration[6.0]
       t.string :name
       t.string :username
       t.string :email
-      t.belongs_to :care_receiver, null: false, foreign_key: true
+      t.integer :care_receiver_id, null: true
       t.string :role
       t.string :level
 
