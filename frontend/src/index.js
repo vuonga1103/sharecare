@@ -15,6 +15,8 @@ const registerBtn = document.querySelector("#register-btn"),
   centerDashboardContainer = document.querySelector("#center-container");
 let loggedInCaregiver;
 
+dashboard.style.display = "none";
+
   
 // LOG IN / REGISTER FEATURES -----------------------------------------------
 // EVENT LISTENERS
@@ -133,7 +135,8 @@ function createCareReceiver(evt, newPrimaryCaregiver) {
 // COMPLETE MEEEEEEEEEEEEEEEEE
 // displays dashboard for a caregiver
 function displayDashboard(caregiver) {
-
+  dashboard.style.display = "flex";
+  firstShowScreen.style.display = "none"
   // Assign global loggedInCaregiver to be the caregiver who just logged in
   loggedInCaregiver = caregiver;
   dashboard.hidden = false;
