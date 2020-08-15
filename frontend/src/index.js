@@ -7,7 +7,13 @@ const registerBtn = document.querySelector("#register-btn"),
   signInButton = document.getElementById("signIn"),
   container = document.getElementById("container"),
   registerErrorsUl = document.querySelector("ul#register-errors"),
-  loginForm = document.querySelector("form#login-form");
+  loginForm = document.querySelector("form#login-form"),
+  leftMenuContainer = document.querySelector("div#left-menu-container"),
+  rightMenuContainer = document.querySelector("div#right-menu-container"),
+  firstShowScreen = document.querySelector("#first-show"),
+  dashboard = document.querySelector("#dashboard"),
+  centerDashboardContainer = document.querySelector("#center-container");
+let loggedInCaregiver;
 
   
 // LOG IN / REGISTER FEATURES -----------------------------------------------
@@ -127,7 +133,44 @@ function createCareReceiver(evt, newPrimaryCaregiver) {
 // COMPLETE MEEEEEEEEEEEEEEEEE
 // displays dashboard for a caregiver
 function displayDashboard(caregiver) {
-  console.log("to be completed");
+
+  // Assign global loggedInCaregiver to be the caregiver who just logged in
+  loggedInCaregiver = caregiver;
+  dashboard.hidden = false;
+  displayPosts();
+  
+  
+}
+// Displays all posts associated with the logged in caregiver's carereceiver
+function displayPosts() {
+  firstShowScreen.hidden = true;
+
+  const care_receiver_id = loggedInCaregiver.care_receiver_id
+
+  fetch(`http://localhost:3000/care-receivers/${care_receiver_id}/posts`)
+    .then(response => response.json())
+    .then(posts => {
+      posts.forEach(post => addPostToContainer(post))
+    });
+}
+
+// Creates needed elements for post, add to main container
+function addPostToContainer(post){
+
+  const postUl = document.createElement("ul"),
+    postTitleLi = document.createElement("li"),
+    postContentLi = document.createElement("li"),
+    postPriorityLi = document.createElement("li"),
+    postAuthorLi = document.createElement("li");
+
+    postTitleLi.innerText = post.post.title;
+    postContentLi.innerText = post.post.content;
+    postPriorityLi.innerText = post.post.priority;
+    postAuthorLi.innerText = post.author.name
+
+  postUl.append(postTitleLi, postContentLi, postPriorityLi, postAuthorLi)
+
+  centerDashboardContainer.append(postUl)
 }
 
 // Find the caregiver by the username and email in the database, if not found, display login error, if found, take caregiver to dashboard
