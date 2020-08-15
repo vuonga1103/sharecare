@@ -14,6 +14,7 @@ const registerBtn = document.querySelector("#register-btn"),
   dashboard = document.querySelector("#dashboard"),
   centerDashboardContainer = document.querySelector("#center-container"),
   postsContainer = centerDashboardContainer.querySelector("#posts-container"),
+  postsUl = centerDashboardContainer.querySelector("#posts-ul"),
   newPostFormContainer = centerDashboardContainer.querySelector("#new-post-form-container"),
   newPostForm = newPostFormContainer.querySelector("#new-post-form"),
   importantPostsUl = document.querySelector("#priority-posts")
@@ -159,28 +160,37 @@ function displayPosts() {
   fetch(`http://localhost:3000/care-receivers/${care_receiver_id}/posts`)
     .then(response => response.json())
     .then(posts => {
-      posts.forEach(post => addToPostsContainer(post))
+      posts.reverse().forEach(post => postsUl.append(createPostLi(post)))
     });
 }
 
-// Creates needed elements for post, add to main container
-function addToPostsContainer(post){
+function createPostLi(post){
+  const postLi = document.createElement("li"),
+    datePosted = post.post["created_at"].slice(0, 10);
 
+<<<<<<< HEAD
     const postUl = document.createElement("ul"),
     postTitleLi = document.createElement("li"),
     postContentLi = document.createElement("li"),
     postPriorityLi = document.createElement("li"),
     postAuthorLi = document.createElement("li");
+=======
+  postLi.innerHTML = 
+  `
+    ${post.post.title} - by ${post.author.name} (${post.author.username}) <br>
+    Posted on ${datePosted} | Priority: ${post.post.priority}<br>
+    ${post.post.content}
+>>>>>>> b1250ea27774d9c10c5e36d8a21603a34d2a568a
 
-    postTitleLi.innerText = post.post.title;
-    postContentLi.innerText = post.post.content;
-    postPriorityLi.innerText = post.post.priority;
-    postAuthorLi.innerText = post.author.name
+    <br><br>
+  `
 
-  postUl.append(postTitleLi, postContentLi, postPriorityLi, postAuthorLi)
-
-  postsContainer.append(postUl)
+  return postLi
+  // acknowledgement ******
+  // view comments ******
+  // comment********
 }
+
 
 // Find the caregiver by the username and email in the database, if not found, display login error, if found, take caregiver to dashboard
 function findCaregiver(evt) {
@@ -221,7 +231,7 @@ function displayCareReceiverError(error) {
   errorParagraph.innerText = error;
 }
 
-// Creates a new post on form submission
+// Creates a new post on form submission; if post is valid, add to DOM, if not display errors
 function createNewPost(evt) {
   evt.preventDefault();
   const titleInput = evt.target['post-title'].value,  
@@ -245,7 +255,7 @@ function createNewPost(evt) {
       if (Array.isArray(errorOrPost)) {
         displayPostErrors(errorOrPost)
       } else {
-        addToPostsContainer(errorOrPost);
+        postsUl.firstElementChild.prepend(createPostLi(errorOrPost));
         evt.target.reset();
       }
     });   
