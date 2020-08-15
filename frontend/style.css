@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;800&display=swap');
 
 html {
-    background: url("https://cdn.aarp.net/content/dam/aarp/work/Work_at_50%2B/2018/11/1140-caregiving-jobs.jpg") no-repeat center center fixed;
+    background: url("https://www.verywellmind.com/thmb/hJywQx3hri9o_9fHZWNmgmtyD8E=/3437x2578/smart/filters:no_upscale()/caregiver-CreativeRFTerryVineGettyImages-56cd9ca53df78cfb37a3276b.jpg") no-repeat center center fixed;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
@@ -14,7 +14,9 @@ html {
 }
 
 body {
-
+	-webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
+    background-color: rgba(199, 199, 199, 0.01);  
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -138,10 +140,12 @@ input {
 	left: 0;
 	width: 50%;
 	z-index: 2;
+	
 }
 
 .container.right-panel-active .sign-in-container {
 	transform: translateX(100%);
+	
 }
 
 .sign-up-container {
@@ -183,6 +187,7 @@ input {
 
 .container.right-panel-active .overlay-container{
 	transform: translateX(-100%);
+	
 }
 
 .overlay {
@@ -202,7 +207,8 @@ input {
 }
 
 .container.right-panel-active .overlay {
-  	transform: translateX(50%);
+	  transform: translateX(50%);
+	  
 }
 
 .overlay-panel {
