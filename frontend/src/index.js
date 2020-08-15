@@ -73,6 +73,7 @@ function displayCreateCareReceiverForm(newPrimaryCaregiver) {
 
   registerDiv.innerHTML = `
     <form id="register-carereceiver-form">
+      <p id="carereceiver-error"></p>
       <h1>Add Care Receiver Info</h1>
       <input id="register-carereceiver-name" type="text" placeholder="Name" />
       <input id="register-carereceiver-age" type="number" placeholder="Age" />
@@ -93,7 +94,7 @@ function displayCreateCareReceiverForm(newPrimaryCaregiver) {
   });
 }
 
-// Creates a care receiver, linking it to the newPrimaryCaregiver who signed up, via the caregiver's id, then take the new user/caregiver to their dashboard
+// Creates a care receiver, linking it to the newPrimaryCaregiver who signed up, via the caregiver's id, if care receiver was successfully created then take the new user/caregiver to their dashboard, otherwise display error
 function createCareReceiver(evt, newPrimaryCaregiver) {
   evt.preventDefault();
 
@@ -118,8 +119,8 @@ function createCareReceiver(evt, newPrimaryCaregiver) {
     body: JSON.stringify(newCareReceiver),
   })
     .then((response) => response.json())
-    .then((caregiver) => {
-      displayDashboard(caregiver);
+    .then((errorOrCaregiver) => {
+      Array.isArray(errorOrCaregiver) ? displayCareReceiverError(errorOrCaregiver) : displayDashboard(errorOrCaregiver)
     });
 }
 
@@ -157,6 +158,13 @@ function findCaregiver(evt) {
 // Displays login error
 function displayLoginError(error) {
   const errorParagraph = document.querySelector("p#login-error");
+  errorParagraph.innerText = "";
+  errorParagraph.innerText = error;
+}
+
+// Displays care receiver error
+function displayCareReceiverError(error) {
+  const errorParagraph = document.querySelector("p#carereceiver-error");
   errorParagraph.innerText = "";
   errorParagraph.innerText = error;
 }

@@ -5,7 +5,10 @@ class Caregiver < ApplicationRecord
   has_many :posts, :foreign_key => 'author_id'
   has_many :acknowledgments
 
-  # Validations for username/email
-  validates :username, uniqueness: true
-  validates :email, uniqueness: true
+  # Validations for sign up
+  validates :username, uniqueness: true, presence: true
+  validates :email, uniqueness: true, presence: true
+  validates :name, presence: true
+  validates :role, presence: true
+  validates :level, presence: true
 end
