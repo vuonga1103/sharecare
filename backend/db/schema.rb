@@ -36,12 +36,11 @@ ActiveRecord::Schema.define(version: 2020_08_14_183203) do
     t.string "name"
     t.string "username"
     t.string "email"
-    t.bigint "care_receiver_id", null: false
+    t.integer "care_receiver_id"
     t.string "role"
     t.string "level"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["care_receiver_id"], name: "index_caregivers_on_care_receiver_id"
   end
 
   create_table "comments", force: :cascade do |t|
@@ -61,5 +60,4 @@ ActiveRecord::Schema.define(version: 2020_08_14_183203) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  add_foreign_key "caregivers", "care_receivers"
 end
