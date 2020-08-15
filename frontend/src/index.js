@@ -15,7 +15,8 @@ const registerBtn = document.querySelector("#register-btn"),
   centerDashboardContainer = document.querySelector("#center-container"),
   postsContainer = centerDashboardContainer.querySelector("#posts-container"),
   newPostFormContainer = centerDashboardContainer.querySelector("#new-post-form-container"),
-  newPostForm = newPostFormContainer.querySelector("#new-post-form")
+  newPostForm = newPostFormContainer.querySelector("#new-post-form"),
+  importantPostsUl = document.querySelector("#priority-posts")
 let loggedInCaregiver;
 
 dashboard.style.display = "none";
@@ -146,6 +147,7 @@ function displayDashboard(caregiver) {
 
   dashboard.hidden = false; // Displays the dashboard
   displayPosts();
+  displayImportantPosts();
 }
 
 // Displays all posts associated with the logged in caregiver's carereceiver
@@ -164,7 +166,7 @@ function displayPosts() {
 // Creates needed elements for post, add to main container
 function addToPostsContainer(post){
 
-  const postUl = document.createElement("ul"),
+    const postUl = document.createElement("ul"),
     postTitleLi = document.createElement("li"),
     postContentLi = document.createElement("li"),
     postPriorityLi = document.createElement("li"),
@@ -259,4 +261,33 @@ function displayPostErrors(errors) {
     postErrorLi.innerText = error;
     postErrorUl.append(postErrorLi)
   })
+}
+
+
+
+function displayImportantPosts() {
+  const care_receiver_id = loggedInCaregiver.care_receiver_id
+
+  fetch(`http://localhost:3000/care-receivers/${care_receiver_id}/important_posts`)
+    .then(response => response.json())
+    .then(posts => {
+      posts.forEach(post => addToImportantPostsContainer(post))
+    });
+}
+
+function addToImportantPostsContainer(post){
+
+    const importantPostLi = document.createElement("li"),
+    importantPostTitle = document.createElement("h1"),
+    importantPostPriority = document.createElement("h4"),
+    importantPostContent = document.createElement("p"),
+    importantPostAuthor = document.createElement("h3");
+
+    importantPostTitle.innerText = post.post.title;
+    importantPostContent.innerText = post.post.content;
+    importantPostPriority.innerText = post.post.priority;
+    importantPostAuthor.innerText = post.author.name
+
+    importantPostLi.append(importantPostTitle,importantPostPriority,importantPostContent,importantPostAuthor);
+    importantPostsUl.append(importantPostLi);
 }
