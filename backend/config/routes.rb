@@ -6,4 +6,5 @@ Rails.application.routes.draw do
   post '/caregivers/login', to: 'caregivers#login'
   get '/care-receivers/:id/posts', to: 'care_receivers#posts'
   get '/care-receivers/:id/important_posts', to: 'care_receivers#important_posts'
+  post '/posts', to: 'posts#create'
 end
