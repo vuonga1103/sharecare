@@ -7,4 +7,6 @@ Rails.application.routes.draw do
   get '/care-receivers/:id/posts', to: 'care_receivers#posts'
   get '/care-receivers/:id/important_posts', to: 'care_receivers#important_posts'
   post '/posts', to: 'posts#create'
+  post '/acknowledgments', to: 'acknowledgments#create'
+  post '/acknowledgments/delete', to: 'acknowledgments#destroy'
 end
