@@ -340,7 +340,10 @@ section #left-menu-container{
 	justify-content: space-between;
 	height:100%;
 	padding:20px;
-	background: white;
+	-webkit-backdrop-filter: blur(7px);
+    backdrop-filter: blur(7px);
+	background-color: rgba(207, 207, 207, 0.5);
+	border-radius: 10px;
 	box-shadow: 0 1px 1px rgba(0,0,0,0.09), 
     0 2px 2px rgba(0,0,0,0.09), 
     0 4px 4px rgba(0,0,0,0.09), 
@@ -357,7 +360,10 @@ section #center-container{
 	flex-direction: column;
 	justify-content: space-between;
 	padding:20px;
-	background:white;
+	-webkit-backdrop-filter: blur(7px);
+    backdrop-filter: blur(7px);
+	background-color: rgba(207, 207, 207, 0.5);
+	border-radius: 10px;
 	box-shadow: 0 1px 1px rgba(0,0,0,0.09), 
     0 2px 2px rgba(0,0,0,0.09), 
     0 4px 4px rgba(0,0,0,0.09), 
@@ -374,7 +380,10 @@ section #right-menu-container{
 	justify-content: space-between;
 	height:100%;
 	padding:20px;
-	background:white;
+	-webkit-backdrop-filter: blur(7px);
+    backdrop-filter: blur(7px);
+	background-color: rgba(207, 207, 207, 0.5);
+	border-radius: 10px;
 	box-shadow: 0 1px 1px rgba(0,0,0,0.09), 
     0 2px 2px rgba(0,0,0,0.09), 
     0 4px 4px rgba(0,0,0,0.09), 
@@ -453,7 +462,7 @@ main{
 
 
   #left-carereceiver-container{
-	padding: 10px;
+	padding: 15px;
 	display: flex;
 	flex-direction: column;
 	justify-content: flex-start;
@@ -685,10 +694,10 @@ main{
 	background: #f78976;
 }
 
-<<<<<<< HEAD
 #care-receiver-name-and-age{
 	height:auto;
 	display:flex;
+	flex-direction: row;
 	justify-content: space-between;
 	margin-bottom: 0px;
 }
@@ -743,12 +752,10 @@ main{
 
 
   
-=======
 .comments-ul {
 	list-style-type: none;
 	padding: 0;
 }
->>>>>>> 2b43d7ca6ce05be072d4e82003c17bd55c9255f9
 
   
 

@@ -498,7 +498,7 @@ function displayPostErrors(errors) {
   })
 }
 
-
+//fetches all important posts that are part of the care receiver that is active right now
 
 function displayImportantPosts() {
   const care_receiver_id = loggedInCaregiver.care_receiver_id
@@ -552,6 +552,8 @@ function addToImportantPostsContainer(post){
     
 }
 
+//fetch all caregivers for the specific care receiver
+
 function fetchAllCaregivers(){
   const care_receiver_id = loggedInCaregiver.care_receiver_id
 
@@ -563,6 +565,8 @@ function fetchAllCaregivers(){
     });
 
 }
+
+//add all caregivers on the appropriate section
 
 function addAllCaregiversToTheContainer(caregiver){
   
