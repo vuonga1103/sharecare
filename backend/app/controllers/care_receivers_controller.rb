@@ -17,7 +17,7 @@ class CareReceiversController < ApplicationController
   def posts
     care_receiver_found = CareReceiver.find_by(id: params[:id])
     posts_with_author = care_receiver_found.posts.map do |post| 
-      {post: post, author: post.author}
+      {post: post, author: post.author, acknowledgments: post.acknowledgments}
     end
 
     if care_receiver_found.posts.size > 0 

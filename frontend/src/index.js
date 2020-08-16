@@ -167,21 +167,112 @@ function displayPosts() {
 function createPostLi(post){
   const postLi = document.createElement("li"),
     datePosted = post.post["created_at"].slice(0, 10);
-
+  postLi.setAttribute("id", post.post.id);
   postLi.innerHTML = 
   `
     ${post.post.title} - by ${post.author.name} (${post.author.username}) <br>
     Posted on ${datePosted} | Priority: ${post.post.priority}<br>
-    ${post.post.content}
-
+    ${post.post.content} <br>
+    <span id="acknowledge-span">
+      <img src="images/checkmark-grey.png" style="width:15px" id="acknowledge-checkmark">
+      <span id="acknowledge-text">Acknowledge</span>
+    </span>
+    
     <br><br>
   `
   postLi.classList.add("adding_post_animation")
 
+  const acknowledgeSpan = postLi.querySelector("#acknowledge-span"),
+    acknowledgeCheckmarkImg = acknowledgeSpan.querySelector("#acknowledge-checkmark"),
+    acknowledgeTextSpan = acknowledgeSpan.querySelector("#acknowledge-text")
+
+  if (caregiverAcknowledgedPost(post)) {
+    acknowledgeCheckmarkImg.src = 'images/checkmark-green.png';
+    acknowledgeTextSpan.innerText = 'Acknowledged!';
+    acknowledgeSpan.style.color = 'Green'
+  } 
+  
+  acknowledgeSpan.addEventListener("click", acknowledgePostToggle)
   return postLi
-  // acknowledgement ******
   // view comments ******
   // comment********
+}
+
+// Function to check if the logged in caregiver has acknowledged a post (return the acknowledgment if one if found-- true; otherwise return undefined-- false)
+function caregiverAcknowledgedPost(post) {
+  const caregiverId = loggedInCaregiver.id,
+    acknowledgmentArr = post.acknowledgments;
+  let acknowledgmentFound;
+
+  return acknowledgmentArr.find(acknowledgment => {
+    return acknowledgment['caregiver_id'] == caregiverId
+  })
+}
+
+// If the post has not yet been acknowledge, call function to acknowledge the post, passing in the evt listener, otherwise, call function to unacknowledge the post, passing in the evt listener
+function acknowledgePostToggle(evt) {
+  const postId = parseInt(evt.target.parentElement.parentElement.id),
+    acknowledgementSpan = evt.target.parentElement,
+    acknowledgmentText = acknowledgementSpan.querySelector("#acknowledge-text").innerText
+
+  if (acknowledgmentText === "Acknowledge") {
+    acknowledgePost(postId) 
+  } else {
+    unacknowledgePost(postId)
+  }
+}
+
+// Create a new acknowledgment, persist to server, change the acknowledgement visuals on DOM
+function acknowledgePost(postId) {
+  const newAcknowledgment = {
+    caregiver_id: loggedInCaregiver.id,
+    post_id: postId
+  }
+
+  fetch('http://localhost:3000/acknowledgments', {
+    method: 'POST',
+    headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+    body: JSON.stringify(newAcknowledgment)
+  })
+    .then(response => response.json())
+    .then(newAcknowledgment => {
+      changeAcknowledgmentVisuals(postId)
+    });
+}
+
+// Make a fetch delete request, change acknowledgement visuals on DOM
+function unacknowledgePost(postId) {
+  const acknowledgementToDelete = {
+    caregiver_id: loggedInCaregiver.id,
+    post_id: postId
+  }
+
+  fetch('http://localhost:3000/acknowledgments/delete', {
+    method: 'POST',
+    headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+    body: JSON.stringify(acknowledgementToDelete)
+  })
+    .then(response => response.json())
+    .then(result => {
+      changeAcknowledgmentVisuals(postId)
+    });
+}
+
+// Find the post by the ID on the DOM, change the color of the checkmark and text
+function changeAcknowledgmentVisuals(postId) {
+  const acknowledgmentSpan = document.getElementById(`${postId}`).querySelector("#acknowledge-span"),
+    checkmarkImg = acknowledgmentSpan.querySelector("#acknowledge-checkmark"),
+    acknowledgeText = acknowledgmentSpan.querySelector("#acknowledge-text");
+
+  if (acknowledgeText.innerText === "Acknowledge") {
+    checkmarkImg.src = "images/checkmark-green.png";
+    acknowledgmentSpan.style.color = "green";
+    acknowledgeText.innerText = "Acknowledged!"
+  } else {
+    checkmarkImg.src = "images/checkmark-grey.png"
+    acknowledgmentSpan.style.color = "black";
+    acknowledgeText.innerText = "Acknowledge"
+  }
 }
 
 
