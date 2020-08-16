@@ -26,7 +26,8 @@ dashboard.style.display = "none";
 
 
   
-// LOG IN / REGISTER FEATURES --------------------------------------------------------
+// LOG IN / REGISTER FEATURES ---------------------------------------------------------------
+// ------------------------------------------------------------------------------------------
 
 
 // EVENT LISTENERS
@@ -113,6 +114,13 @@ function displayCreateCareReceiverForm(newPrimaryCaregiver) {
   });
 }
 
+// Displays care receiver error
+function displayCareReceiverError(error) {
+  const errorParagraph = document.querySelector("p#carereceiver-error");
+  errorParagraph.innerText = "";
+  errorParagraph.innerText = error;
+}
+
 // Creates a care receiver, linking it to the newPrimaryCaregiver who signed up, via the caregiver's id, if care receiver was successfully created then take the new user/caregiver to their dashboard, otherwise display error
 function createCareReceiver(evt, newPrimaryCaregiver) {
   evt.preventDefault();
@@ -143,10 +151,41 @@ function createCareReceiver(evt, newPrimaryCaregiver) {
     });
 }
 
+// Find the caregiver by the username and email in the database with the login info entered, if not found, display login error, if found, take caregiver to dashboard
+function findCaregiver(evt) {
+  evt.preventDefault();
+
+  const usernameInput = evt.target["login-username"].value,
+    emailInput = evt.target["login-email"].value;
+
+  caregiver = {
+    username: usernameInput,
+    email: emailInput,
+  };
+
+  fetch("http://localhost:3000/caregivers/login", {
+    method: "POST",
+    headers: { Accept: "application/json", "Content-Type": "application/json" },
+    body: JSON.stringify(caregiver),
+  })
+    .then((response) => response.json())
+    .then((errorOrCaregiver) => {
+      Array.isArray(errorOrCaregiver)
+        ? displayLoginError(...errorOrCaregiver)
+        : displayDashboard(errorOrCaregiver);
+    });
+}
+
+// Displays login error
+function displayLoginError(error) {
+  const errorParagraph = document.querySelector("p#login-error");
+  errorParagraph.innerText = "";
+  errorParagraph.innerText = error;
+}
 
 
-// INITIAL DASHBOARD / POST FEATURES --------------------------------------------------------
-
+// INITIAL DASHBOARD / POST / ACKNOWLEDGMENT / COMMENT FEATURES -----------------------------
+// ------------------------------------------------------------------------------------------
 // Displays dashboard for caregiver
 function displayDashboard(caregiver) {
   dashboard.style.display = "flex";
@@ -197,7 +236,6 @@ function createPostLi(post){
     <button class="comment-btn">Comments</button>
 
     <div class="comments-container" hidden>
-      <p class="comment-error"></p>
       <form class="comment-form">
         <input type="text" placeholder="Add a new comment...">
         <input type="submit">
@@ -399,61 +437,13 @@ function addCommentToPost(evt, postId) {
     .then(response => response.json())
     .then(result => {
       if (Array.isArray(result)) {
-        displayCommentError(...result,postId)
+        alert(...result)
       } else {
-        commentErrorParagraph.innerText = '';
         commentsUl.prepend(createCommentLi(result))
       }
     });
 
   evt.target.reset();
-}
-
-// Will take a string of error and displays it in error paragraph, above comment form of a post
-function displayCommentError(error, postId) {
-  const postLi = document.getElementById(postId),
-    commentErrorParagraph = postLi.querySelector("p.comment-error")
-  
-    commentErrorParagraph.innerText = error
-}
-
-// Find the caregiver by the username and email in the database, if not found, display login error, if found, take caregiver to dashboard
-function findCaregiver(evt) {
-  evt.preventDefault();
-
-  const usernameInput = evt.target["login-username"].value,
-    emailInput = evt.target["login-email"].value;
-
-  caregiver = {
-    username: usernameInput,
-    email: emailInput,
-  };
-
-  fetch("http://localhost:3000/caregivers/login", {
-    method: "POST",
-    headers: { Accept: "application/json", "Content-Type": "application/json" },
-    body: JSON.stringify(caregiver),
-  })
-    .then((response) => response.json())
-    .then((errorOrCaregiver) => {
-      Array.isArray(errorOrCaregiver)
-        ? displayLoginError(...errorOrCaregiver)
-        : displayDashboard(errorOrCaregiver);
-    });
-}
-
-// Displays login error
-function displayLoginError(error) {
-  const errorParagraph = document.querySelector("p#login-error");
-  errorParagraph.innerText = "";
-  errorParagraph.innerText = error;
-}
-
-// Displays care receiver error
-function displayCareReceiverError(error) {
-  const errorParagraph = document.querySelector("p#carereceiver-error");
-  errorParagraph.innerText = "";
-  errorParagraph.innerText = error;
 }
 
 // Creates a new post on form submission; if post is valid, add to DOM, if not display errors
@@ -478,24 +468,12 @@ function createNewPost(evt) {
     .then(response => response.json())
     .then(errorOrPost => {
       if (Array.isArray(errorOrPost)) {
-        displayPostErrors(errorOrPost)
+        alert(errorOrPost.join(' & '))
       } else {
         postsUl.prepend(createPostLi(errorOrPost));
         evt.target.reset();
       }
     });   
-}
-
-function displayPostErrors(errors) {
-  const postErrorUl = newPostFormContainer.querySelector("#post-errors")
-
-  postErrorUl.innerHTML = '';
-
-  errors.forEach(error => {
-    const postErrorLi = document.createElement("li");
-    postErrorLi.innerText = error;
-    postErrorUl.append(postErrorLi)
-  })
 }
 
 //fetches all important posts that are part of the care receiver that is active right now
