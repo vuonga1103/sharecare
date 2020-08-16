@@ -24,8 +24,11 @@ let loggedInCaregiver;
 
 dashboard.style.display = "none";
 
+
   
-// LOG IN / REGISTER FEATURES -----------------------------------------------
+// LOG IN / REGISTER FEATURES --------------------------------------------------------
+
+
 // EVENT LISTENERS
 signUpButton.addEventListener("click", signUpLogInSlidingToggle);
 signInButton.addEventListener("click", signUpLogInSlidingToggle);
@@ -140,6 +143,10 @@ function createCareReceiver(evt, newPrimaryCaregiver) {
     });
 }
 
+
+
+// INITIAL DASHBOARD / POST FEATURES --------------------------------------------------------
+
 // Displays dashboard for caregiver
 function displayDashboard(caregiver) {
   dashboard.style.display = "flex";
@@ -159,7 +166,7 @@ function displayDashboard(caregiver) {
 function displayPosts() {
   firstShowScreen.hidden = true;
 
-  const care_receiver_id = loggedInCaregiver.care_receiver_id
+  const care_receiver_id = loggedInCaregiver.care_receiver_id;
 
   fetch(`http://localhost:3000/care-receivers/${care_receiver_id}/posts`)
     .then(response => response.json())
@@ -168,10 +175,12 @@ function displayPosts() {
     });
 }
 
+// Responsible for creating an Li for each individual post, which has all post's info (title, content, date) AND acknowledgement and comment functions
 function createPostLi(post){
   const postLi = document.createElement("li"),
     datePosted = post.post["created_at"].slice(0, 10);
   postLi.setAttribute("id", post.post.id);
+
   postLi.innerHTML = 
   `
     ${post.post.title} - by ${post.author.name} (${post.author.username}) <br>
@@ -183,10 +192,25 @@ function createPostLi(post){
     </span>
     <br>
     <span class="acknowledgers-span"></span>
+    <br>
+    
+    <button class="comment-btn">Comments</button>
+
+    <div class="comments-container" hidden>
+      <p class="comment-error"></p>
+      <form class="comment-form">
+        <input type="text" placeholder="Add a new comment...">
+        <input type="submit">
+      </form>
+
+      <ul class="comments-ul">
+      </ul>
+    </div>
     <br><br>
   `
   postLi.classList.add("adding_post_animation")
 
+  // Acknowledgement feature - allows user to click to acknowledge a post
   const acknowledgeSpan = postLi.querySelector(".acknowledge-span"),
     acknowledgeCheckmarkImg = acknowledgeSpan.querySelector(".acknowledge-checkmark"),
     acknowledgeTextSpan = acknowledgeSpan.querySelector(".acknowledge-text");
@@ -199,13 +223,27 @@ function createPostLi(post){
   
   acknowledgeSpan.addEventListener("click", acknowledgePostToggle)
   
-  acknowledgersSpan = postLi.querySelector(".acknowledgers-span");
-
+  // Acknowledgers feature - allows user to see a list of caregivers who acknowledged a post
+  const acknowledgersSpan = postLi.querySelector(".acknowledgers-span");
   getAcknowledgersAndAttachToSpan(acknowledgersSpan, post.post.id)
+
+  // Comment feature - allows user to toggle hidding of comment section, which has comment form
+  const commentsUl = postLi.querySelector(".comments-ul");
+  getCommentsAndAttachToUl(commentsUl, post.post.id);
+
+  const commentBtn = postLi.querySelector(".comment-btn"),
+    commentsContainer = postLi.querySelector(".comments-container"),
+    commentForm = postLi.querySelector(".comment-form");
   
+  commentBtn.addEventListener('click', (evt) => {
+    (commentsContainer.hidden == true) ? (commentsContainer.hidden = false) : (commentsContainer.hidden = true)
+  })
+
+  commentForm.addEventListener('submit', (evt) => {
+    addCommentToPost(evt, post.post.id)
+  })
+
   return postLi
-  // view comments ******
-  // comment********
 }
 
 // Function to check if the logged in caregiver has acknowledged a post (return the acknowledgment if one if found-- true; otherwise return undefined-- false)
@@ -315,6 +353,69 @@ function getAcknowledgersAndAttachToSpan(acknowledgersSpan, postId) {
     });
 }
 
+// Fetch the post's comments create an Li for each, and append to commentsUl
+function getCommentsAndAttachToUl(commentsUl, postId) {
+  fetch(`http://localhost:3000/posts/${postId}/comments`)
+    .then(response => response.json())
+    .then(result => {
+      if (typeof result[0] == 'string') {
+        commentsUl.innerText = result[0]
+      } else {
+        result.forEach(comment => commentsUl.append(createCommentLi(comment)))
+      }
+    });
+}
+
+// Creates an Li for a comment object
+function createCommentLi(commentObj) {
+  const commentLi = document.createElement("li");
+  commentLi.innerText = commentObj.content;
+  
+  commentLi.innerText += ' - ' + commentObj['commenter_name']
+  return commentLi
+}
+
+// Takes comment submitted from form, persist to server, display either the comment or the error on DOM
+function addCommentToPost(evt, postId) {
+  evt.preventDefault();
+
+  const contentInput = evt.target.firstElementChild.value,
+    commentsUl = evt.target.parentElement.querySelector(".comments-ul");
+    commentErrorParagraph = evt.target.parentElement.querySelector(".comment-error")
+
+
+  const newComment = {
+    content: contentInput,
+    commenter_id: loggedInCaregiver.id,
+    post_id: postId
+  };
+
+
+  fetch('http://localhost:3000/comments', {
+    method: 'POST',
+    headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+    body: JSON.stringify(newComment)
+  })
+    .then(response => response.json())
+    .then(result => {
+      if (Array.isArray(result)) {
+        displayCommentError(...result,postId)
+      } else {
+        commentErrorParagraph.innerText = '';
+        commentsUl.prepend(createCommentLi(result))
+      }
+    });
+
+  evt.target.reset();
+}
+
+// Will take a string of error and displays it in error paragraph, above comment form of a post
+function displayCommentError(error, postId) {
+  const postLi = document.getElementById(postId),
+    commentErrorParagraph = postLi.querySelector("p.comment-error")
+  
+    commentErrorParagraph.innerText = error
+}
 
 // Find the caregiver by the username and email in the database, if not found, display login error, if found, take caregiver to dashboard
 function findCaregiver(evt) {

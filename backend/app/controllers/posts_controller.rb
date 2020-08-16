@@ -12,12 +12,27 @@ class PostsController < ApplicationController
     end
   end
 
+  # Send back a list of acknowledgeres in an array
   def acknowledgers
     post = Post.find_by(id: params[:id])
 
     acknowledgers = post.acknowledgments.map { |acknowledgment| acknowledgment.caregiver.name }
     
     render json: acknowledgers
+  end
+
+  # Send back [{comment: comment.content, author_name: comment.author.name}]
+  def comments
+    post = Post.find_by(id: params[:id])
+    comments = post.comments.reverse
+
+    if comments.size > 0
+      comments_with_commenter = comments.map { |comment| {content: comment.content, commenter_name: comment.commenter.name} }
+
+      render json: comments_with_commenter
+    else
+      render json: ["No comments for this post yet!"]
+    end
   end
 
   private

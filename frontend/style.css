@@ -685,6 +685,7 @@ main{
 	background: #f78976;
 }
 
+<<<<<<< HEAD
 #care-receiver-name-and-age{
 	height:auto;
 	display:flex;
@@ -742,6 +743,12 @@ main{
 
 
   
+=======
+.comments-ul {
+	list-style-type: none;
+	padding: 0;
+}
+>>>>>>> 2b43d7ca6ce05be072d4e82003c17bd55c9255f9
 
   
 
