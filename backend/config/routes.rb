@@ -11,4 +11,6 @@ Rails.application.routes.draw do
   post '/acknowledgments', to: 'acknowledgments#create'
   post '/acknowledgments/delete', to: 'acknowledgments#destroy'
   get '/posts/:id/acknowledgers', to: 'posts#acknowledgers'
+  get '/posts/:id/comments', to: 'posts#comments'
+  post '/comments', to: 'comments#create'
 end

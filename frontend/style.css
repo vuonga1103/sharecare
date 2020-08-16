@@ -678,7 +678,10 @@ main{
 	background: #f78976;
 }
 
-  
+.comments-ul {
+	list-style-type: none;
+	padding: 0;
+}
 
   
 
