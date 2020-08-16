@@ -391,13 +391,16 @@ function getAcknowledgersAndAttachToSpan(acknowledgersSpan, postId) {
     });
 }
 
-// Fetch the post's comments create an Li for each, and append to commentsUl
+// Fetch the post's comments create an Li for each, and append to commentsUl, if there are no comments, add a paragraph element to commentsUl with innertext of the "no comment" array
 function getCommentsAndAttachToUl(commentsUl, postId) {
   fetch(`http://localhost:3000/posts/${postId}/comments`)
     .then(response => response.json())
     .then(result => {
       if (typeof result[0] == 'string') {
-        commentsUl.innerText = result[0]
+        const noCommentParagraph = document.createElement("p");
+        noCommentParagraph.className = 'no-comment';
+        noCommentParagraph.innerText = result[0];
+        commentsUl.append(noCommentParagraph);
       } else {
         result.forEach(comment => commentsUl.append(createCommentLi(comment)))
       }
@@ -408,7 +411,6 @@ function getCommentsAndAttachToUl(commentsUl, postId) {
 function createCommentLi(commentObj) {
   const commentLi = document.createElement("li");
   commentLi.innerText = commentObj.content;
-  
   commentLi.innerText += ' - ' + commentObj['commenter_name']
   return commentLi
 }
@@ -419,8 +421,6 @@ function addCommentToPost(evt, postId) {
 
   const contentInput = evt.target.firstElementChild.value,
     commentsUl = evt.target.parentElement.querySelector(".comments-ul");
-    commentErrorParagraph = evt.target.parentElement.querySelector(".comment-error")
-
 
   const newComment = {
     content: contentInput,
@@ -439,6 +439,7 @@ function addCommentToPost(evt, postId) {
       if (Array.isArray(result)) {
         alert(...result)
       } else {
+        commentsUl.querySelector('.no-comment').remove();
         commentsUl.prepend(createCommentLi(result))
       }
     });
