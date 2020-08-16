@@ -203,9 +203,13 @@ function caregiverAcknowledgedPost(post) {
     acknowledgmentArr = post.acknowledgments;
   let acknowledgmentFound;
 
-  return acknowledgmentArr.find(acknowledgment => {
-    return acknowledgment['caregiver_id'] == caregiverId
-  })
+  if (acknowledgmentArr) {
+    return acknowledgmentArr.find(acknowledgment => {
+      return acknowledgment['caregiver_id'] == caregiverId
+    })
+  } 
+  
+  return false;
 }
 
 // If the post has not yet been acknowledge, call function to acknowledge the post, passing in the evt listener, otherwise, call function to unacknowledge the post, passing in the evt listener
