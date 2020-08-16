@@ -18,7 +18,8 @@ const registerBtn = document.querySelector("#register-btn"),
   newPostFormContainer = centerDashboardContainer.querySelector("#new-post-form-container"),
   newPostForm = newPostFormContainer.querySelector("#new-post-form"),
   importantPostsUl = document.querySelector("#priority-posts"),
-  rightBottomContainer = document.querySelector("#right-bottom-container");
+  rightBottomContainer = document.querySelector("#right-bottom-container"),
+  leftCareReceiverContainer = document.querySelector("#left-carereceiver-container");
 let loggedInCaregiver;
 
 dashboard.style.display = "none";
@@ -151,6 +152,7 @@ function displayDashboard(caregiver) {
   displayPosts();
   displayImportantPosts();
   fetchAllCaregivers();
+  fetchInfoForCareReceiver();
 }
 
 // Displays all posts associated with the logged in caregiver's carereceiver
@@ -454,9 +456,9 @@ function fetchAllCaregivers(){
 
   fetch(`http://localhost:3000/care-receivers/${care_receiver_id}/my_caregivers`)
     .then(response => response.json())
-    .then(posts => {
-      posts["caregivers"].sort((a, b) => a.level.localeCompare(b.level));
-      posts["caregivers"].forEach(caregiver => addAllCaregiversToTheContainer(caregiver))
+    .then(caregivers => {
+      caregivers["caregivers"].sort((a, b) => a.level.localeCompare(b.level));
+      caregivers["caregivers"].forEach(caregiver => addAllCaregiversToTheContainer(caregiver))
     });
 
 }
@@ -493,6 +495,58 @@ function addAllCaregiversToTheContainer(caregiver){
 
       }
 }
+
+function fetchInfoForCareReceiver(){
+  const care_receiver_id = loggedInCaregiver.care_receiver_id
+ console.log(care_receiver_id)
+  fetch(`http://localhost:3000/care_receivers/${care_receiver_id}`)
+    .then(response => response.json())
+    .then(theCareReceiver => {
+      console.log(theCareReceiver)
+        addCareReceiverToTheDom(theCareReceiver)
+    });
+
+}
+
+function addCareReceiverToTheDom(theCareReceiver){
+
+    const theCareReceiverDiv = document.createElement("div"),
+    careReceiverNameandAgeDiv = document.createElement("div")
+    careReceiverNameandAgeDiv.id = "care-receiver-name-and-age"
+    theCareReceiverName = document.createElement("h1"),
+    theCareReceiverAge = document.createElement("h3")
+    allergiesArray = theCareReceiver["allergies"].toLowerCase().split(/[^\w-]+/),
+    theCareReceiverPrecautions = document.createElement("p"),
+    theCareReceiverBio = document.createElement("p"),
+    allergiesDiv = document.createElement("div")
+    allergiesDiv.classList.add("care-receiver-allergies");
+
+
+    allergiesArray.forEach((allergy) => {
+        let allergySpan = document.createElement("span")
+        allergySpan.innerText = allergy
+        allergiesDiv.append(allergySpan)
+    })
+
+    theCareReceiverName.innerText = theCareReceiver.name;
+    theCareReceiverAge.innerText = theCareReceiver.age
+    theCareReceiverPrecautions.innerText = theCareReceiver.precautions;
+    theCareReceiverBio.innerText = theCareReceiver.bio;
+
+    careReceiverNameandAgeDiv.append(theCareReceiverName,theCareReceiverAge)
+    theCareReceiverDiv.append(careReceiverNameandAgeDiv,allergiesDiv,theCareReceiverPrecautions,theCareReceiverBio);
+    leftCareReceiverContainer.append(theCareReceiverDiv);
+
+
+    
+
+  
+
+
+}
+
+
+
 
 
 
