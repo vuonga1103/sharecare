@@ -13,6 +13,12 @@ class CareReceiversController < ApplicationController
     end
   end
 
+
+  def show
+    care_receiver_found = CareReceiver.find_by(id: params[:id])
+    render json: care_receiver_found;
+  end
+
   # Find the care receiver by id, sends back posts associated with that care receiver, including author's info; if the care receiver doesn't have any posts associated, send back message indicating so
   def posts
     care_receiver_found = CareReceiver.find_by(id: params[:id])
