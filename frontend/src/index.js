@@ -180,6 +180,7 @@ function createPostLi(post){
     
     <br><br>
   `
+  postLi.classList.add("adding_post_animation")
 
   const acknowledgeSpan = postLi.querySelector("#acknowledge-span"),
     acknowledgeCheckmarkImg = acknowledgeSpan.querySelector("#acknowledge-checkmark"),
@@ -380,11 +381,32 @@ function addToImportantPostsContainer(post){
     importantPostContent = document.createElement("p"),
     importantPostAuthor = document.createElement("h3");
 
+
     importantPostTitle.innerText = post.post.title;
     importantPostContent.innerText = post.post.content;
     importantPostPriority.innerText = post.post.priority;
     importantPostAuthor.innerText = post.author.name
 
+    importantPostContent.hidden=true;
+    importantPostAuthor.hidden=true;
+
     importantPostLi.append(importantPostTitle,importantPostPriority,importantPostContent,importantPostAuthor);
     importantPostsUl.append(importantPostLi);
+
+    importantPostLi.addEventListener("click",(evt) => {
+      
+      if(importantPostContent.hidden === true)
+      {
+      importantPostContent.hidden=false;
+      importantPostAuthor.hidden=false;
+      importantPostLi.classList.add("expand-animation")
+      importantPostLi.classList.remove("swing-out-top-bck")
+    } else {
+      importantPostLi.classList.remove("expand-animation")
+      importantPostLi.classList.add("collapse-animation")
+      importantPostContent.hidden=true;
+      importantPostAuthor.hidden=true;      
+    }
+    })
+    
 }

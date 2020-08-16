@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800&display=swap');
 
 html {
     background: url("https://afscenter.org/wp-content/uploads/AdobeStock_75313743.jpeg") no-repeat center center fixed;
@@ -357,6 +357,9 @@ section #left-menu-container{
 section #center-container{
 	width:50%;
 	height:100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
 	padding:20px;
 	background:white;
 	box-shadow: 0 1px 1px rgba(0,0,0,0.09), 
@@ -430,28 +433,33 @@ main{
   }
 
   #priority-posts-container{
+	display: flex;
+	flex-direction: column;
+	flex-wrap: nowrap;
+	  overflow: scroll;
 	  height: 55%;
 	  width:100%;
-	  background-color: rgb(238, 238, 238);
+	  background-color: rgb(245, 245, 245);
+	  overflow-x: hidden;
   }
 
   #right-bottom-container{
 	  height:40%;
 	  width:100%;
-	  background-color: rgb(235, 235, 235);
+	  background-color: rgb(245, 245, 245);
   }
 
 
   #left-carereceiver-container{
 	height: 40%;
 	width:100%;
-	background-color: rgb(238, 238, 238);
+	background-color: rgb(245, 245, 245);
   }
 
   #left-selection-container{
 	height: 55%;
 	width:100%;
-	background-color: rgb(238, 238, 238);
+	background-color: rgb(245, 245, 245);
 	}
 	
 	#title-and-checkbox{
@@ -462,10 +470,15 @@ main{
 
 	#priority-posts{
 		padding:20px;
+		display:flex;
+		flex-direction: column;
+		gap:10px;
 		list-style-type: none;
+
 	}
 
 	#priority-posts li{
+		height:auto;
 		width:100%;
 		padding:20px;
 		background: white;
@@ -476,6 +489,159 @@ main{
     0 16px 16px rgba(0,0,0,0.09), 
     0 32px 32px rgba(0,0,0,0.09);
 	}
+
+	#priority-posts h1{
+		font-size: 16px;
+		font-weight: 600;
+
+	}
+
+	#priority-posts p{
+		margin:0px;
+	}
+
+	#priority-posts h4{
+		font-size: 13px;
+		width: 100%;
+		padding:5px 5px;
+		text-align: center;
+		background:#f78976;
+		color:white;
+	}
+
+	#posts-container{
+		position: relative;
+	display: flex;
+	flex-direction: column;
+	flex-wrap: nowrap;
+	height:55%;
+	  overflow: scroll;
+	  width:100%;
+	  background-color: rgb(245, 245, 245);
+	  overflow-x: hidden;
+	  
+	  
+	}
+
+	#posts-ul{
+		padding:20px;
+		list-style-type: none;
+	}
+
+	
+
+	#posts-ul li{
+		width:100%;
+		margin-bottom:20px;
+		padding:20px;
+		background: white;
+		box-shadow: 0 1px 1px rgba(0,0,0,0.09), 
+    0 2px 2px rgba(0,0,0,0.09), 
+    0 4px 4px rgba(0,0,0,0.09), 
+    0 8px 8px rgba(0,0,0,0.09), 
+    0 16px 16px rgba(0,0,0,0.09), 
+    0 32px 32px rgba(0,0,0,0.09);
+	}
+
+
+	::-webkit-scrollbar {
+		width: 0.5rem;
+	  }
+	  ::-webkit-scrollbar-track {
+		background: #858585;
+	  }
+	  ::-webkit-scrollbar-thumb {
+		background: #FF4B2B;
+	  }
+
+	  #new-post-form-container{
+		  height:30%;
+	  }
+
+
+	  .expand-animation{
+		-webkit-animation: expanding-animation 1s cubic-bezier(0.175, 0.885, 0.320, 1.275) both;
+	        animation: expanding-animation 1s cubic-bezier(0.175, 0.885, 0.320, 1.275) both;
+	  }
+
+
+	  @-webkit-keyframes expanding-animation {
+		0% {
+		  -webkit-transform: rotateX(-100deg);
+				  transform: rotateX(-100deg);
+		  -webkit-transform-origin: top;
+				  transform-origin: top;
+		  opacity: 0;
+		}
+		100% {
+		  -webkit-transform: rotateX(0deg);
+				  transform: rotateX(0deg);
+		  -webkit-transform-origin: top;
+				  transform-origin: top;
+		  opacity: 1;
+		}
+	  }
+	  @keyframes expanding-animation {
+		0% {
+		  -webkit-transform: rotateX(-100deg);
+				  transform: rotateX(-100deg);
+		  -webkit-transform-origin: top;
+				  transform-origin: top;
+		  opacity: 0;
+		}
+		100% {
+		  -webkit-transform: rotateX(0deg);
+				  transform: rotateX(0deg);
+		  -webkit-transform-origin: top;
+				  transform-origin: top;
+		  opacity: 1;
+		}
+	  }
+
+
+	  .adding_post_animation{
+		-webkit-animation: swing-in-top-fwd 0.5s cubic-bezier(0.645, 0.045, 0.355, 1.000) both;
+	        animation: swing-in-top-fwd 0.5s cubic-bezier(0.645, 0.045, 0.355, 1.000) both;
+	  }
+
+@-webkit-keyframes swing-in-top-fwd {
+	0% {
+	  -webkit-transform: rotateX(-100deg);
+			  transform: rotateX(-100deg);
+	  -webkit-transform-origin: top;
+			  transform-origin: top;
+	  opacity: 0;
+	}
+	100% {
+	  -webkit-transform: rotateX(0deg);
+			  transform: rotateX(0deg);
+	  -webkit-transform-origin: top;
+			  transform-origin: top;
+	  opacity: 1;
+	}
+  }
+  @keyframes swing-in-top-fwd {
+	0% {
+	  -webkit-transform: rotateX(-100deg);
+			  transform: rotateX(-100deg);
+	  -webkit-transform-origin: top;
+			  transform-origin: top;
+	  opacity: 0;
+	}
+	100% {
+	  -webkit-transform: rotateX(0deg);
+			  transform: rotateX(0deg);
+	  -webkit-transform-origin: top;
+			  transform-origin: top;
+	  opacity: 1;
+	}
+  }
+  
+
+  
+
+  
+
   
 
 
