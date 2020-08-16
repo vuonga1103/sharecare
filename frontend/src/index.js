@@ -173,18 +173,19 @@ function createPostLi(post){
     ${post.post.title} - by ${post.author.name} (${post.author.username}) <br>
     Posted on ${datePosted} | Priority: ${post.post.priority}<br>
     ${post.post.content} <br>
-    <span id="acknowledge-span">
-      <img src="images/checkmark-grey.png" style="width:15px" id="acknowledge-checkmark">
-      <span id="acknowledge-text">Acknowledge</span>
+    <span class="acknowledge-span">
+      <img src="images/checkmark-grey.png" style="width:15px" class="acknowledge-checkmark">
+      <span class="acknowledge-text">Acknowledge</span>
     </span>
-    
+    <br>
+    <span class="acknowledgers-span"></span>
     <br><br>
   `
   postLi.classList.add("adding_post_animation")
 
-  const acknowledgeSpan = postLi.querySelector("#acknowledge-span"),
-    acknowledgeCheckmarkImg = acknowledgeSpan.querySelector("#acknowledge-checkmark"),
-    acknowledgeTextSpan = acknowledgeSpan.querySelector("#acknowledge-text")
+  const acknowledgeSpan = postLi.querySelector(".acknowledge-span"),
+    acknowledgeCheckmarkImg = acknowledgeSpan.querySelector(".acknowledge-checkmark"),
+    acknowledgeTextSpan = acknowledgeSpan.querySelector(".acknowledge-text");
 
   if (caregiverAcknowledgedPost(post)) {
     acknowledgeCheckmarkImg.src = 'images/checkmark-green.png';
@@ -193,6 +194,11 @@ function createPostLi(post){
   } 
   
   acknowledgeSpan.addEventListener("click", acknowledgePostToggle)
+  
+  acknowledgersSpan = postLi.querySelector(".acknowledgers-span");
+
+  getAcknowledgersAndAttachToSpan(acknowledgersSpan, post.post.id)
+  
   return postLi
   // view comments ******
   // comment********
@@ -217,7 +223,7 @@ function caregiverAcknowledgedPost(post) {
 function acknowledgePostToggle(evt) {
   const postId = parseInt(evt.target.parentElement.parentElement.id),
     acknowledgementSpan = evt.target.parentElement,
-    acknowledgmentText = acknowledgementSpan.querySelector("#acknowledge-text").innerText
+    acknowledgmentText = acknowledgementSpan.querySelector(".acknowledge-text").innerText
 
   if (acknowledgmentText === "Acknowledge") {
     acknowledgePost(postId) 
@@ -262,11 +268,12 @@ function unacknowledgePost(postId) {
     });
 }
 
-// Find the post by the ID on the DOM, change the color of the checkmark and text
+// Find the post by the ID on the DOM, change the color of the checkmark and text, update the names of the caregivers who acknowledged the post
 function changeAcknowledgmentVisuals(postId) {
-  const acknowledgmentSpan = document.getElementById(`${postId}`).querySelector("#acknowledge-span"),
-    checkmarkImg = acknowledgmentSpan.querySelector("#acknowledge-checkmark"),
-    acknowledgeText = acknowledgmentSpan.querySelector("#acknowledge-text");
+  const acknowledgmentSpan = document.getElementById(`${postId}`).querySelector(".acknowledge-span"),
+    checkmarkImg = acknowledgmentSpan.querySelector(".acknowledge-checkmark"),
+    acknowledgeText = acknowledgmentSpan.querySelector(".acknowledge-text"),
+    acknowledgersSpan = document.getElementById(`${postId}`).querySelector(".acknowledgers-span");
 
   if (acknowledgeText.innerText === "Acknowledge") {
     checkmarkImg.src = "images/checkmark-green.png";
@@ -277,6 +284,31 @@ function changeAcknowledgmentVisuals(postId) {
     acknowledgmentSpan.style.color = "black";
     acknowledgeText.innerText = "Acknowledge"
   }
+
+  getAcknowledgersAndAttachToSpan(acknowledgersSpan, postId)
+}
+
+// Get the acknowledgers for post from server, attach their name to the span
+function getAcknowledgersAndAttachToSpan(acknowledgersSpan, postId) {
+  fetch(`http://localhost:3000/posts/${postId}/acknowledgers`)
+    .then(response => response.json())
+    .then(acknowledgers => {
+      if (acknowledgers.length === 0) {
+        acknowledgersSpan.innerText = "No one acknowledged this post yet"
+      } else {
+        let joinedStr = 'Acknowledged by ';
+        for (let i = 0; i < acknowledgers.length; i++) {
+          if (i == (acknowledgers.length - 1)) {
+            joinedStr += acknowledgers[i]
+          } else if (i == (acknowledgers.length - 2)) {
+            (acknowledgers.length == 2) ? (joinedStr += acknowledgers[i] + ' & ') : (joinedStr += acknowledgers[i] + ', & ')
+          } else {
+            joinedStr += acknowledgers[i] + ', '
+          }
+        }
+        acknowledgersSpan.innerText = joinedStr
+      }
+    });
 }
 
 

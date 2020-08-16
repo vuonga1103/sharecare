@@ -12,6 +12,14 @@ class PostsController < ApplicationController
     end
   end
 
+  def acknowledgers
+    post = Post.find_by(id: params[:id])
+
+    acknowledgers = post.acknowledgments.map { |acknowledgment| acknowledgment.caregiver.name }
+    
+    render json: acknowledgers
+  end
+
   private
   def post_params
     params.permit(:title, :content, :priority, :author_id)
