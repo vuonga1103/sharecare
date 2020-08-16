@@ -28,7 +28,8 @@ class CareReceiversController < ApplicationController
   end
 
   def my_caregivers
-
+    care_receiver_found = CareReceiver.find_by(id: params[:id])
+    render json: care_receiver_found, include: :caregivers
   end
 
   #return important posts made by the caregivers associated with the caregivers
