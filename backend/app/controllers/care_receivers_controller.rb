@@ -27,14 +27,22 @@ class CareReceiversController < ApplicationController
     end
   end
 
+  def my_caregivers
+
+  end
+
   #return important posts made by the caregivers associated with the caregivers
   def important_posts
     care_receiver_found = CareReceiver.find_by(id: params[:id])
     important_posts_with_author = care_receiver_found.posts.where(priority: 'high').map do |post| 
        {post: post, author: post.author}
     end
-    render json: important_posts_with_author
 
+    if important_posts_with_author.size > 0
+      render json: important_posts_with_author
+    else
+      render json: { message: "No posts yet" }
+    end
   end
 
   private

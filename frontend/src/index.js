@@ -168,22 +168,15 @@ function createPostLi(post){
   const postLi = document.createElement("li"),
     datePosted = post.post["created_at"].slice(0, 10);
 
-<<<<<<< HEAD
-    const postUl = document.createElement("ul"),
-    postTitleLi = document.createElement("li"),
-    postContentLi = document.createElement("li"),
-    postPriorityLi = document.createElement("li"),
-    postAuthorLi = document.createElement("li");
-=======
   postLi.innerHTML = 
   `
     ${post.post.title} - by ${post.author.name} (${post.author.username}) <br>
     Posted on ${datePosted} | Priority: ${post.post.priority}<br>
     ${post.post.content}
->>>>>>> b1250ea27774d9c10c5e36d8a21603a34d2a568a
 
     <br><br>
   `
+  postLi.classList.add("adding_post_animation")
 
   return postLi
   // acknowledgement ******
@@ -255,7 +248,7 @@ function createNewPost(evt) {
       if (Array.isArray(errorOrPost)) {
         displayPostErrors(errorOrPost)
       } else {
-        postsUl.firstElementChild.prepend(createPostLi(errorOrPost));
+        postsUl.prepend(createPostLi(errorOrPost));
         evt.target.reset();
       }
     });   
@@ -293,11 +286,32 @@ function addToImportantPostsContainer(post){
     importantPostContent = document.createElement("p"),
     importantPostAuthor = document.createElement("h3");
 
+
     importantPostTitle.innerText = post.post.title;
     importantPostContent.innerText = post.post.content;
     importantPostPriority.innerText = post.post.priority;
     importantPostAuthor.innerText = post.author.name
 
+    importantPostContent.hidden=true;
+    importantPostAuthor.hidden=true;
+
     importantPostLi.append(importantPostTitle,importantPostPriority,importantPostContent,importantPostAuthor);
     importantPostsUl.append(importantPostLi);
+
+    importantPostLi.addEventListener("click",(evt) => {
+      
+      if(importantPostContent.hidden === true)
+      {
+      importantPostContent.hidden=false;
+      importantPostAuthor.hidden=false;
+      importantPostLi.classList.add("expand-animation")
+      importantPostLi.classList.remove("swing-out-top-bck")
+    } else {
+      importantPostLi.classList.remove("expand-animation")
+      importantPostLi.classList.add("collapse-animation")
+      importantPostContent.hidden=true;
+      importantPostAuthor.hidden=true;      
+    }
+    })
+    
 }
