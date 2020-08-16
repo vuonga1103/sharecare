@@ -17,7 +17,8 @@ const registerBtn = document.querySelector("#register-btn"),
   postsUl = centerDashboardContainer.querySelector("#posts-ul"),
   newPostFormContainer = centerDashboardContainer.querySelector("#new-post-form-container"),
   newPostForm = newPostFormContainer.querySelector("#new-post-form"),
-  importantPostsUl = document.querySelector("#priority-posts")
+  importantPostsUl = document.querySelector("#priority-posts"),
+  rightBottomContainer = document.querySelector("#right-bottom-container");
 let loggedInCaregiver;
 
 dashboard.style.display = "none";
@@ -149,6 +150,7 @@ function displayDashboard(caregiver) {
   dashboard.hidden = false; // Displays the dashboard
   displayPosts();
   displayImportantPosts();
+  fetchAllCaregivers();
 }
 
 // Displays all posts associated with the logged in caregiver's carereceiver
@@ -373,15 +375,19 @@ function displayImportantPosts() {
     });
 }
 
+
+//add Important Post to the appropriate container and also modify their showing size on click
 function addToImportantPostsContainer(post){
 
     const importantPostLi = document.createElement("li"),
     importantPostTitle = document.createElement("h1"),
+    dateImportantPosted = document.createElement("span"),
     importantPostPriority = document.createElement("h4"),
     importantPostContent = document.createElement("p"),
     importantPostAuthor = document.createElement("h3");
+    
 
-
+    dateImportantPosted.innerText = post.post["created_at"].slice(0, 10);
     importantPostTitle.innerText = post.post.title;
     importantPostContent.innerText = post.post.content;
     importantPostPriority.innerText = post.post.priority;
@@ -390,7 +396,7 @@ function addToImportantPostsContainer(post){
     importantPostContent.hidden=true;
     importantPostAuthor.hidden=true;
 
-    importantPostLi.append(importantPostTitle,importantPostPriority,importantPostContent,importantPostAuthor);
+    importantPostLi.append(importantPostTitle,dateImportantPosted,importantPostPriority,importantPostContent,importantPostAuthor);
     importantPostsUl.append(importantPostLi);
 
     importantPostLi.addEventListener("click",(evt) => {
@@ -410,3 +416,54 @@ function addToImportantPostsContainer(post){
     })
     
 }
+
+function fetchAllCaregivers(){
+  const care_receiver_id = loggedInCaregiver.care_receiver_id
+
+  fetch(`http://localhost:3000/care-receivers/${care_receiver_id}/my_caregivers`)
+    .then(response => response.json())
+    .then(posts => {
+      posts["caregivers"].sort((a, b) => a.level.localeCompare(b.level));
+      posts["caregivers"].forEach(caregiver => addAllCaregiversToTheContainer(caregiver))
+    });
+
+}
+
+function addAllCaregiversToTheContainer(caregiver){
+  
+  if(caregiver["level"] === "primary"){
+  const primaryCaregiverInformation = document.createElement("div"),
+        primaryCaregiverName = document.createElement("h1"),
+        primaryCaregiverRole = document.createElement("span"),
+        primaryCaregiverLevel = document.createElement("h4");
+
+        primaryCaregiverInformation.classList.add("primary-caregiver-div")
+        primaryCaregiverName.innerText = caregiver["name"]
+        primaryCaregiverRole.innerText = caregiver["role"]
+        primaryCaregiverLevel.innerText = caregiver["level"]
+
+        primaryCaregiverInformation.append(primaryCaregiverName,primaryCaregiverRole,primaryCaregiverLevel)
+        rightBottomContainer.append(primaryCaregiverInformation)
+      } else {
+        const secondaryCaregiverInformation = document.createElement("div"),
+        secondaryCaregiverName = document.createElement("h1"),
+        secondaryCaregiverRole = document.createElement("span"),
+        secondaryCaregiverLevel = document.createElement("h4");
+
+        secondaryCaregiverInformation.classList.add("primary-caregiver-div")
+        secondaryCaregiverName.innerText = caregiver["name"]
+        secondaryCaregiverRole.innerText = caregiver["role"]
+        secondaryCaregiverLevel.innerText = caregiver["level"]
+        secondaryCaregiverLevel.id = "secondary-caregiver-level";
+
+        secondaryCaregiverInformation.append(secondaryCaregiverName,secondaryCaregiverRole,secondaryCaregiverLevel)
+        rightBottomContainer.append(secondaryCaregiverInformation)
+
+      }
+}
+
+
+
+
+
+
