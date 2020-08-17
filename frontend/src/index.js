@@ -30,12 +30,9 @@ let currentCareReceiver;
 
 dashboard.style.display = "none";
 
-dashboard/addEventListener("mousedown",(evt) => {
-  if(evt.shiftKey)
   new Sortable(dashboard, {
     animation: 150,
   });
-})
 
 
 // var elem = postsUl
