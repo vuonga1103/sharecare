@@ -52,7 +52,7 @@ Sortable.create(importantPostsUl,{
     },
   animation: 100,
   onEnd: function (evt){
-    debugger
+    // debugger
   }
 });
 
@@ -177,8 +177,13 @@ function createCareReceiver(evt, newPrimaryCaregiver) {
     body: JSON.stringify(newCareReceiver),
   })
     .then((response) => response.json())
-    .then((errorOrCaregiver) => {
-      Array.isArray(errorOrCaregiver) ? displayCareReceiverError(errorOrCaregiver) : displayDashboard(errorOrCaregiver)
+    .then((errorOrCareReceiver) => {
+      if (Array.isArray(errorOrCareReceiver)) {
+        displayCareReceiverError(errorOrCareReceiver) 
+      } else {
+        currentCareReceiver = errorOrCareReceiver;
+        displayDashboard(errorOrCareReceiver);   
+      }
     });
 }
 
@@ -201,9 +206,12 @@ function findCaregiver(evt) {
   })
     .then((response) => response.json())
     .then((errorOrCaregiver) => {
-      Array.isArray(errorOrCaregiver)
-        ? displayLoginError(...errorOrCaregiver)
-        : displayDashboard(errorOrCaregiver);
+      if (Array.isArray(errorOrCaregiver)) {
+        displayLoginError(...errorOrCaregiver)
+      } else {
+        displayDashboard(errorOrCaregiver)
+        evt.target.reset();
+      }
     });
 }
 
@@ -226,9 +234,10 @@ function displayDashboard(caregiver) {
   loggedInCaregiver = caregiver;
 
   dashboard.hidden = false; // Displays the dashboard
+  fetchAllCaregivers();
   renderPostsInCenter();
   displayImportantPosts();
-  fetchAllCaregivers();
+  
   fetchInfoForCareReceiver();
 }
 
@@ -618,21 +627,22 @@ function addToImportantPostsContainer(post){
 //fetch all caregivers for the specific care receiver
 
 function fetchAllCaregivers(){
-  const care_receiver_id = loggedInCaregiver.care_receiver_id
+  const careReceiverId = loggedInCaregiver.care_receiver_id
 
-  fetch(`http://localhost:3000/care-receivers/${care_receiver_id}/my_caregivers`)
+  
+  fetch(`http://localhost:3000/care-receivers/${careReceiverId}/my_caregivers`)
     .then(response => response.json())
     .then(caregivers => {
       caregivers["caregivers"].sort((a, b) => a.level.localeCompare(b.level));
-      caregivers["caregivers"].forEach(caregiver => addAllCaregiversToTheContainer(caregiver))
+      caregivers["caregivers"].forEach(caregiver => {
+        addAllCaregiversToTheContainer(caregiver)})
     });
-
 }
 
 //add all caregivers on the appropriate section
 
 function addAllCaregiversToTheContainer(caregiver){
-  
+ 
   if(caregiver["level"] === "primary"){
   const primaryCaregiverInformation = document.createElement("div"),
         primaryCaregiverName = document.createElement("h1"),
@@ -666,7 +676,7 @@ function addAllCaregiversToTheContainer(caregiver){
 
 function fetchInfoForCareReceiver(){
   const care_receiver_id = loggedInCaregiver.care_receiver_id
- console.log(care_receiver_id)
+  
   fetch(`http://localhost:3000/care_receivers/${care_receiver_id}`)
     .then(response => response.json())
     .then(theCareReceiver => {
@@ -712,6 +722,7 @@ function addCareReceiverToTheDom(theCareReceiver){
 postsSelectionBtn.addEventListener("click", renderPostsInCenter);
 teamSelectionBtn.addEventListener("click", renderTeamInCenter);
 myInfoSelectionBtn.addEventListener("click", renderMyInfoInCenter);
+logoutSelectionBtn.addEventListener("click", logCaregiverOut)
 
 // Will display team info in center container; will show options for adding of new CG and deletion of CGs if logged-in CG is primary
 function renderTeamInCenter(){
@@ -852,7 +863,7 @@ function renderMyInfoInCenter(){
         <li id='my-info-role'>Role: ${currentCareReceiver.name}'s ${loggedInCaregiver.role}</li>
         <li id='my-info-level'>You are a ${loggedInCaregiver.level} caregiver</li>
       </ul>
-      <button id='my-info-edit-btn'>Edit Info</button>
+      <button id='my-info-edit-btn'>Edit My Info</button>
 
       <form id='my-info-edit-form' style="display:none;">
         <label for="my-info-name-input">Name: </label>
@@ -917,5 +928,11 @@ function editMyInfo(evt) {
         renderMyInfoInCenter();
       }
     });
+}
 
+// Reset currentCareReceiver and loggedInCaregiver, then reload page to go back to signin screen
+function logCaregiverOut() {
+  loggedInCaregiver = '';
+  currentCareReceiver = '';
+  location.reload();
 }
