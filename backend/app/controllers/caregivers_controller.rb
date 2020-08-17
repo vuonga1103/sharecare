@@ -28,9 +28,28 @@ class CaregiversController < ApplicationController
     end
   end
 
+  def upload_document
+    new_document = Document.create(upload_document_params)
+    new_document.update(document:params[:document])
+    render json: {image_url: url_for(new_document.document)}
+  end
+
+  def care_receiver_documents
+  care_receiver_found = CareReceiver.find_by(id: params[:id])
+  
+  all_documents = care_receiver_found.documents.map do |document|
+      {title: document.title, description: document.description, privacy: document.privacy, document: url_for(document.document), author: document.caregiver.name}
+    end
+    byebug
+  end
+
 
   private
   def caregiver_params
     params.permit(:name, :username, :email, :role, :level, :care_receiver_id)
+  end
+
+  def upload_document_params
+    params.permit(:title, :description,:privacy, :caregiver_id)
   end
 end

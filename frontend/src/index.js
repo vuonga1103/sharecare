@@ -712,6 +712,7 @@ function addCareReceiverToTheDom(theCareReceiver){
 postsSelectionBtn.addEventListener("click", renderPostsInCenter);
 teamSelectionBtn.addEventListener("click", renderTeamInCenter);
 myInfoSelectionBtn.addEventListener("click", renderMyInfoInCenter);
+documentsSelectionBtn.addEventListener("click", renderDocumentsInCenter);
 
 // Will display team info in center container; will show options for adding of new CG and deletion of CGs if logged-in CG is primary
 function renderTeamInCenter(){
@@ -890,5 +891,59 @@ function toggleDisplayMyInfoEditForm(evt){
 function editMyInfo(evt) {
   evt.preventDefault();
   
+
+}
+
+function renderDocumentsInCenter(){
+console.log("donat")
+  centerDashboardContainer.innerHTML = `
+  <form id="upload-document">
+    <input type="text" placeholder="Document Title" name="document-title">
+    <input type="text" placeholder="Document Description" name="document-description">
+    <label for='document'>Upload document:</label>
+    <input type="file" name="document">
+    <select name="privacy" id="privacy-select">
+      <option value="private">Private</option>
+      <option value="public">Public</option>
+    </select>
+    <input type="submit" value="Submit Document">
+  </form>
+  `
+  const documentFormUploader = document.querySelector("#upload-document")
+  documentFormUploader.addEventListener("submit",(evt) => documentUploadFetching(evt))
+}
+
+function documentUploadFetching(evt)
+{
+  evt.preventDefault()
+  console.log(evt)
+
+  const documentTitle = evt.target['document-title'].value
+  const documentDescription = evt.target['document-description'].value
+  const documentPrivacy = evt.target['privacy'].value
+  const documentFile = evt.target['document'].files[0]
+  debugger
+
+  const formData = new FormData()
+
+  formData.append('title',documentTitle)
+  formData.append('description',documentDescription)
+  formData.append('privacy',documentPrivacy)
+  formData.append('caregiver_id', loggedInCaregiver.id)
+  formData.append('document',documentFile)
+  
+debugger
+  fetch('http://localhost:3000/caregivers/upload_document', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json'
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(fileURL => {
+          debugger
+        })
+
 
 }
