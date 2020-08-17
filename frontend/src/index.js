@@ -34,6 +34,8 @@ dashboard.style.display = "none";
     animation: 150,
   });
 
+  
+
 
 // var elem = postsUl
 // var infScroll = new InfiniteScroll( elem, {
