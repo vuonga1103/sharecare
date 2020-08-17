@@ -52,7 +52,7 @@ Sortable.create(importantPostsUl,{
     },
   animation: 100,
   onEnd: function (evt){
-    debugger
+    // debugger
   }
 });
 
@@ -177,8 +177,13 @@ function createCareReceiver(evt, newPrimaryCaregiver) {
     body: JSON.stringify(newCareReceiver),
   })
     .then((response) => response.json())
-    .then((errorOrCaregiver) => {
-      Array.isArray(errorOrCaregiver) ? displayCareReceiverError(errorOrCaregiver) : displayDashboard(errorOrCaregiver)
+    .then((errorOrCareReceiver) => {
+      if (Array.isArray(errorOrCareReceiver)) {
+        displayCareReceiverError(errorOrCareReceiver) 
+      } else {
+        currentCareReceiver = errorOrCareReceiver;
+        displayDashboard(errorOrCareReceiver);   
+      }
     });
 }
 
@@ -201,9 +206,12 @@ function findCaregiver(evt) {
   })
     .then((response) => response.json())
     .then((errorOrCaregiver) => {
-      Array.isArray(errorOrCaregiver)
-        ? displayLoginError(...errorOrCaregiver)
-        : displayDashboard(errorOrCaregiver);
+      if (Array.isArray(errorOrCaregiver)) {
+        displayLoginError(...errorOrCaregiver)
+      } else {
+        displayDashboard(errorOrCaregiver)
+        evt.target.reset();
+      }
     });
 }
 
@@ -226,9 +234,10 @@ function displayDashboard(caregiver) {
   loggedInCaregiver = caregiver;
 
   dashboard.hidden = false; // Displays the dashboard
+  fetchAllCaregivers();
   renderPostsInCenter();
   displayImportantPosts();
-  fetchAllCaregivers();
+  
   fetchInfoForCareReceiver();
 }
 
@@ -618,21 +627,22 @@ function addToImportantPostsContainer(post){
 //fetch all caregivers for the specific care receiver
 
 function fetchAllCaregivers(){
-  const care_receiver_id = loggedInCaregiver.care_receiver_id
+  const careReceiverId = loggedInCaregiver.care_receiver_id
 
-  fetch(`http://localhost:3000/care-receivers/${care_receiver_id}/my_caregivers`)
+  
+  fetch(`http://localhost:3000/care-receivers/${careReceiverId}/my_caregivers`)
     .then(response => response.json())
     .then(caregivers => {
       caregivers["caregivers"].sort((a, b) => a.level.localeCompare(b.level));
-      caregivers["caregivers"].forEach(caregiver => addAllCaregiversToTheContainer(caregiver))
+      caregivers["caregivers"].forEach(caregiver => {
+        addAllCaregiversToTheContainer(caregiver)})
     });
-
 }
 
 //add all caregivers on the appropriate section
 
 function addAllCaregiversToTheContainer(caregiver){
-  
+ 
   if(caregiver["level"] === "primary"){
   const primaryCaregiverInformation = document.createElement("div"),
         primaryCaregiverName = document.createElement("h1"),
@@ -666,7 +676,7 @@ function addAllCaregiversToTheContainer(caregiver){
 
 function fetchInfoForCareReceiver(){
   const care_receiver_id = loggedInCaregiver.care_receiver_id
- console.log(care_receiver_id)
+  
   fetch(`http://localhost:3000/care_receivers/${care_receiver_id}`)
     .then(response => response.json())
     .then(theCareReceiver => {
@@ -713,6 +723,7 @@ postsSelectionBtn.addEventListener("click", renderPostsInCenter);
 teamSelectionBtn.addEventListener("click", renderTeamInCenter);
 myInfoSelectionBtn.addEventListener("click", renderMyInfoInCenter);
 documentsSelectionBtn.addEventListener("click", renderDocumentsInCenter);
+logoutSelectionBtn.addEventListener("click", logCaregiverOut)
 
 // Will display team info in center container; will show options for adding of new CG and deletion of CGs if logged-in CG is primary
 function renderTeamInCenter(){
@@ -853,20 +864,20 @@ function renderMyInfoInCenter(){
         <li id='my-info-role'>Role: ${currentCareReceiver.name}'s ${loggedInCaregiver.role}</li>
         <li id='my-info-level'>You are a ${loggedInCaregiver.level} caregiver</li>
       </ul>
-      <button id='my-info-edit-btn'>Edit Info</button>
+      <button id='my-info-edit-btn'>Edit My Info</button>
 
       <form id='my-info-edit-form' style="display:none;">
         <label for="my-info-name-input">Name: </label>
-        <input type='text' id='my-info-name-input' name='my-info-name-input' value=${loggedInCaregiver.name}>
+        <input type='text' id='my-info-name-input' name='my-info-name-input' value='${loggedInCaregiver.name}'>
 
-        <label for="my-info-name-username">Username: </label>
-        <input type='text' id='my-info-username-input' name='my-info-username-input' value=${loggedInCaregiver.username}>
+        <label for="my-info-username-input">Username: </label>
+        <input type='text' id='my-info-username-input' name='my-info-username-input' value='${loggedInCaregiver.username}'>
 
-        <label for="my-info-name-email">Email: </label>
-        <input type='text' id='my-info-email-input' name='my-info-username-input' value=${loggedInCaregiver.email}>
+        <label for="my-info-email-input">Email: </label>
+        <input type='text' id='my-info-email-input' name='my-info-email-input' value='${loggedInCaregiver.email}'>
 
-        <label for="my-info-name-role">Role: </label>
-        <input type='text' id='my-info-role-input' name='my-info-username-input' value=${loggedInCaregiver.role}>
+        <label for="my-info-role-input">Role: </label>
+        <input type='text' id='my-info-role-input' name='my-info-role-input' value='${loggedInCaregiver.role}'>
 
         <input type='submit'>
       </form>
@@ -890,9 +901,36 @@ function toggleDisplayMyInfoEditForm(evt){
 // Submit patch request to update current logged in caregiver's info, display new info on dom
 function editMyInfo(evt) {
   evt.preventDefault();
-  
+  const inputName = evt.target['my-info-name-input'].value,
+    inputUsername = evt.target['my-info-username-input'].value,
+    inputEmail = evt.target['my-info-email-input'].value,
+    inputRole = evt.target['my-info-role-input'].value;
 
+  const editedCaregiver = {
+    name: inputName,
+    username: inputUsername,
+    email: inputEmail,
+    care_receiver_id: currentCareReceiver.id,
+    role: inputRole,
+    level: loggedInCaregiver.level
+  }
+
+  fetch('http://localhost:3000/caregivers/' + loggedInCaregiver.id, {
+    method: 'PATCH',
+    headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+    body: JSON.stringify(editedCaregiver)
+  })
+    .then(response => response.json())
+    .then(result => {
+      if (Array.isArray(result)) {
+        alert(...result)
+      } else {
+        loggedInCaregiver = result;
+        renderMyInfoInCenter();
+      }
+    });
 }
+
 
 function renderDocumentsInCenter(){
 console.log("donat")
@@ -945,5 +983,10 @@ debugger
           debugger
         })
 
-
+}
+// Reset currentCareReceiver and loggedInCaregiver, then reload page to go back to signin screen
+function logCaregiverOut() {
+  loggedInCaregiver = '';
+  currentCareReceiver = '';
+  location.reload();
 }
