@@ -665,12 +665,15 @@ teamSelectionBtn.addEventListener("click", renderTeamInCenter);
 
 function renderTeamInCenter(){
   centerDashboardContainer.innerHTML = `
-    <h1 id="team-title">${currentCareReceiver.name}'s Team</h1>
-    <ul id="cg-ul"></ul>
+    <div id="team-container">
+      <h1 id="team-title">${currentCareReceiver.name}'s Team</h1>
+      <ul id="cg-ul"></ul>
+    </div>
   `
 
   const caregiversUl = centerDashboardContainer.querySelector("#cg-ul"),
-    teamTitle = centerDashboardContainer.querySelector("#team-title");
+    teamTitle = centerDashboardContainer.querySelector("#team-title"),
+    teamContainer = centerDashboardContainer.querySelector("#team-container");
 
   getCaregiversAndAppendToCaregiversUl(caregiversUl);
 
@@ -682,7 +685,7 @@ function renderTeamInCenter(){
     addNewCGBtn.innerText = 'Add a New Caregiver';
     newCGFormDiv.append(addNewCGBtn);
 
-    centerDashboardContainer.insertBefore(newCGFormDiv, caregiversUl);
+    teamContainer.insertBefore(newCGFormDiv, caregiversUl);
     
     addNewCGBtn.addEventListener("click", () => addCGFormToFormDiv(newCGFormDiv))
   }
