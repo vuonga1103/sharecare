@@ -26,11 +26,16 @@ const registerBtn = document.querySelector("#register-btn"),
 let loggedInCaregiver;
 let currentCareReceiver;
 
+
+
 dashboard.style.display = "none";
 
-new Sortable(dashboard, {
-  animation: 150,
-});
+  new Sortable(dashboard, {
+    animation: 150,
+  });
+
+  
+
 
 // var elem = postsUl
 // var infScroll = new InfiniteScroll( elem, {
