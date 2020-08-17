@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :documents
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
 
   # /CAREGIVERS ROUTES
@@ -7,6 +8,8 @@ Rails.application.routes.draw do
   post '/caregivers/login', to: 'caregivers#login'
   patch '/caregivers/:id', to: 'caregivers#edit'
   delete '/caregivers/:id', to: 'caregivers#destroy'
+  post '/caregivers/upload_document', to: 'caregivers#upload_document'
+  get 'caregivers/:id/care_receiver_documents', to: 'caregivers#care_receiver_documents'
 
   # /CARE-RECEIVERS ROUTES
   post '/care-receivers', to: 'care_receivers#create'
@@ -26,5 +29,6 @@ Rails.application.routes.draw do
   
   # /COMMENTS ROUTES
   post '/comments', to: 'comments#create'
+  
   
 end
