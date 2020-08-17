@@ -856,16 +856,16 @@ function renderMyInfoInCenter(){
 
       <form id='my-info-edit-form' style="display:none;">
         <label for="my-info-name-input">Name: </label>
-        <input type='text' id='my-info-name-input' name='my-info-name-input' value=${loggedInCaregiver.name}>
+        <input type='text' id='my-info-name-input' name='my-info-name-input' value='${loggedInCaregiver.name}'>
 
-        <label for="my-info-name-username">Username: </label>
-        <input type='text' id='my-info-username-input' name='my-info-username-input' value=${loggedInCaregiver.username}>
+        <label for="my-info-username-input">Username: </label>
+        <input type='text' id='my-info-username-input' name='my-info-username-input' value='${loggedInCaregiver.username}'>
 
-        <label for="my-info-name-email">Email: </label>
-        <input type='text' id='my-info-email-input' name='my-info-username-input' value=${loggedInCaregiver.email}>
+        <label for="my-info-email-input">Email: </label>
+        <input type='text' id='my-info-email-input' name='my-info-email-input' value='${loggedInCaregiver.email}'>
 
-        <label for="my-info-name-role">Role: </label>
-        <input type='text' id='my-info-role-input' name='my-info-username-input' value=${loggedInCaregiver.role}>
+        <label for="my-info-role-input">Role: </label>
+        <input type='text' id='my-info-role-input' name='my-info-role-input' value='${loggedInCaregiver.role}'>
 
         <input type='submit'>
       </form>
@@ -889,6 +889,33 @@ function toggleDisplayMyInfoEditForm(evt){
 // Submit patch request to update current logged in caregiver's info, display new info on dom
 function editMyInfo(evt) {
   evt.preventDefault();
-  
+  const inputName = evt.target['my-info-name-input'].value,
+    inputUsername = evt.target['my-info-username-input'].value,
+    inputEmail = evt.target['my-info-email-input'].value,
+    inputRole = evt.target['my-info-role-input'].value;
+
+  const editedCaregiver = {
+    name: inputName,
+    username: inputUsername,
+    email: inputEmail,
+    care_receiver_id: currentCareReceiver.id,
+    role: inputRole,
+    level: loggedInCaregiver.level
+  }
+
+  fetch('http://localhost:3000/caregivers/' + loggedInCaregiver.id, {
+    method: 'PATCH',
+    headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+    body: JSON.stringify(editedCaregiver)
+  })
+    .then(response => response.json())
+    .then(result => {
+      if (Array.isArray(result)) {
+        alert(...result)
+      } else {
+        loggedInCaregiver = result;
+        renderMyInfoInCenter();
+      }
+    });
 
 }
