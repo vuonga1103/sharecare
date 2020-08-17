@@ -480,7 +480,12 @@ main{
   #left-selection-container{
 	height: 50%;
 	width:100%;
+	padding: 20px;
 	background-color: rgb(245, 245, 245);
+	display:flex;
+	flex-direction: column;
+	justify-content: space-around;
+	align-items: center;
 	}
 	
 	#title-and-checkbox{

@@ -26,11 +26,17 @@ const registerBtn = document.querySelector("#register-btn"),
 let loggedInCaregiver;
 let currentCareReceiver;
 
+
+
 dashboard.style.display = "none";
 
-new Sortable(dashboard, {
-  animation: 150,
-});
+dashboard/addEventListener("mousedown",(evt) => {
+  if(evt.shiftKey)
+  new Sortable(dashboard, {
+    animation: 150,
+  });
+})
+
 
 // var elem = postsUl
 // var infScroll = new InfiniteScroll( elem, {
