@@ -28,6 +28,24 @@ class CaregiversController < ApplicationController
     end
   end
 
+  # Edit a caregiver's info, if caregiver is not valid with updated info, send back errors, otherwise send back the caregiver object
+  def edit
+    caregiver = Caregiver.find_by(id: params[:id])
+    caregiver.update(caregiver_params)
+    
+    if caregiver.valid?
+      render json: caregiver
+    else
+      render json: caregiver.errors.full_messages
+    end
+  end
+
+  # Delete an instance of the caregiver and associated data
+  def destroy
+    caregiver = Caregiver.find_by(id: params[:id])
+    caregiver.destroy
+    render json: caregiver
+  end
 
   private
   def caregiver_params
