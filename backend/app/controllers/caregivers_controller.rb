@@ -31,6 +31,6 @@ class CaregiversController < ApplicationController
 
   private
   def caregiver_params
-    params.permit(:name, :username, :email, :role, :level)
+    params.permit(:name, :username, :email, :role, :level, :care_receiver_id)
   end
 end

@@ -13,21 +13,23 @@ const registerBtn = document.querySelector("#register-btn"),
   firstShowScreen = document.querySelector("#first-show"),
   dashboard = document.querySelector("#dashboard"),
   centerDashboardContainer = document.querySelector("#center-container"),
-  postsContainer = centerDashboardContainer.querySelector("#posts-container"),
-  postsUl = centerDashboardContainer.querySelector("#posts-ul"),
-  newPostFormContainer = centerDashboardContainer.querySelector("#new-post-form-container"),
-  newPostForm = newPostFormContainer.querySelector("#new-post-form"),
   importantPostsUl = document.querySelector("#priority-posts"),
   rightBottomContainer = document.querySelector("#right-bottom-container"),
-  leftCareReceiverContainer = document.querySelector("#left-carereceiver-container");
+  leftCareReceiverContainer = document.querySelector("#left-carereceiver-container"),
+  postsSelectionBtn = document.querySelector("#posts-selection-btn"),
+  teamSelectionBtn = document.querySelector("#team-selection-btn"),
+  documentsSelectionBtn = document.querySelector("#documents-selection-btn"),
+  myInfoSelectionBtn = document.querySelector("#my-info-selection-btn"),
+  logoutSelectionBtn = document.querySelector("#logout-selection-btn");
 let loggedInCaregiver;
+let currentCareReceiver;
 
 dashboard.style.display = "none";
 
 
   
 // LOG IN / REGISTER FEATURES ---------------------------------------------------------------
-// ------------------------------------------------------------------------------------------
+// ------------------------------------------------------------
 
 
 // EVENT LISTENERS
@@ -35,7 +37,6 @@ signUpButton.addEventListener("click", signUpLogInSlidingToggle);
 signInButton.addEventListener("click", signUpLogInSlidingToggle);
 registerForm.addEventListener("submit", createNewPrimaryCaregiver);
 loginForm.addEventListener("submit", findCaregiver);
-newPostForm.addEventListener("submit", createNewPost);
 
 // Allows for sliding toggle between sign up and log in forms
 function signUpLogInSlidingToggle() {
@@ -184,8 +185,8 @@ function displayLoginError(error) {
 }
 
 
-// INITIAL DASHBOARD / POST / ACKNOWLEDGMENT / COMMENT FEATURES -----------------------------
-// ------------------------------------------------------------------------------------------
+// INITIAL DASHBOARD / POST / ACKNOWLEDGMENT / COMMENT FEATURES
+// ------------------------------------------------------------
 // Displays dashboard for caregiver
 function displayDashboard(caregiver) {
   dashboard.style.display = "flex";
@@ -195,17 +196,47 @@ function displayDashboard(caregiver) {
   loggedInCaregiver = caregiver;
 
   dashboard.hidden = false; // Displays the dashboard
-  displayPosts();
+  renderPostsInCenter();
   displayImportantPosts();
   fetchAllCaregivers();
   fetchInfoForCareReceiver();
 }
 
 // Displays all posts associated with the logged in caregiver's carereceiver
-function displayPosts() {
+function renderPostsInCenter() {
   firstShowScreen.hidden = true;
 
   const care_receiver_id = loggedInCaregiver.care_receiver_id;
+  centerDashboardContainer.innerHTML = `
+    <div id="new-post-form-container">
+      <ul id="post-errors"></ul>
+      <form id="new-post-form">
+        <h3>Create a Post</h3>
+        <div id="title-and-checkbox">
+        <input style="width:70%;" type="text" id="post-title" placeholder="Enter Title...">
+        <div style="display:flex; flex-direction: row; width:25%; align-items: center;">
+        <input type="checkbox" id="post-priority" name="post-priority">
+        <label for="post-priority">Important</label>
+        </div>
+      </div>
+        <input type="text" id="post-content" placeholder="Write a message to your team...">
+        <input class="submit" type="submit" value="Add Post">
+      </form>
+    </div>
+
+    <div id="posts-container">
+      <ul id="posts-ul">
+
+      </ul>
+    </div>
+  `
+
+  const postsContainer = centerDashboardContainer.querySelector("#posts-container"),
+    postsUl = centerDashboardContainer.querySelector("#posts-ul"),
+    newPostFormContainer = centerDashboardContainer.querySelector("#new-post-form-container"),
+    newPostForm = newPostFormContainer.querySelector("#new-post-form");
+
+  newPostForm.addEventListener("submit", createNewPost);
 
   fetch(`http://localhost:3000/care-receivers/${care_receiver_id}/posts`)
     .then(response => response.json())
@@ -469,7 +500,7 @@ function createNewPost(evt) {
     .then(response => response.json())
     .then(errorOrPost => {
       if (Array.isArray(errorOrPost)) {
-        alert(errorOrPost.join(' & '))
+        alert(errorOrPost.join('\n'))
       } else {
         postsUl.prepend(createPostLi(errorOrPost));
         evt.target.reset();
@@ -586,8 +617,8 @@ function fetchInfoForCareReceiver(){
   fetch(`http://localhost:3000/care_receivers/${care_receiver_id}`)
     .then(response => response.json())
     .then(theCareReceiver => {
-      console.log(theCareReceiver)
-        addCareReceiverToTheDom(theCareReceiver)
+      currentCareReceiver = theCareReceiver;
+      addCareReceiverToTheDom(theCareReceiver)
     });
 
 }
@@ -620,20 +651,111 @@ function addCareReceiverToTheDom(theCareReceiver){
     careReceiverNameandAgeDiv.append(theCareReceiverName,theCareReceiverAge)
     theCareReceiverDiv.append(careReceiverNameandAgeDiv,allergiesDiv,theCareReceiverPrecautions,theCareReceiverBio);
     leftCareReceiverContainer.append(theCareReceiverDiv);
+}
 
+// LEFT SELECTION CONTAINER EVENT LISTENERS AND METHODS 
+//-----------------------------------------------------
 
+postsSelectionBtn.addEventListener("click", renderPostsInCenter);
+teamSelectionBtn.addEventListener("click", renderTeamInCenter);
+
+function renderTeamInCenter(){
+  centerDashboardContainer.innerHTML = `
+    <h1 id="team-title">${currentCareReceiver.name}'s Team</h1>
+    <ul id="cg-ul"></ul>
+  `
+
+  const caregiversUl = centerDashboardContainer.querySelector("#cg-ul"),
+    teamTitle = centerDashboardContainer.querySelector("#team-title");
+
+  getCaregiversAndAppendToCaregiversUl(caregiversUl);
+
+  if (loggedInCaregiver.level === "primary") {
+    const newCGFormDiv = document.createElement("div");
+    const addNewCGBtn = document.createElement("button");
+    newCGFormDiv.id = 'new-cg-form-container';
+    addNewCGBtn.id = 'add-new-cg-btn';
+    addNewCGBtn.innerText = 'Add a New Caregiver';
+    newCGFormDiv.append(addNewCGBtn);
+
+    centerDashboardContainer.insertBefore(newCGFormDiv, caregiversUl);
     
-
-  
-
+    addNewCGBtn.addEventListener("click", () => addCGFormToFormDiv(newCGFormDiv))
+  }
 
 }
 
+// Get all caregivers associated with this care receiver, create an Li for each and append to the Ul
+function getCaregiversAndAppendToCaregiversUl(caregiversUl) {
+  fetch(`http://localhost:3000/care-receivers/${currentCareReceiver.id}/my_caregivers`)
+    .then(response => response.json())
+    .then(result => {
+      result.caregivers.forEach(cg => caregiversUl.append(createCaregiverLi(cg)))
+    });
+}
 
+// create an Li for caregiver, return the Li
+function createCaregiverLi(caregiver){
+  const caregiverLi = document.createElement("li");
+  caregiverLi.innerHTML = `
+    Name: ${caregiver.name} <br>
+    Username: ${caregiver.username}<br>
+    Role: ${caregiver.role}<br>
+    Level: ${caregiver.level}<br>
+  `
 
+  return caregiverLi;
+}
 
+// display new CG form on form div
+function addCGFormToFormDiv(newCGFormDiv){
+  newCGFormDiv.innerHTML = `
+    <form id="new-cg-form">
+      Enter New Caregiver's Info
+      <input type="text" id="sec-cg-name" placeholder="Name">
+      <input type="text" id="sec-cg-username" placeholder="Username">
+      <input type="text" id="sec-cg-email" placeholder="Email">
+      <input type="text" id="sec-cg-role" placeholder="Role (i.e. therapist, aide, etc.)">
+      <input type="submit">
+    </form>
+  `
+  const newCGForm = newCGFormDiv.querySelector("#new-cg-form");
 
+  newCGForm.addEventListener("submit", createNewSecondaryCaregiver)
+}
 
+function createNewSecondaryCaregiver(evt) {
+  evt.preventDefault();
+  const caregiversUl = evt.target.parentElement.parentElement.querySelector("#cg-ul");
+  const nameInput = evt.target['sec-cg-name'].value,
+    usernameInput = evt.target['sec-cg-username'].value,
+    emailInput = evt.target['sec-cg-email'].value,
+    roleInput = evt.target['sec-cg-role'].value;
 
+  const newCaregiver = {
+    name: nameInput,
+    username: usernameInput,
+    email: emailInput,
+    role: roleInput,
+    level: "secondary",
+    care_receiver_id: currentCareReceiver.id,
+  };
+
+  fetch("http://localhost:3000/caregivers", {
+    method: "POST",
+    headers: { Accept: "application/json", "Content-Type": "application/json" },
+    body: JSON.stringify(newCaregiver),
+  })
+    .then((response) => response.json())
+    .then((errorsOrCaregiver) => {
+      if (Array.isArray(errorsOrCaregiver)) {
+        alert(errorsOrCaregiver.join('\n'))
+      } else {
+        alert("Caregiver successfully added!")
+        caregiversUl.append(createCaregiverLi(errorsOrCaregiver));
+        evt.target.reset();
+      }
+    });
+}
 
 
