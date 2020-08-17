@@ -283,8 +283,12 @@ function renderPostsInCenter() {
 
   fetch(`http://localhost:3000/care-receivers/${care_receiver_id}/posts`)
     .then(response => response.json())
-    .then(posts => {
-      posts.reverse().forEach(post => postsUl.append(createPostLi(post)))
+    .then(result => {
+      if (Array.isArray(result)) {
+        posts.reverse().forEach(post => postsUl.append(createPostLi(post)))
+      } else {
+        postsUl.append(result.message)
+      }
     });
 }
 
@@ -562,8 +566,12 @@ function displayImportantPosts() {
 
   fetch(`http://localhost:3000/care-receivers/${care_receiver_id}/important_posts`)
     .then(response => response.json())
-    .then(posts => {
-      posts.forEach(post => addToImportantPostsContainer(post))
+    .then(result => {
+      if (Array.isArray(result)) {
+        addToImportantPostsContainer(posts)
+      } else {
+        document.querySelector("#priority-posts").append(result.message)
+      }
     });
 }
 
@@ -706,14 +714,18 @@ function addCareReceiverToTheDom(theCareReceiver){
 postsSelectionBtn.addEventListener("click", renderPostsInCenter);
 teamSelectionBtn.addEventListener("click", renderTeamInCenter);
 
+// Will display team info in center container; will show options for adding of new CG and deletion of CGs if logged-in CG is primary
 function renderTeamInCenter(){
   centerDashboardContainer.innerHTML = `
-    <h1 id="team-title">${currentCareReceiver.name}'s Team</h1>
-    <ul id="cg-ul"></ul>
+    <div id="team-container">
+      <h1 id="team-title">${currentCareReceiver.name}'s Team</h1>
+      <ul id="cg-ul"></ul>
+    </div>
   `
 
   const caregiversUl = centerDashboardContainer.querySelector("#cg-ul"),
-    teamTitle = centerDashboardContainer.querySelector("#team-title");
+    teamTitle = centerDashboardContainer.querySelector("#team-title"),
+    teamContainer = centerDashboardContainer.querySelector("#team-container");
 
   getCaregiversAndAppendToCaregiversUl(caregiversUl);
 
@@ -725,7 +737,7 @@ function renderTeamInCenter(){
     addNewCGBtn.innerText = 'Add a New Caregiver';
     newCGFormDiv.append(addNewCGBtn);
 
-    centerDashboardContainer.insertBefore(newCGFormDiv, caregiversUl);
+    teamContainer.insertBefore(newCGFormDiv, caregiversUl);
     
     addNewCGBtn.addEventListener("click", () => addCGFormToFormDiv(newCGFormDiv))
   }
@@ -750,6 +762,16 @@ function createCaregiverLi(caregiver){
     Role: ${caregiver.role}<br>
     Level: ${caregiver.level}<br>
   `
+  
+  // Add button to delete other CGs if logged in CG is primary
+  if (loggedInCaregiver.level === "primary" && caregiver.id !== loggedInCaregiver.id) {
+    const removeCGBtn = document.createElement("button");
+    removeCGBtn.innerText = "Remove"
+    caregiverLi.append(removeCGBtn)
+
+    removeCGBtn.addEventListener("click", deleteCaregiver(caregiver))
+  }
+  
 
   return caregiverLi;
 }
@@ -805,4 +827,6 @@ function createNewSecondaryCaregiver(evt) {
     });
 }
 
+function deleteCaregiver(caregiver){
 
+}
