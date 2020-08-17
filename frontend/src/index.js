@@ -507,7 +507,9 @@ function addCommentToPost(evt, postId) {
       if (Array.isArray(result)) {
         alert(...result)
       } else {
-        commentsUl.querySelector('.no-comment').remove();
+        if (commentsUl.querySelector('.no-comment')) {
+          commentsUl.querySelector('.no-comment').remove();
+        }
         commentsUl.prepend(createCommentLi(result))
       }
     });
@@ -518,6 +520,8 @@ function addCommentToPost(evt, postId) {
 // Creates a new post on form submission; if post is valid, add to DOM, if not display errors
 function createNewPost(evt) {
   evt.preventDefault();
+
+  const postsUl = evt.target.parentElement.parentElement.querySelector("#posts-ul");
   const titleInput = evt.target['post-title'].value,  
     contentInput = evt.target['post-content'].value, 
     priorityInput = evt.target['post-priority'].checked ? 'high' : 'low',
