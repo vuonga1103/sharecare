@@ -706,6 +706,7 @@ function addCareReceiverToTheDom(theCareReceiver){
 
 postsSelectionBtn.addEventListener("click", renderPostsInCenter);
 teamSelectionBtn.addEventListener("click", renderTeamInCenter);
+myInfoSelectionBtn.addEventListener("click", renderMyInfoInCenter);
 
 // Will display team info in center container; will show options for adding of new CG and deletion of CGs if logged-in CG is primary
 function renderTeamInCenter(){
@@ -762,7 +763,9 @@ function createCaregiverLi(caregiver){
     removeCGBtn.innerText = "Remove"
     caregiverLi.append(removeCGBtn)
 
-    removeCGBtn.addEventListener("click", deleteCaregiver(caregiver))
+    removeCGBtn.addEventListener("click", () => {
+      deleteCaregiver(caregiver)
+    })
   }
   
 
@@ -786,6 +789,7 @@ function addCGFormToFormDiv(newCGFormDiv){
   newCGForm.addEventListener("submit", createNewSecondaryCaregiver)
 }
 
+// Creates a new secondary CG and add them to the caregiversUl, if not successfully created, display message that says so
 function createNewSecondaryCaregiver(evt) {
   evt.preventDefault();
   const caregiversUl = evt.target.parentElement.parentElement.querySelector("#cg-ul");
@@ -820,6 +824,66 @@ function createNewSecondaryCaregiver(evt) {
     });
 }
 
+// Delete caregiver and update dom
 function deleteCaregiver(caregiver){
+  fetch('http://localhost:3000/caregivers/' + caregiver.id, {
+    method: 'DELETE',
+  })
+  .then(response => response.json()) 
+  .then(result => {
+    alert(`${caregiver.name} succcessfully removed from team.`);
+    renderTeamInCenter();
+  })
+}
+
+// Display current user's info in the center container
+function renderMyInfoInCenter(){
+  centerDashboardContainer.innerHTML = `
+    <div id="my-info-container">
+      <h1 id="my-info-name">${loggedInCaregiver.name}</h1>
+      <ul id="my-info-ul">
+        <li id='my-info-username'>Username: ${loggedInCaregiver.username}</li>
+        <li id='my-info-email'>Email: ${loggedInCaregiver.email}</li>
+        <li id='my-info-role'>Role: ${currentCareReceiver.name}'s ${loggedInCaregiver.role}</li>
+        <li id='my-info-level'>You are a ${loggedInCaregiver.level} caregiver</li>
+      </ul>
+      <button id='my-info-edit-btn'>Edit Info</button>
+
+      <form id='my-info-edit-form' style="display:none;">
+        <label for="my-info-name-input">Name: </label>
+        <input type='text' id='my-info-name-input' name='my-info-name-input' value=${loggedInCaregiver.name}>
+
+        <label for="my-info-name-username">Username: </label>
+        <input type='text' id='my-info-username-input' name='my-info-username-input' value=${loggedInCaregiver.username}>
+
+        <label for="my-info-name-email">Email: </label>
+        <input type='text' id='my-info-email-input' name='my-info-username-input' value=${loggedInCaregiver.email}>
+
+        <label for="my-info-name-role">Role: </label>
+        <input type='text' id='my-info-role-input' name='my-info-username-input' value=${loggedInCaregiver.role}>
+
+        <input type='submit'>
+      </form>
+    </div>
+  `
+
+  const editBtn = document.querySelector("#my-info-edit-btn");
+  editBtn.addEventListener("click", toggleDisplayMyInfoEditForm)
+
+  const editMyInfoForm = document.querySelector("#my-info-edit-form")
+  editMyInfoForm.addEventListener("submit", editMyInfo)
+}
+
+// Toggle display of my info edit display form
+function toggleDisplayMyInfoEditForm(evt){
+  const editMyInfoForm = document.querySelector("#my-info-edit-form");
   
+  (editMyInfoForm.style.display === 'none') ? (editMyInfoForm.style.removeProperty("display")) : (editMyInfoForm.style.display = 'none')
+}
+
+// Submit patch request to update current logged in caregiver's info, display new info on dom
+function editMyInfo(evt) {
+  evt.preventDefault();
+  
+
 }
