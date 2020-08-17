@@ -32,22 +32,13 @@ new Sortable(dashboard, {
   animation: 150,
 });
 
-var elem = postsUl
-var infScroll = new InfiniteScroll( elem, {
-  // options
-  history: false,
-});
+// var elem = postsUl
+// var infScroll = new InfiniteScroll( elem, {
+//   // options
+//   history: false,
+// });
 
-Sortable.create(postsUl, {
-  group: {
-  name: "posts-ul",
-  pull: true
-  },
-  animation: 100,
-  // onEnd: function (evt){
-  //   debugger
-  // }
-});
+
 
 Sortable.create(importantPostsUl,{
   group: {
@@ -270,6 +261,17 @@ function renderPostsInCenter() {
     postsUl = centerDashboardContainer.querySelector("#posts-ul"),
     newPostFormContainer = centerDashboardContainer.querySelector("#new-post-form-container"),
     newPostForm = newPostFormContainer.querySelector("#new-post-form");
+
+    Sortable.create(postsUl, {
+      group: {
+      name: "posts-ul",
+      pull: true
+      },
+      animation: 100,
+      // onEnd: function (evt){
+      //   debugger
+      // }
+    });
 
   newPostForm.addEventListener("submit", createNewPost);
 
