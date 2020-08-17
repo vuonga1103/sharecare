@@ -1,6 +1,8 @@
 // STABLE ELEMENTS
+
 const registerBtn = document.querySelector("#register-btn"),
   loginDiv = document.querySelector("div#login"),
+  getHtmlTag = document.querySelector("html")
   registerDiv = document.querySelector("div#register-div"),
   registerForm = document.querySelector("form#register-form"),
   signUpButton = document.getElementById("signUp"),
@@ -25,6 +27,29 @@ let loggedInCaregiver;
 let currentCareReceiver;
 
 dashboard.style.display = "none";
+
+new Sortable(dashboard, {
+  animation: 150,
+});
+
+// var elem = postsUl
+// var infScroll = new InfiniteScroll( elem, {
+//   // options
+//   history: false,
+// });
+
+
+
+Sortable.create(importantPostsUl,{
+  group: {
+    name: "priority-posts",
+    put: ["posts-ul"]
+    },
+  animation: 100,
+  onEnd: function (evt){
+    debugger
+  }
+});
 
 
   
@@ -206,6 +231,7 @@ function displayDashboard(caregiver) {
 function renderPostsInCenter() {
   firstShowScreen.hidden = true;
 
+  getHtmlTag.style = "background: url('https://cdn.aarp.net/content/dam/aarp/work/Work_at_50%2B/2018/11/1140-caregiving-jobs.jpg') no-repeat center center fixed; -webkit-background-size: cover; -moz-background-size: cover; -o-background-size: cover; background-size: cover; transition: 1s; box-shadow: inset 0 0 0 1000px rgba(0,0,0,.3);"
   const care_receiver_id = loggedInCaregiver.care_receiver_id;
   centerDashboardContainer.innerHTML = `
     <div id="new-post-form-container">
@@ -235,6 +261,17 @@ function renderPostsInCenter() {
     postsUl = centerDashboardContainer.querySelector("#posts-ul"),
     newPostFormContainer = centerDashboardContainer.querySelector("#new-post-form-container"),
     newPostForm = newPostFormContainer.querySelector("#new-post-form");
+
+    Sortable.create(postsUl, {
+      group: {
+      name: "posts-ul",
+      pull: true
+      },
+      animation: 100,
+      // onEnd: function (evt){
+      //   debugger
+      // }
+    });
 
   newPostForm.addEventListener("submit", createNewPost);
 
