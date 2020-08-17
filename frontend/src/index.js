@@ -227,7 +227,7 @@ function displayDashboard(caregiver) {
   fetchInfoForCareReceiver();
 }
 
-// Displays all posts associated with the logged in caregiver's carereceiver
+// Displays all posts associated with the logged in caregiver's carereceiver; if there are no posts, display message saying so
 function renderPostsInCenter() {
   firstShowScreen.hidden = true;
 
@@ -279,7 +279,7 @@ function renderPostsInCenter() {
     .then(response => response.json())
     .then(result => {
       if (Array.isArray(result)) {
-        posts.reverse().forEach(post => postsUl.append(createPostLi(post)))
+        result.reverse().forEach(post => postsUl.append(createPostLi(post)))
       } else {
         postsUl.append(result.message)
       }
@@ -553,7 +553,7 @@ function createNewPost(evt) {
     });   
 }
 
-//fetches all important posts that are part of the care receiver that is active right now
+//fetches all important posts that are part of the care receiver that is active right now. if there is no important posts, display message saying so
 
 function displayImportantPosts() {
   const care_receiver_id = loggedInCaregiver.care_receiver_id
@@ -562,9 +562,9 @@ function displayImportantPosts() {
     .then(response => response.json())
     .then(result => {
       if (Array.isArray(result)) {
-        addToImportantPostsContainer(posts)
+        result.forEach(post => addToImportantPostsContainer(post))
       } else {
-        document.querySelector("#priority-posts").append(result.message)
+        document.querySelector("#priority-posts").innerText = result.message;
       }
     });
 }
@@ -572,7 +572,6 @@ function displayImportantPosts() {
 
 //add Important Post to the appropriate container and also modify their showing size on click
 function addToImportantPostsContainer(post){
-
     const importantPostLi = document.createElement("li"),
     importantPostTitle = document.createElement("h1"),
     dateImportantPosted = document.createElement("span"),
@@ -822,5 +821,5 @@ function createNewSecondaryCaregiver(evt) {
 }
 
 function deleteCaregiver(caregiver){
-
+  
 }
