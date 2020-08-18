@@ -312,13 +312,12 @@ function createPostLi(post){
     <span class='post-date-span'>Posted on ${datePosted}</span>
     <div class='post-title-important-div'>
       <span class='post-title-span'>${post.post.title}</span>
-      <span class='post-important-span' style="display:none">Important</span>
+      <span class='post-important-span' style="display:none">IMPORTANT</span>
     </div>
+    <span class='post-author-span'>by ${post.author.name} (${post.author.username}) </span>
     
-
-    <br>
-    by ${post.author.name} (${post.author.username}) <br>
-    ${post.post.content} <br>
+    <div class='post-content-div'>${post.post.content} </div>
+    
     <span class="acknowledge-span">
       <img src="images/checkmark-grey.png" style="width:20px" class="acknowledge-checkmark">
       <span class="acknowledge-text">Acknowledge</span>

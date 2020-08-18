@@ -937,14 +937,26 @@ main {
 
 .post-title-span {
 	font-size: 16px;
-	font-weight: 600;
+  font-weight: 600;
+  padding-right: 10px;
 }
 
 .post-important-span {
 	font-size: 10px;
 	align-self: flex-start;
 	color:white;
-	padding:4px;
+  padding-top:4px;
+  padding-bottom: 4px;
+  padding-left: 10px;
+  padding-right: 10px;
 	border-radius:5px;
 	background-color: #f78976;
+}
+
+.post-author-span {
+  color: #3282b8;
+}
+
+.post-content-div {
+  margin-top: 15px;
 }
