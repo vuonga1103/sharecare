@@ -34,6 +34,16 @@ dashboard.style.display = "none";
     animation: 150,
   });
 
+  new Sortable(rightMenuContainer, {
+    animation: 150,
+  });
+
+  dashboard.style.display = "none";
+
+  new Sortable(leftMenuContainer, {
+    animation: 150,
+  });
+  
   
 
 
@@ -52,6 +62,7 @@ Sortable.create(importantPostsUl,{
     },
   animation: 100,
   onEnd: function (evt){
+    debugger
     // debugger
   }
 });
@@ -279,12 +290,16 @@ function renderPostsInCenter() {
     Sortable.create(postsUl, {
       group: {
       name: "posts-ul",
-      pull: true
+      pull: 'clone'
       },
       animation: 100,
-      // onEnd: function (evt){
-      //   debugger
-      // }
+      onEnd: function (evt){
+        if(evt.to.id !== "posts-ul"){
+        fetch(`http://localhost:3000/posts/`+evt.item.id)
+        .then(response => response.json())
+        .then(thePost => dragAndDropPost(thePost,evt))
+      }
+    }
     });
 
   newPostForm.addEventListener("submit", createNewPost);
@@ -298,6 +313,52 @@ function renderPostsInCenter() {
         postsUl.append(result.message)
       }
     });
+}
+
+
+//function to control the flow of drag and drop
+function dragAndDropPost(thePost,evt)
+{
+
+  
+  if (thePost.priority === "high"){
+    evt.item.remove()
+    swal({
+      title: "Post Priority",
+      text: "This post is already high priority",
+      icon: "info",
+    });
+    
+  } else if(thePost.author_id !== loggedInCaregiver.id){
+    evt.item.remove()
+    swal({
+      title: "Permission Denied",
+      text: "This post doesn't belong to you",
+      icon: "warning",
+    });
+    
+  } else {
+    fetch('http://localhost:3000/posts/priority/' + thePost.id, {
+    method: 'PATCH',
+    headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+    body: JSON.stringify({priority:"high"})
+  })
+    .then(response => response.json())
+    .then(errorOrPost => {
+
+        evt.item.remove()
+        swal({
+          title: "Post Succesfully Updated",
+          text: "This post was succesfully updated to high priority",
+          icon: "success",
+        });
+        renderPostsInCenter();
+        displayImportantPosts();
+    });  
+
+
+  }
+
 }
 
 // Responsible for creating an Li for each individual post, which has all post's info (title, content, date) AND acknowledgement and comment functions; the the post belongs to the user, then show button to edit
@@ -360,12 +421,13 @@ function createPostLi(post){
     deletePostSpan.innerText = "❌ Delete";
 
     postLi.append(editPostSpan, deletePostSpan)
-    editPostSpan.addEventListener("click", () => displayPostEditFormInPopupModal(post))
+      
+    editPostSpan.addEventListener('click', (evt) => displayPostEditForm(evt, post))
+    
     deletePostSpan.addEventListener("click", () => { 
       if (confirm("Are you sure you want to delete this post?")) {
         deletePost(post)
       }
-      
     })
   }
 
@@ -388,36 +450,43 @@ function createPostLi(post){
 }
 
 // Displays popup modal for user to edit their post
-function displayPostEditFormInPopupModal(post) {
-  const editFormModal = document.getElementById("edit-post-modal");
-    closeEl = document.getElementsByClassName("close")[0];
+function displayPostEditForm(evt, post) {
+  let editModal = new tingle.modal({
+    footer: false,
+    stickyFooter: false,
+    closeMethods: ['overlay', 'button', 'escape'],
+    closeLabel: "Close",
+    cssClass: ['custom-class-1', 'custom-class-2'],
+    });
+    
+  editModal.setContent(`
+    <form style="padding:20px; width:700px;" id="edit-post-form">
+      <label for="edit-post-title">Title</label>
+      <input type="text" id="edit-post-title" name="edit-post-title">
+      <label for="edit-post-content">Content</label>
+      <input type="text" id="edit-post-content" name="edit-post-content">
+      <label for="edit-post-checkbox">Important</label>
+      <input type="checkbox" id="edit-post-checkbox" name="edit-post-checkbox">
+      <input type="submit" class="submit">
+    </form>
+  `)
 
-  // Show the modal popup
-  editFormModal.style.display = "block";
-
-  // If user clicks X close the modal
-  closeEl.addEventListener("click", () => editFormModal.style.display = "none")
-
-  // If user clicks anywhere outside of the modal, it closes the modal
-  window.addEventListener("click", (evt) => {
-    if (evt.target == editFormModal) {
-      editFormModal.style.display = "none";
-    }
-  })
 
   // Grab form elements
   const editPostForm = document.querySelector("#edit-post-form"),
-    editPostTitle = document.querySelector("#edit-post-title"), 
-    editPostContent = document.querySelector("#edit-post-content"),
-    editPostCheckbox = document.querySelector("#edit-post-checkbox");
-  
+  editPostTitle = document.querySelector("#edit-post-title"), 
+  editPostContent = document.querySelector("#edit-post-content"),
+  editPostCheckbox = document.querySelector("#edit-post-checkbox");
+
   editPostTitle.value = post.post.title;
   editPostContent.value = post.post.content;
   (post.post.priority === "high") ? (editPostCheckbox.checked = true) : (editPostCheckbox.checked = false)
-
+  editModal.open()
   // Add event listener on the form
-  editPostForm.addEventListener("submit", (evt) => editPost(evt, post))
-}
+  editPostForm.addEventListener("submit", (evt) => {
+    editModal.close()
+    editPost(evt, post)})
+} 
 
 function editPost(evt, post){
   evt.preventDefault();
@@ -448,7 +517,6 @@ function editPost(evt, post){
         renderPostsInCenter();
         displayImportantPosts();
         evt.target.reset();
-        editFormModal.style.display = "none";
       }
     });  
 }
@@ -1130,7 +1198,7 @@ function documentUploadFetching(evt)
   const documentDescription = evt.target['document-description'].value
   const documentPrivacy = evt.target['privacy'].value
   const documentFile = evt.target['document'].files[0]
-  debugger
+
 
   const formData = new FormData()
 
@@ -1149,7 +1217,7 @@ function documentUploadFetching(evt)
         })
         .then(response => response.json())
         .then(fileURL => {
-          debugger
+        
         })
 
 }
@@ -1184,7 +1252,7 @@ const documentLi = document.createElement("li"),
     documentLiFileIcon = document.createElement("span"),
     mainDocumentInfo = document.createElement("div"),
     secondaryDocumentInfo = document.createElement("div")
-    
+    documentLi.classList.add("adding_post_animation")
     mainDocumentInfo.classList.add("main-document-info-class")
     if(documentInfo.document.slice(-3) === "pdf"){
     documentLiFileIcon.innerHTML = '<img src="https://img.icons8.com/cute-clipart/64/000000/pdf.png"/>'
@@ -1202,20 +1270,22 @@ const documentLi = document.createElement("li"),
 
     documentsUl.append(documentLi)
     
-    
       let modal = new tingle.modal({
         footer: true,
         stickyFooter: false,
         closeMethods: ['overlay', 'button', 'escape'],
         closeLabel: "Close",
         cssClass: ['custom-class-1', 'custom-class-2'],
+        onClose: function(){
+          modal.setContent('')
+        }
         });
         modal.addFooterBtn('Delete', 'tingle-btn tingle-btn--primary', function() {
           // here goes some logic
           modal.close();
+          modal.destroy()
       });
-
-     
+    
     documentLi.addEventListener('click',(evt) => {
       if(documentInfo.document.slice(-3) === "pdf"){
       modal.setContent('<div style="height:900px; width:700px" id="modal-div"></div>')  
@@ -1227,7 +1297,7 @@ const documentLi = document.createElement("li"),
       modal.open()
     }
     })
-   
+  
 
 
 

@@ -444,6 +444,7 @@ main{
 	  overflow: scroll;
 	  overflow-y: auto;
 	  height: 55%;
+	  border-radius: 5px;
 	  width:100%;
 	  background-color: rgb(245, 245, 245);
 	  overflow-x: hidden;
@@ -451,6 +452,7 @@ main{
 
   #right-bottom-container{
 	  padding:10px;
+	  border-radius: 5px;
 	  display:flex;
 	  overflow: scroll;
 	  overflow-y: auto;
@@ -468,6 +470,7 @@ main{
 	overflow-y: auto;
 	overflow-x: hidden;
 	padding: 15px;
+	border-radius: 5px;
 	display: flex;
 	flex-direction: column;
 	justify-content: flex-start;
@@ -480,6 +483,7 @@ main{
   #left-selection-container{
 	height: 50%;
 	width:100%;
+	border-radius: 5px;
 	padding: 20px;
 	background-color: rgb(245, 245, 245);
 	display:flex;
@@ -603,6 +607,8 @@ main{
 
 	  #new-post-form-container{
 		  height:30%;
+		  -webkit-animation: swing-in-top-fwd 0.8s cubic-bezier(0.175, 0.885, 0.320, 1.275) both;
+	        animation: swing-in-top-fwd 0.8s cubic-bezier(0.175, 0.885, 0.320, 1.275) both;
 	  }
 
 
@@ -647,8 +653,8 @@ main{
 
 
 	  .adding_post_animation{
-		-webkit-animation: swing-in-top-fwd 0.2s cubic-bezier(0.645, 0.045, 0.355, 1.000) both;
-	        animation: swing-in-top-fwd 0.2s cubic-bezier(0.645, 0.045, 0.355, 1.000) both;
+		-webkit-animation: swing-in-top-fwd 0.5s cubic-bezier(0.645, 0.045, 0.355, 1.000) both;
+	        animation: swing-in-top-fwd 0.5s cubic-bezier(0.645, 0.045, 0.355, 1.000) both;
 	  }
 
 @-webkit-keyframes swing-in-top-fwd {
@@ -799,13 +805,17 @@ main{
 	flex-direction: column;
 	justify-content: space-between;
 	height:100%;
+	-webkit-animation: swing-in-top-fwd 1s cubic-bezier(0.175, 0.885, 0.320, 1.275) both;
+	        animation: swing-in-top-fwd 1s cubic-bezier(0.175, 0.885, 0.320, 1.275) both;
 }
 
 #upload-document{	
 margin:0;
+height:40%;
 }
 
 #documents-list{
+	height:60%;
 	display: flex;
 	flex-direction: column;
 	gap:15px;
@@ -982,6 +992,8 @@ margin:0;
   text-decoration: none;
   cursor: pointer;
 }
+
+  
 
 
 

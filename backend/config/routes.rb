@@ -11,6 +11,7 @@ Rails.application.routes.draw do
   post '/caregivers/upload_document', to: 'caregivers#upload_document'
   get 'caregivers/:id/care_receiver_documents', to: 'caregivers#care_receiver_documents'
 
+
   # /CARE-RECEIVERS ROUTES
   post '/care-receivers', to: 'care_receivers#create'
   get '/care_receivers/:id', to: 'care_receivers#show'
@@ -21,8 +22,10 @@ Rails.application.routes.draw do
   # /POSTS ROUTES
   post '/posts', to: 'posts#create'
   get '/posts/:id/acknowledgers', to: 'posts#acknowledgers'
+  get '/posts/:id', to: 'posts#show'
   get '/posts/:id/comments', to: 'posts#comments'
   patch '/posts/:id', to: 'posts#edit'
+  patch '/posts/priority/:id', to: 'posts#priority_update'
   delete '/posts/:id', to: 'posts#destroy'
 
   # /ACKNOWLEDGMENTS ROUTES
