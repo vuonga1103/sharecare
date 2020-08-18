@@ -360,12 +360,13 @@ function createPostLi(post){
     deletePostSpan.innerText = "❌ Delete";
 
     postLi.append(editPostSpan, deletePostSpan)
-    editPostSpan.addEventListener("click", () => displayPostEditFormInPopupModal(post))
+      
+    editPostSpan.addEventListener('click', (evt) => displayPostEditForm(evt, post))
+    
     deletePostSpan.addEventListener("click", () => { 
       if (confirm("Are you sure you want to delete this post?")) {
         deletePost(post)
       }
-      
     })
   }
 
@@ -388,36 +389,43 @@ function createPostLi(post){
 }
 
 // Displays popup modal for user to edit their post
-function displayPostEditFormInPopupModal(post) {
-  const editFormModal = document.getElementById("edit-post-modal");
-    closeEl = document.getElementsByClassName("close")[0];
+function displayPostEditForm(evt, post) {
+  let editModal = new tingle.modal({
+    footer: false,
+    stickyFooter: false,
+    closeMethods: ['overlay', 'button', 'escape'],
+    closeLabel: "Close",
+    cssClass: ['custom-class-1', 'custom-class-2'],
+    });
+    
+  editModal.setContent(`
+    <form style="padding:20px; width:700px;" id="edit-post-form">
+      <label for="edit-post-title">Title</label>
+      <input type="text" id="edit-post-title" name="edit-post-title">
+      <label for="edit-post-content">Content</label>
+      <input type="text" id="edit-post-content" name="edit-post-content">
+      <label for="edit-post-checkbox">Important</label>
+      <input type="checkbox" id="edit-post-checkbox" name="edit-post-checkbox">
+      <input type="submit" class="submit">
+    </form>
+  `)
 
-  // Show the modal popup
-  editFormModal.style.display = "block";
-
-  // If user clicks X close the modal
-  closeEl.addEventListener("click", () => editFormModal.style.display = "none")
-
-  // If user clicks anywhere outside of the modal, it closes the modal
-  window.addEventListener("click", (evt) => {
-    if (evt.target == editFormModal) {
-      editFormModal.style.display = "none";
-    }
-  })
 
   // Grab form elements
   const editPostForm = document.querySelector("#edit-post-form"),
-    editPostTitle = document.querySelector("#edit-post-title"), 
-    editPostContent = document.querySelector("#edit-post-content"),
-    editPostCheckbox = document.querySelector("#edit-post-checkbox");
-  
+  editPostTitle = document.querySelector("#edit-post-title"), 
+  editPostContent = document.querySelector("#edit-post-content"),
+  editPostCheckbox = document.querySelector("#edit-post-checkbox");
+
   editPostTitle.value = post.post.title;
   editPostContent.value = post.post.content;
   (post.post.priority === "high") ? (editPostCheckbox.checked = true) : (editPostCheckbox.checked = false)
-
+  editModal.open()
   // Add event listener on the form
-  editPostForm.addEventListener("submit", (evt) => editPost(evt, post))
-}
+  editPostForm.addEventListener("submit", (evt) => {
+    editModal.close()
+    editPost(evt, post)})
+} 
 
 function editPost(evt, post){
   evt.preventDefault();
