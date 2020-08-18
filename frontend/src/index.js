@@ -456,7 +456,6 @@ function editPost(evt, post){
         renderPostsInCenter();
         displayImportantPosts();
         evt.target.reset();
-        editFormModal.style.display = "none";
       }
     });  
 }
