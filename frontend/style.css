@@ -993,6 +993,43 @@ height:40%;
   cursor: pointer;
 }
 
+/* STYLING FOR POST LI */
+.post-li {
+	position: relative;
+}
+.delete-post-span {
+	position: absolute;
+	right: 10px;
+	top: 11px;
+}
+.edit-post-span {
+	position: absolute;
+	right: 35px;
+	top: 8px;
+}
+.post-date-span {
+	color: grey;
+	display: block;
+	margin-bottom: 5px;
+}
+.post-title-important-div {
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+}
+.post-title-span {
+	font-size: 16px;
+	font-weight: 600;
+}
+.post-important-span {
+	font-size: 10px;
+	align-self: flex-start;
+	color:white;
+	padding:4px;
+	border-radius:5px;
+	background-color: #f78976;
+}
+
   
 
 
