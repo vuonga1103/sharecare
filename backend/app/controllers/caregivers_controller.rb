@@ -51,16 +51,14 @@ class CaregiversController < ApplicationController
     
     new_document.update(document:params[:document])
     document_url = url_for(new_document.document)
-    byebug
-
-    render json: {title: new_document.title, description: new_document.description, privacy: new_document.privacy, document: url_for(new_document.document), author: new_document.caregiver.name}
+    render json: {id: new_document.id,title: new_document.title, description: new_document.description, privacy: new_document.privacy, document: url_for(new_document.document), author: new_document.caregiver.name}
   end
 
   def care_receiver_documents
   care_receiver_found = CareReceiver.find_by(id: params[:id])
   all_documents = care_receiver_found.documents.map do |document|
     
-      {title: document.title, description: document.description, privacy: document.privacy, document: url_for(document.document), author: document.caregiver.name}
+      {id: document.id, title: document.title, description: document.description, privacy: document.privacy, document: url_for(document.document), author: document.caregiver.name}
     end
     render json: all_documents
   end

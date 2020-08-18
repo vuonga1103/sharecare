@@ -369,30 +369,35 @@ function createPostLi(post){
 
   postLi.innerHTML = 
   `
-    ${post.post.title} - by ${post.author.name} (${post.author.username}) <br>
-    Posted on ${datePosted} | Priority: ${post.post.priority}<br>
-    ${post.post.content} <br>
+    <span class='post-date-span'>Posted on ${datePosted}</span>
+    <div class='post-title-important-div'>
+      <span class='post-title-span'>${post.post.title}</span>
+      <span class='post-important-span' style="display:none">IMPORTANT</span>
+    </div>
+    <span class='post-author-span'>by ${post.author.name} (${post.author.username}) </span>
+    <div class='post-content-div'>${post.post.content} </div>
     <span class="acknowledge-span">
-      <img src="images/checkmark-grey.png" style="width:15px" class="acknowledge-checkmark">
+      <img src="images/checkmark-grey.png" style="width:20px" class="acknowledge-checkmark">
       <span class="acknowledge-text">Acknowledge</span>
     </span>
     <br>
     <span class="acknowledgers-span"></span>
     <br>
-    
     <button class="comment-btn">Comments</button>
-
     <div class="comments-container" hidden>
       <form class="comment-form">
         <input type="text" placeholder="Add a new comment...">
         <input type="submit">
       </form>
-
       <ul class="comments-ul">
       </ul>
     </div>
-    <br><br>
   `
+    // If the post's priority is high, unhide the important span
+    if (post.post.priority === "high") {
+      const importantSpan = postLi.querySelector(".post-important-span");
+      importantSpan.style = '';
+    }
   postLi.classList.add("adding_post_animation")
 
   // Acknowledgement feature - allows user to click to acknowledge a post
@@ -1192,7 +1197,6 @@ function renderDocumentsInCenter(){
 function documentUploadFetching(evt)
 {
   evt.preventDefault()
-  console.log(evt)
 
   const documentTitle = evt.target['document-title'].value
   const documentDescription = evt.target['document-description'].value
@@ -1217,7 +1221,8 @@ function documentUploadFetching(evt)
         })
         .then(response => response.json())
         .then(fileURL => {
-        
+          evt.target.reset()
+          renderDocumentToContainer(fileURL)
         })
 
 }
@@ -1268,7 +1273,7 @@ const documentLi = document.createElement("li"),
     mainDocumentInfo.append(documentLiTitle,documentLiAuthor,documentLiDescription)
     documentLi.append(mainDocumentInfo,secondaryDocumentInfo)
 
-    documentsUl.append(documentLi)
+    documentsUl.prepend(documentLi)
     
       let modal = new tingle.modal({
         footer: true,
@@ -1281,9 +1286,13 @@ const documentLi = document.createElement("li"),
         }
         });
         modal.addFooterBtn('Delete', 'tingle-btn tingle-btn--primary', function() {
-          // here goes some logic
+          deleteDocument(documentInfo)
           modal.close();
-          modal.destroy()
+          swal({
+            title: "Document succesfully Deleted",
+            text: "This post was succesfully deleted",
+            icon: "success",
+          });
       });
     
     documentLi.addEventListener('click',(evt) => {
@@ -1297,12 +1306,16 @@ const documentLi = document.createElement("li"),
       modal.open()
     }
     })
-  
-
-
-
-
-
-
 }
+
+
+function deleteDocument(documentInfo){
+    fetch('http://localhost:3000/documents/'+ documentInfo.id, {
+      method: 'DELETE',
+    })
+    .then(response => response.json()) 
+    .then(post => {
+      fetchAllDocuments()
+    })
+  }
 
