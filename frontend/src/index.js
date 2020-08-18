@@ -34,6 +34,16 @@ dashboard.style.display = "none";
     animation: 150,
   });
 
+  new Sortable(rightMenuContainer, {
+    animation: 150,
+  });
+
+  dashboard.style.display = "none";
+
+  new Sortable(leftMenuContainer, {
+    animation: 150,
+  });
+  
   
 
 
@@ -52,6 +62,7 @@ Sortable.create(importantPostsUl,{
     },
   animation: 100,
   onEnd: function (evt){
+    debugger
     // debugger
   }
 });
@@ -279,12 +290,16 @@ function renderPostsInCenter() {
     Sortable.create(postsUl, {
       group: {
       name: "posts-ul",
-      pull: true
+      pull: 'clone'
       },
       animation: 100,
-      // onEnd: function (evt){
-      //   debugger
-      // }
+      onEnd: function (evt){
+        if(evt.to.id !== "posts-ul"){
+        fetch(`http://localhost:3000/posts/`+evt.item.id)
+        .then(response => response.json())
+        .then(thePost => dragAndDropPost(thePost,evt))
+      }
+    }
     });
 
   newPostForm.addEventListener("submit", createNewPost);
@@ -298,6 +313,52 @@ function renderPostsInCenter() {
         postsUl.append(result.message)
       }
     });
+}
+
+
+//function to control the flow of drag and drop
+function dragAndDropPost(thePost,evt)
+{
+
+  
+  if (thePost.priority === "high"){
+    evt.item.remove()
+    swal({
+      title: "Post Priority",
+      text: "This post is already high priority",
+      icon: "info",
+    });
+    
+  } else if(thePost.author_id !== loggedInCaregiver.id){
+    evt.item.remove()
+    swal({
+      title: "Permission Denied",
+      text: "This post doesn't belong to you",
+      icon: "warning",
+    });
+    
+  } else {
+    fetch('http://localhost:3000/posts/priority/' + thePost.id, {
+    method: 'PATCH',
+    headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+    body: JSON.stringify({priority:"high"})
+  })
+    .then(response => response.json())
+    .then(errorOrPost => {
+
+        evt.item.remove()
+        swal({
+          title: "Post Succesfully Updated",
+          text: "This post was succesfully updated to high priority",
+          icon: "success",
+        });
+        renderPostsInCenter();
+        displayImportantPosts();
+    });  
+
+
+  }
+
 }
 
 // Responsible for creating an Li for each individual post, which has all post's info (title, content, date) AND acknowledgement and comment functions; the the post belongs to the user, then show button to edit
@@ -1165,7 +1226,7 @@ function documentUploadFetching(evt)
   const documentDescription = evt.target['document-description'].value
   const documentPrivacy = evt.target['privacy'].value
   const documentFile = evt.target['document'].files[0]
-  debugger
+
 
   const formData = new FormData()
 
@@ -1184,7 +1245,7 @@ function documentUploadFetching(evt)
         })
         .then(response => response.json())
         .then(fileURL => {
-          debugger
+        
         })
 
 }
@@ -1219,7 +1280,7 @@ const documentLi = document.createElement("li"),
     documentLiFileIcon = document.createElement("span"),
     mainDocumentInfo = document.createElement("div"),
     secondaryDocumentInfo = document.createElement("div")
-    
+    documentLi.classList.add("adding_post_animation")
     mainDocumentInfo.classList.add("main-document-info-class")
     if(documentInfo.document.slice(-3) === "pdf"){
     documentLiFileIcon.innerHTML = '<img src="https://img.icons8.com/cute-clipart/64/000000/pdf.png"/>'
@@ -1237,20 +1298,22 @@ const documentLi = document.createElement("li"),
 
     documentsUl.append(documentLi)
     
-    
       let modal = new tingle.modal({
         footer: true,
         stickyFooter: false,
         closeMethods: ['overlay', 'button', 'escape'],
         closeLabel: "Close",
         cssClass: ['custom-class-1', 'custom-class-2'],
+        onClose: function(){
+          modal.setContent('')
+        }
         });
         modal.addFooterBtn('Delete', 'tingle-btn tingle-btn--primary', function() {
           // here goes some logic
           modal.close();
+          modal.destroy()
       });
-
-     
+    
     documentLi.addEventListener('click',(evt) => {
       if(documentInfo.document.slice(-3) === "pdf"){
       modal.setContent('<div style="height:900px; width:700px" id="modal-div"></div>')  
@@ -1262,7 +1325,7 @@ const documentLi = document.createElement("li"),
       modal.open()
     }
     })
-   
+  
 
 
 
