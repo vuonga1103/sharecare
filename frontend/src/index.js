@@ -1217,7 +1217,8 @@ function documentUploadFetching(evt)
         })
         .then(response => response.json())
         .then(fileURL => {
-        
+          
+          renderDocumentToContainer(fileURL)
         })
 
 }
@@ -1268,7 +1269,7 @@ const documentLi = document.createElement("li"),
     mainDocumentInfo.append(documentLiTitle,documentLiAuthor,documentLiDescription)
     documentLi.append(mainDocumentInfo,secondaryDocumentInfo)
 
-    documentsUl.append(documentLi)
+    documentsUl.prepend(documentLi)
     
       let modal = new tingle.modal({
         footer: true,
