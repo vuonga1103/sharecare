@@ -54,8 +54,8 @@ class CaregiversController < ApplicationController
 
   def care_receiver_documents
   care_receiver_found = CareReceiver.find_by(id: params[:id])
+  
   all_documents = care_receiver_found.documents.map do |document|
-    
       {title: document.title, description: document.description, privacy: document.privacy, document: url_for(document.document), author: document.caregiver.name}
     end
     render json: all_documents

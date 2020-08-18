@@ -34,16 +34,6 @@ dashboard.style.display = "none";
     animation: 150,
   });
 
-  new Sortable(rightMenuContainer, {
-    animation: 150,
-  });
-
-  dashboard.style.display = "none";
-
-  new Sortable(leftMenuContainer, {
-    animation: 150,
-  });
-  
   
 
 
@@ -62,7 +52,6 @@ Sortable.create(importantPostsUl,{
     },
   animation: 100,
   onEnd: function (evt){
-    debugger
     // debugger
   }
 });
@@ -290,16 +279,12 @@ function renderPostsInCenter() {
     Sortable.create(postsUl, {
       group: {
       name: "posts-ul",
-      pull: 'clone'
+      pull: true
       },
       animation: 100,
-      onEnd: function (evt){
-        if(evt.to.id !== "posts-ul"){
-        fetch(`http://localhost:3000/posts/`+evt.item.id)
-        .then(response => response.json())
-        .then(thePost => dragAndDropPost(thePost,evt))
-      }
-    }
+      // onEnd: function (evt){
+      //   debugger
+      // }
     });
 
   newPostForm.addEventListener("submit", createNewPost);
@@ -315,65 +300,27 @@ function renderPostsInCenter() {
     });
 }
 
-
-//function to control the flow of drag and drop
-function dragAndDropPost(thePost,evt)
-{
-
-  
-  if (thePost.priority === "high"){
-    evt.item.remove()
-    swal({
-      title: "Post Priority",
-      text: "This post is already high priority",
-      icon: "info",
-    });
-    
-  } else if(thePost.author_id !== loggedInCaregiver.id){
-    evt.item.remove()
-    swal({
-      title: "Permission Denied",
-      text: "This post doesn't belong to you",
-      icon: "warning",
-    });
-    
-  } else {
-    fetch('http://localhost:3000/posts/priority/' + thePost.id, {
-    method: 'PATCH',
-    headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
-    body: JSON.stringify({priority:"high"})
-  })
-    .then(response => response.json())
-    .then(errorOrPost => {
-
-        evt.item.remove()
-        swal({
-          title: "Post Succesfully Updated",
-          text: "This post was succesfully updated to high priority",
-          icon: "success",
-        });
-        renderPostsInCenter();
-        displayImportantPosts();
-    });  
-
-
-  }
-
-}
-
 // Responsible for creating an Li for each individual post, which has all post's info (title, content, date) AND acknowledgement and comment functions; the the post belongs to the user, then show button to edit
 function createPostLi(post){
   const postLi = document.createElement("li"),
     datePosted = post.post["created_at"].slice(0, 10);
   postLi.setAttribute("id", post.post.id);
+  postLi.classList += "post-li"
 
   postLi.innerHTML = 
   `
-    ${post.post.title} - by ${post.author.name} (${post.author.username}) <br>
-    Posted on ${datePosted} | Priority: ${post.post.priority}<br>
+    <span class='post-date-span'>Posted on ${datePosted}</span>
+    <div class='post-title-important-div'>
+      <span class='post-title-span'>${post.post.title}</span>
+      <span class='post-important-span' style="display:none">Important</span>
+    </div>
+    
+
+    <br>
+    by ${post.author.name} (${post.author.username}) <br>
     ${post.post.content} <br>
     <span class="acknowledge-span">
-      <img src="images/checkmark-grey.png" style="width:15px" class="acknowledge-checkmark">
+      <img src="images/checkmark-grey.png" style="width:20px" class="acknowledge-checkmark">
       <span class="acknowledge-text">Acknowledge</span>
     </span>
     <br>
@@ -391,9 +338,15 @@ function createPostLi(post){
       <ul class="comments-ul">
       </ul>
     </div>
-    <br><br>
   `
   postLi.classList.add("adding_post_animation")
+
+  // If the post's priority is high, unhide the important span
+  if (post.post.priority === "high") {
+    const importantSpan = postLi.querySelector(".post-important-span");
+    importantSpan.style = '';
+  }
+  
 
   // Acknowledgement feature - allows user to click to acknowledge a post
   const acknowledgeSpan = postLi.querySelector(".acknowledge-span"),
@@ -415,10 +368,21 @@ function createPostLi(post){
   // Edit post feature
   if (post.author.id === loggedInCaregiver.id) {
     const editPostSpan = document.createElement("span");
-    editPostSpan.innerText = "🖋 Edit"
-
+    editPostSpan.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
+      width="25" height="25"
+      viewBox="0 0 48 48"
+      style=" fill:#000000;"><path fill="#50e6ff" d="M39,16v25c0,1.105-0.895,2-2,2H11c-1.105,0-2-0.895-2-2V7c0-1.105,0.895-2,2-2h17L39,16z"></path><linearGradient id="_kEeDraea4YIsmYS50SoDa_OIR0Uk9Fhc35_gr1" x1="28.529" x2="33.6" y1="15.472" y2="10.4" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#3079d6"></stop><stop offset="1" stop-color="#297cd2"></stop></linearGradient><path fill="url(#_kEeDraea4YIsmYS50SoDa_OIR0Uk9Fhc35_gr1)" d="M28,5v9c0,1.105,0.895,2,2,2h9L28,5z"></path><path d="M39,18.602L23.101,34.504L21.868,39.4c-0.111,0.442,0.29,0.843,0.732,0.732l4.897-1.233L39,27.394	V18.602z" opacity=".05"></path><path d="M39,19.309L23.941,34.371l-0.547,1.017l0,0l-0.001,0l-0.864,3.434	c-0.099,0.392,0.256,0.746,0.648,0.648l3.446-0.868l0,0l0,0l1.006-0.543L39,26.663V19.309z" opacity=".07"></path><path fill="#c94f60" d="M42.781,21.141l-1.922-1.921c-0.292-0.293-0.768-0.293-1.061,0l-0.904,0.905l2.981,2.981l0.905-0.904	C43.073,21.908,43.073,21.434,42.781,21.141"></path><path fill="#f0f0f0" d="M24.003,35.016L23,39l3.985-1.003l0.418-3.456L24.003,35.016z"></path><path fill="#edbe00" d="M39.333,25.648L26.985,37.996l-2.981-2.981l12.348-12.348L39.333,25.648z"></path><linearGradient id="_kEeDraea4YIsmYS50SoDb_OIR0Uk9Fhc35_gr2" x1="39.112" x2="39.112" y1="20.312" y2="25.801" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#dedede"></stop><stop offset="1" stop-color="#d6d6d6"></stop></linearGradient><path fill="url(#_kEeDraea4YIsmYS50SoDb_OIR0Uk9Fhc35_gr2)" d="M36.349,22.667l2.543-2.544l2.983,2.981l-2.543,2.544L36.349,22.667z"></path><path fill="#787878" d="M23.508,36.985L23,39l2.014-0.508L23.508,36.985z"></path></svg>`;
+    editPostSpan.className = "edit-post-span"
+    
     const deletePostSpan = document.createElement("span");
-    deletePostSpan.innerText = "❌ Delete";
+    deletePostSpan.className = "delete-post-span"
+    deletePostSpan.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
+      width="21" height="21"
+      viewBox="0 0 512 512"
+      style=" fill:#000000;"><path fill="#E04F5F" d="M504.1,256C504.1,119,393,7.9,256,7.9C119,7.9,7.9,119,7.9,256C7.9,393,119,504.1,256,504.1C393,504.1,504.1,393,504.1,256z"></path><path fill="#FFF" d="M285,256l72.5-84.2c7.9-9.2,6.9-23-2.3-31c-9.2-7.9-23-6.9-30.9,2.3L256,222.4l-68.2-79.2c-7.9-9.2-21.8-10.2-31-2.3c-9.2,7.9-10.2,21.8-2.3,31L227,256l-72.5,84.2c-7.9,9.2-6.9,23,2.3,31c4.1,3.6,9.2,5.3,14.3,5.3c6.2,0,12.3-2.6,16.6-7.6l68.2-79.2l68.2,79.2c4.3,5,10.5,7.6,16.6,7.6c5.1,0,10.2-1.7,14.3-5.3c9.2-7.9,10.2-21.8,2.3-31L285,256z"></path></svg>
+    `;
 
     postLi.append(editPostSpan, deletePostSpan)
       
@@ -666,7 +630,10 @@ function createCommentLi(commentObj) {
     <span class='comment-commenter'>- ${commentObj['commenter_name']}</span>`
 
   if (commentObj['commenter_id'] == loggedInCaregiver.id) {
-    commentLi.innerHTML += `<span class='comment-delete'>❌</span>`
+    commentLi.innerHTML += `<span class='comment-delete'><svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
+    width="15" height="15"
+    viewBox="0 0 512 512"
+    style=" fill:#000000;"><path fill="#E04F5F" d="M504.1,256C504.1,119,393,7.9,256,7.9C119,7.9,7.9,119,7.9,256C7.9,393,119,504.1,256,504.1C393,504.1,504.1,393,504.1,256z"></path><path fill="#FFF" d="M285,256l72.5-84.2c7.9-9.2,6.9-23-2.3-31c-9.2-7.9-23-6.9-30.9,2.3L256,222.4l-68.2-79.2c-7.9-9.2-21.8-10.2-31-2.3c-9.2,7.9-10.2,21.8-2.3,31L227,256l-72.5,84.2c-7.9,9.2-6.9,23,2.3,31c4.1,3.6,9.2,5.3,14.3,5.3c6.2,0,12.3-2.6,16.6-7.6l68.2-79.2l68.2,79.2c4.3,5,10.5,7.6,16.6,7.6c5.1,0,10.2-1.7,14.3-5.3c9.2-7.9,10.2-21.8,2.3-31L285,256z"></path></svg></span>`
     const commentDeleteBtn = commentLi.querySelector(".comment-delete");
     commentDeleteBtn.addEventListener("click", () => {
       if (confirm("Are you sure you want to delete this comment?")) {
@@ -752,7 +719,7 @@ function createNewPost(evt) {
     .then(errorOrPost => {
       if (Array.isArray(errorOrPost)) {
         swal({
-          title: "Posting unsuccesful!",
+          title: "Posting unsuccessful!",
           text: errorOrPost.join('\n'),
           icon: "error",
         });
@@ -1198,7 +1165,7 @@ function documentUploadFetching(evt)
   const documentDescription = evt.target['document-description'].value
   const documentPrivacy = evt.target['privacy'].value
   const documentFile = evt.target['document'].files[0]
-
+  debugger
 
   const formData = new FormData()
 
@@ -1217,7 +1184,7 @@ function documentUploadFetching(evt)
         })
         .then(response => response.json())
         .then(fileURL => {
-        
+          debugger
         })
 
 }
@@ -1252,7 +1219,7 @@ const documentLi = document.createElement("li"),
     documentLiFileIcon = document.createElement("span"),
     mainDocumentInfo = document.createElement("div"),
     secondaryDocumentInfo = document.createElement("div")
-    documentLi.classList.add("adding_post_animation")
+    
     mainDocumentInfo.classList.add("main-document-info-class")
     if(documentInfo.document.slice(-3) === "pdf"){
     documentLiFileIcon.innerHTML = '<img src="https://img.icons8.com/cute-clipart/64/000000/pdf.png"/>'
@@ -1270,22 +1237,20 @@ const documentLi = document.createElement("li"),
 
     documentsUl.append(documentLi)
     
+    
       let modal = new tingle.modal({
         footer: true,
         stickyFooter: false,
         closeMethods: ['overlay', 'button', 'escape'],
         closeLabel: "Close",
         cssClass: ['custom-class-1', 'custom-class-2'],
-        onClose: function(){
-          modal.setContent('')
-        }
         });
         modal.addFooterBtn('Delete', 'tingle-btn tingle-btn--primary', function() {
           // here goes some logic
           modal.close();
-          modal.destroy()
       });
-    
+
+     
     documentLi.addEventListener('click',(evt) => {
       if(documentInfo.document.slice(-3) === "pdf"){
       modal.setContent('<div style="height:900px; width:700px" id="modal-div"></div>')  
@@ -1297,7 +1262,7 @@ const documentLi = document.createElement("li"),
       modal.open()
     }
     })
-  
+   
 
 
 

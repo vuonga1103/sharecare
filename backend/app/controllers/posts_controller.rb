@@ -13,12 +13,6 @@ class PostsController < ApplicationController
   end
 
   # Update instance of post, send back the post object if valid, otherwise send back error array
-  def show
-    post = Post.find_by(id: params[:id])
-
-    render json: post
-  end
-  
   def edit
     post = Post.find_by(id: params[:id])
     
@@ -27,13 +21,6 @@ class PostsController < ApplicationController
     else
       render json: ["Error: Unable to submit post. Please make sure no fields are empty and try again."]
     end
-  end
-
-  def priority_update
-    post = Post.find_by(id: params[:id])
-    post.update(priority: params[:priority])
-    render json: post
-    
   end
 
   # Destroy a post
