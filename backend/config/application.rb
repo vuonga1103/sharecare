@@ -19,8 +19,10 @@ require "rails/test_unit/railtie"
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
+
 module Sharecare
   class Application < Rails::Application
+    config.action_dispatch.default_headers.clear
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 6.0
 

@@ -523,7 +523,11 @@ function addCommentToPost(evt, postId) {
     .then(response => response.json())
     .then(result => {
       if (Array.isArray(result)) {
-        alert(...result)
+        swal({
+          title: "Comment Error!",
+          text: "You need to enter a comment",
+          icon: "error",
+        });
       } else {
         if (commentsUl.querySelector('.no-comment')) {
           commentsUl.querySelector('.no-comment').remove();
@@ -559,7 +563,11 @@ function createNewPost(evt) {
     .then(response => response.json())
     .then(errorOrPost => {
       if (Array.isArray(errorOrPost)) {
-        alert(errorOrPost.join('\n'))
+        swal({
+          title: "Posting unsuccesful!",
+          text: errorOrPost.join('\n'),
+          icon: "error",
+        });
       } else {
         postsUl.prepend(createPostLi(errorOrPost));
         evt.target.reset();
@@ -832,9 +840,17 @@ function createNewSecondaryCaregiver(evt) {
     .then((response) => response.json())
     .then((errorsOrCaregiver) => {
       if (Array.isArray(errorsOrCaregiver)) {
-        alert(errorsOrCaregiver.join('\n'))
+        swal({
+          title: "Error creating an account!",
+          text: errorsOrCaregiver.join('\n'),
+          icon: "error",
+        });
       } else {
-        alert("Caregiver successfully added!")
+        swal({
+          title: "Account successfully created",
+          text: "Caregiver Succesfully added",
+          icon: "success",
+        });
         caregiversUl.append(createCaregiverLi(errorsOrCaregiver));
         evt.target.reset();
       }
@@ -848,7 +864,11 @@ function deleteCaregiver(caregiver){
   })
   .then(response => response.json()) 
   .then(result => {
-    alert(`${caregiver.name} succcessfully removed from team.`);
+    swal({
+      title: "Caregiver removed!",
+      text: `${caregiver.name} succcessfully removed from team.`,
+      icon: "success",
+    });
     renderTeamInCenter();
   })
 }
@@ -931,11 +951,14 @@ function editMyInfo(evt) {
     });
 }
 
-
+//render the document uploading form according to the authorized level
 function renderDocumentsInCenter(){
-console.log("donat")
+
+  if(loggedInCaregiver.level === "primary"){
   centerDashboardContainer.innerHTML = `
+  <div id="documents-window">
   <form id="upload-document">
+  <h3>Upload a Document</h3>
     <input type="text" placeholder="Document Title" name="document-title">
     <input type="text" placeholder="Document Description" name="document-description">
     <label for='document'>Upload document:</label>
@@ -944,13 +967,38 @@ console.log("donat")
       <option value="private">Private</option>
       <option value="public">Public</option>
     </select>
-    <input type="submit" value="Submit Document">
+    <input type="submit" value="Submit Document" class="submit">
   </form>
+    <ul id="documents-list">
+    </ul>
+  </div>
+  </div>
   `
+} else {
+  centerDashboardContainer.innerHTML = `
+  <div id="documents-window">
+  <form id="upload-document">
+  <h3>Upload a Document</h3>
+    <input type="text" placeholder="Document Title" name="document-title">
+    <input type="text" placeholder="Document Description" name="document-description">
+    <label for='document'>Upload document:</label>
+    <input type="file" name="document">
+    <input type="hidden" name="privacy" value="public">
+    <input type="submit" value="Submit Document" class="submit">
+  </form>
+    <ul id="documents-list">
+    </ul>
+  </div>
+  `
+}
+  // renderAllDocuments()
+  fetchAllDocuments()
   const documentFormUploader = document.querySelector("#upload-document")
   documentFormUploader.addEventListener("submit",(evt) => documentUploadFetching(evt))
 }
 
+
+//upload a document to the server
 function documentUploadFetching(evt)
 {
   evt.preventDefault()
@@ -970,7 +1018,6 @@ function documentUploadFetching(evt)
   formData.append('caregiver_id', loggedInCaregiver.id)
   formData.append('document',documentFile)
   
-debugger
   fetch('http://localhost:3000/caregivers/upload_document', {
             method: 'POST',
             headers: {
@@ -990,3 +1037,80 @@ function logCaregiverOut() {
   currentCareReceiver = '';
   location.reload();
 }
+
+//fetch all the documents for the active care receiver
+function fetchAllDocuments(){
+  fetch(`http://localhost:3000/caregivers/${currentCareReceiver.id}/care_receiver_documents`)
+        .then(response => response.json())
+        .then(documentsInfo => {
+          documentsInfo.forEach((documentInfo) => {
+            renderDocumentToContainer(documentInfo)
+          })
+        })
+}
+
+
+function renderDocumentToContainer(documentInfo){
+
+const documentsUl = document.querySelector("#documents-list")
+
+const documentLi = document.createElement("li"),
+    documentLiTitle = document.createElement("h4"),
+    documentLiAuthor = document.createElement("h6"),
+    documentLiDescription = document.createElement("p"),
+    documentLiPrivacy = document.createElement("span"),
+    documentLiFileIcon = document.createElement("span"),
+    mainDocumentInfo = document.createElement("div"),
+    secondaryDocumentInfo = document.createElement("div")
+    
+    mainDocumentInfo.classList.add("main-document-info-class")
+    if(documentInfo.document.slice(-3) === "pdf"){
+    documentLiFileIcon.innerHTML = '<img src="https://img.icons8.com/cute-clipart/64/000000/pdf.png"/>'
+  } else {
+    documentLiFileIcon.innerHTML = '<img src="https://img.icons8.com/cute-clipart/64/000000/image-file.png"/>'
+  }
+    documentLiTitle.innerText = documentInfo.title
+    documentLiAuthor.innerText = `by ${documentInfo.author}`
+    documentLiDescription.innerText = documentInfo.description
+    documentLiPrivacy.innerText = documentInfo.privacy
+    documentLiPrivacy.classList.add("document-privacy-span")
+    secondaryDocumentInfo.append(documentLiFileIcon,documentLiPrivacy)
+    mainDocumentInfo.append(documentLiTitle,documentLiAuthor,documentLiDescription)
+    documentLi.append(mainDocumentInfo,secondaryDocumentInfo)
+
+    documentsUl.append(documentLi)
+    
+    
+      let modal = new tingle.modal({
+        footer: true,
+        stickyFooter: false,
+        closeMethods: ['overlay', 'button', 'escape'],
+        closeLabel: "Close",
+        cssClass: ['custom-class-1', 'custom-class-2'],
+        });
+        modal.addFooterBtn('Delete', 'tingle-btn tingle-btn--primary', function() {
+          // here goes some logic
+          modal.close();
+      });
+
+     
+    documentLi.addEventListener('click',(evt) => {
+      if(documentInfo.document.slice(-3) === "pdf"){
+      modal.setContent('<div style="height:900px; width:700px" id="modal-div"></div>')  
+      PDFObject.embed(documentInfo.document, "#modal-div"); 
+      modal.open()
+    } else {
+      modal.setContent(`<img style="height:900px; max-width:auto; width:700px; object-fit:contain;" src=${documentInfo.document}>`)
+      
+      modal.open()
+    }
+    })
+   
+
+
+
+
+
+
+}
+
