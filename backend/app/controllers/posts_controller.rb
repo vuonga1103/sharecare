@@ -12,6 +12,24 @@ class PostsController < ApplicationController
     end
   end
 
+  # Update instance of post, send back the post object if valid, otherwise send back error array
+  def edit
+    post = Post.find_by(id: params[:id])
+    
+    if post.update(post_params)
+      render json: post
+    else
+      render json: ["Error: Unable to submit post. Please make sure no fields are empty and try again."]
+    end
+  end
+
+  # Destroy a post
+  def destroy
+    post = Post.find_by(id: params[:id])
+    post.destroy
+    render json: post
+  end
+
   # Send back a list of acknowledgeres in an array
   def acknowledgers
     post = Post.find_by(id: params[:id])
@@ -21,13 +39,15 @@ class PostsController < ApplicationController
     render json: acknowledgers
   end
 
-  # Send back [{comment: comment.content, author_name: comment.author.name}]
+  # Send back the comment object with the commenter_name attached
   def comments
     post = Post.find_by(id: params[:id])
     comments = post.comments.reverse
 
     if comments.size > 0
-      comments_with_commenter = comments.map { |comment| {content: comment.content, commenter_name: comment.commenter.name} }
+      comments_with_commenter = comments.map do |comment| 
+        {id: comment.id, content: comment.content, commenter_id: comment.commenter_id, post_id: comment.post_id, commenter_name: comment.commenter.name }
+      end
 
       render json: comments_with_commenter
     else

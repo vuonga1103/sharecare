@@ -58,7 +58,6 @@ class CaregiversController < ApplicationController
   all_documents = care_receiver_found.documents.map do |document|
       {title: document.title, description: document.description, privacy: document.privacy, document: url_for(document.document), author: document.caregiver.name}
     end
-    byebug
   end
 
 
