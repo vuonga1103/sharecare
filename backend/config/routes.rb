@@ -9,7 +9,9 @@ Rails.application.routes.draw do
   patch '/caregivers/:id', to: 'caregivers#edit'
   delete '/caregivers/:id', to: 'caregivers#destroy'
   post '/caregivers/upload_document', to: 'caregivers#upload_document'
+  delete '/documents/:id', to: 'documents#destroy'
   get 'caregivers/:id/care_receiver_documents', to: 'caregivers#care_receiver_documents'
+
 
   # /CARE-RECEIVERS ROUTES
   post '/care-receivers', to: 'care_receivers#create'
@@ -21,8 +23,10 @@ Rails.application.routes.draw do
   # /POSTS ROUTES
   post '/posts', to: 'posts#create'
   get '/posts/:id/acknowledgers', to: 'posts#acknowledgers'
+  get '/posts/:id', to: 'posts#show'
   get '/posts/:id/comments', to: 'posts#comments'
   patch '/posts/:id', to: 'posts#edit'
+  patch '/posts/priority/:id', to: 'posts#priority_update'
   delete '/posts/:id', to: 'posts#destroy'
 
   # /ACKNOWLEDGMENTS ROUTES
