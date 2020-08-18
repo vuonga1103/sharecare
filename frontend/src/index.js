@@ -300,7 +300,7 @@ function renderPostsInCenter() {
     });
 }
 
-// Responsible for creating an Li for each individual post, which has all post's info (title, content, date) AND acknowledgement and comment functions
+// Responsible for creating an Li for each individual post, which has all post's info (title, content, date) AND acknowledgement and comment functions; the the post belongs to the user, then show button to edit
 function createPostLi(post){
   const postLi = document.createElement("li"),
     datePosted = post.post["created_at"].slice(0, 10);
@@ -351,7 +351,24 @@ function createPostLi(post){
   const acknowledgersSpan = postLi.querySelector(".acknowledgers-span");
   getAcknowledgersAndAttachToSpan(acknowledgersSpan, post.post.id)
 
-  // Comment feature - allows user to toggle hidding of comment section, which has comment form
+  // Edit post feature
+  if (post.author.id === loggedInCaregiver.id) {
+    const editPostSpan = document.createElement("span");
+    editPostSpan.innerText = "🖋 Edit"
+
+    const deletePostSpan = document.createElement("span");
+    deletePostSpan.innerText = "❌ Delete";
+
+    postLi.append(editPostSpan, deletePostSpan)
+    editPostSpan.addEventListener("click", () => displayPostEditFormInPopupModal(post))
+    deletePostSpan.addEventListener("click", () => { 
+      if (confirm("Are you sure you want to delete this post?")) {
+        deletePost(post)
+      }
+      
+    })
+  }
+
   const commentsUl = postLi.querySelector(".comments-ul");
   getCommentsAndAttachToUl(commentsUl, post.post.id);
 
@@ -368,6 +385,84 @@ function createPostLi(post){
   })
 
   return postLi
+}
+
+// Displays popup modal for user to edit their post
+function displayPostEditFormInPopupModal(post) {
+  const editFormModal = document.getElementById("edit-post-modal");
+    closeEl = document.getElementsByClassName("close")[0];
+
+  // Show the modal popup
+  editFormModal.style.display = "block";
+
+  // If user clicks X close the modal
+  closeEl.addEventListener("click", () => editFormModal.style.display = "none")
+
+  // If user clicks anywhere outside of the modal, it closes the modal
+  window.addEventListener("click", (evt) => {
+    if (evt.target == editFormModal) {
+      editFormModal.style.display = "none";
+    }
+  })
+
+  // Grab form elements
+  const editPostForm = document.querySelector("#edit-post-form"),
+    editPostTitle = document.querySelector("#edit-post-title"), 
+    editPostContent = document.querySelector("#edit-post-content"),
+    editPostCheckbox = document.querySelector("#edit-post-checkbox");
+  
+  editPostTitle.value = post.post.title;
+  editPostContent.value = post.post.content;
+  (post.post.priority === "high") ? (editPostCheckbox.checked = true) : (editPostCheckbox.checked = false)
+
+  // Add event listener on the form
+  editPostForm.addEventListener("submit", (evt) => editPost(evt, post))
+}
+
+function editPost(evt, post){
+  evt.preventDefault();
+
+  const editFormModal = document.getElementById("edit-post-modal");
+  const titleInput = evt.target['edit-post-title'].value,
+    contentInput = evt.target['edit-post-content'].value,
+    priorityInput = evt.target['edit-post-checkbox'].checked ? 'high' : 'low';
+
+  const editedPost = {
+    title: titleInput,
+    content: contentInput,
+    priority: priorityInput,
+    author_id: loggedInCaregiver.id
+  }
+  
+
+  fetch('http://localhost:3000/posts/' + post.post.id, {
+    method: 'PATCH',
+    headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+    body: JSON.stringify(editedPost)
+  })
+    .then(response => response.json())
+    .then(errorOrPost => {
+      if (Array.isArray(errorOrPost)) {
+        alert(errorOrPost[0])
+      } else {
+        renderPostsInCenter();
+        displayImportantPosts();
+        evt.target.reset();
+        editFormModal.style.display = "none";
+      }
+    });  
+}
+
+// Delete post, update DOM
+function deletePost(post) {
+  fetch('http://localhost:3000/posts/' + post.post.id, {
+    method: 'DELETE',
+  })
+  .then(response => response.json()) 
+  .then(post => {
+    renderPostsInCenter();
+    displayImportantPosts();
+  })
 }
 
 // Function to check if the logged in caregiver has acknowledged a post (return the acknowledgment if one if found-- true; otherwise return undefined-- false)
@@ -493,12 +588,37 @@ function getCommentsAndAttachToUl(commentsUl, postId) {
     });
 }
 
-// Creates an Li for a comment object
+// Creates an Li for a comment object, if the comment belongs to the loggedInCaregiver, give the option to delete
 function createCommentLi(commentObj) {
   const commentLi = document.createElement("li");
-  commentLi.innerText = commentObj.content;
-  commentLi.innerText += ' - ' + commentObj['commenter_name']
+  commentLi.setAttribute("data-comment-id", `${commentObj.id}`);
+
+  commentLi.innerHTML = `
+    <span class='comment-content'>${commentObj.content}</span>
+    <span class='comment-commenter'>- ${commentObj['commenter_name']}</span>`
+
+  if (commentObj['commenter_id'] == loggedInCaregiver.id) {
+    commentLi.innerHTML += `<span class='comment-delete'>❌</span>`
+    const commentDeleteBtn = commentLi.querySelector(".comment-delete");
+    commentDeleteBtn.addEventListener("click", () => {
+      if (confirm("Are you sure you want to delete this comment?")) {
+        deleteComment(commentLi)
+      }})
+  }
   return commentLi
+}
+
+// Deletes comment off of server and alter DOM
+function deleteComment(commentLi) {
+  const commentId = commentLi.getAttribute('data-comment-id')
+  
+  fetch('http://localhost:3000/comments/' + commentId, {
+    method: 'DELETE',
+  })
+  .then(response => response.json()) 
+  .then(comment => {
+    commentLi.remove();
+  })
 }
 
 // Takes comment submitted from form, persist to server, display either the comment or the error on DOM
@@ -570,6 +690,7 @@ function createNewPost(evt) {
         });
       } else {
         postsUl.prepend(createPostLi(errorOrPost));
+        displayImportantPosts();
         evt.target.reset();
       }
     });   
@@ -584,6 +705,7 @@ function displayImportantPosts() {
     .then(response => response.json())
     .then(result => {
       if (Array.isArray(result)) {
+        importantPostsUl.innerHTML = '';
         result.forEach(post => addToImportantPostsContainer(post))
       } else {
         document.querySelector("#priority-posts").innerText = result.message;
