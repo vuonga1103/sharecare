@@ -48,8 +48,12 @@ class CaregiversController < ApplicationController
   end
   def upload_document
     new_document = Document.create(upload_document_params)
+    
     new_document.update(document:params[:document])
-    render json: {image_url: url_for(new_document.document)}
+    document_url = url_for(new_document.document)
+    byebug
+
+    render json: {title: new_document.title, description: new_document.description, privacy: new_document.privacy, document: url_for(new_document.document), author: new_document.caregiver.name}
   end
 
   def care_receiver_documents
