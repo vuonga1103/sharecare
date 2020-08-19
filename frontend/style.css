@@ -551,7 +551,7 @@ main{
 	display: flex;
 	flex-direction: column;
 	flex-wrap: nowrap;
-	height:63%;
+	height:55%;
 	  overflow: scroll;
 	  overflow-y: auto;
 	  width:100%;
@@ -774,12 +774,12 @@ main{
   
 .comments-ul {
 	list-style-type: none;
-	padding: 0;
+	padding: 20px;
 }
 
 .comments-ul li{
 
-	padding:20px;
+	padding:2px;
 	
 }
 
@@ -1035,4 +1035,55 @@ height:40%;
 	text-transform: none;
 	transition: transform 80ms ease-in;
 	cursor: pointer;
+}
+
+.comments-container {
+	background-color: #d2d2d2;
+	margin-top: 30px;
+	margin-right: -30px;
+	margin-left: -30px;
+	margin-bottom: -30px;
+	padding-bottom: 20px;
+	border-radius: 0 0 5px 5px;
+	position: relative;
+}
+		
+.comments-form-span{
+	padding:20px;
+	display:flex;
+	align-items:center;
+	gap: 20px;
+
+}
+
+.comment-form{
+	width: 800px;
+	padding:0px;
+	margin:0;
+	
+}
+
+.comment-form input {
+	border-radius: 5px;
+}
+
+.comments-form-span form input{
+	width: 100%;
+}
+
+.no-comment {
+	text-align: center;
+}
+
+.comments-form-span span{
+	align-self: center;
+}
+
+.comment-li {
+	margin:0;
+	padding: 5px;
+}
+
+.comment-delete {
+	float: right;
 }

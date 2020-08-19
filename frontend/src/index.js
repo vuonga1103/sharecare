@@ -387,10 +387,12 @@ function createPostLi(post){
     </span>
     
     <div class="comments-container" hidden>
-      <form class="comment-form">
-        <input type="text" placeholder="Add a new comment...">
-        <input type="submit">
-      </form>
+    <div class= "comments-form-span">
+      <span class='comment-cg-img'><img src="https://cdn3.iconfinder.com/data/icons/users-23/64/_Male_Profile_Round_Circle_Users-512.png" width="40px" ></span>
+        <form class="comment-form">
+          <input type="text" placeholder="Add a new comment...">
+        </form>
+      </div>
       <ul class="comments-ul">
       </ul>
     </div>
@@ -678,6 +680,7 @@ function getCommentsAndAttachToUl(commentsUl, postId) {
 function createCommentLi(commentObj) {
   const commentLi = document.createElement("li");
   commentLi.setAttribute("data-comment-id", `${commentObj.id}`);
+  commentLi.classList += "comment-li"
 
   commentLi.innerHTML = `
     <span class='comment-content'>${commentObj.content}</span>
@@ -713,9 +716,9 @@ function deleteComment(commentLi) {
 // Takes comment submitted from form, persist to server, display either the comment or the error on DOM
 function addCommentToPost(evt, postId) {
   evt.preventDefault();
-
+  
   const contentInput = evt.target.firstElementChild.value,
-    commentsUl = evt.target.parentElement.querySelector(".comments-ul");
+    commentsUl = evt.target.parentElement.parentElement.querySelector(".comments-ul");
 
   const newComment = {
     content: contentInput,
