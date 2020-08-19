@@ -1173,10 +1173,30 @@ height:40%;
 	display: flex;
 }
 
+#photo-div {
+	position: relative;
+}
+
+#change-photo-span {
+	position: absolute;
+	top: 1px;
+	right: 3px;
+	visibility: hidden;
+}
+
+#photo-div:hover #change-photo-span {
+	visibility: visible;
+	cursor: pointer;
+}
+
+#change-photo-span img {
+	width: 50px;
+}
+
 .document-created-date{
 	font-family: 'Roboto', sans-serif;
 	font-weight: 300;
-	color:rgb(150, 150, 150)
+	color:rgb(150, 150, 150);
 }
 
 /* TEAM DIVS CSS */
@@ -1184,11 +1204,11 @@ height:40%;
 	overflow: scroll;
 	overflow-y: auto;
 	overflow-x: hidden;
-	height: 80%;
+	height: 500px;
 	margin-top: 20px;
 	border-radius: 5px;
 	background-color: rgb(245, 245, 245);
-	padding-bottom: 40px; */
+	padding-bottom: 40px; 
 	position: relative;
 }
 

@@ -1031,7 +1031,10 @@ function displayAddCGForm(){
   addCGFormModal.open()
 
   const newCGForm = document.querySelector("#new-cg-form");
-  newCGForm.addEventListener("submit", createNewSecondaryCaregiver)
+  newCGForm.addEventListener("submit", (evt) => {
+    addCGFormModal.close();
+    createNewSecondaryCaregiver(evt);
+  })
 }
 
 
@@ -1102,7 +1105,7 @@ function createCaregiverEl(caregiver){
 // Creates a new secondary CG and add them to the caregiversContainer, if not successfully created, display message that says so
 function createNewSecondaryCaregiver(evt) {
   evt.preventDefault();
-  const caregiversContainer = evt.target.parentElement.parentElement.querySelector(".cgs-container");
+  const caregiversContainer = document.querySelector(".cgs-container");
   const nameInput = evt.target['sec-cg-name'].value,
     usernameInput = evt.target['sec-cg-username'].value,
     emailInput = evt.target['sec-cg-email'].value,
@@ -1136,6 +1139,7 @@ function createNewSecondaryCaregiver(evt) {
           text: "Caregiver Succesfully added",
           icon: "success",
         });
+        
         caregiversContainer.append(createCaregiverEl(errorsOrCaregiver));
         evt.target.reset();
       }
@@ -1160,8 +1164,11 @@ function renderMyInfoInCenter(){
       <div id="my-info-container">
         <div id="photo-and-info-div">
           
-          <div>
+          <div id="photo-div">
             <img src="https://i.pinimg.com/originals/07/25/2c/07252c3b10758b816009a3a5c787b45f.jpg">
+            <span id='change-photo-span'>
+              <img src="https://img.icons8.com/plasticine/100/000000/camera.png"/>
+            </span>
           </div>
         
           <div>
@@ -1206,6 +1213,14 @@ function renderMyInfoInCenter(){
 
   const editMyInfoForm = document.querySelector("#my-info-edit-form")
   editMyInfoForm.addEventListener("submit", editMyInfo)
+
+  const photoUpdateEl = document.querySelector("#change-photo-span");
+  photoUpdateEl.addEventListener("click", displayPhotoUploadForm)
+}
+
+// Displays photo upload form in modal
+function displayPhotoUploadForm(){
+  console.log("hi!!!")
 }
 
 // Toggle display of my info edit display form
