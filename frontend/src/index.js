@@ -364,6 +364,7 @@ function dragAndDropPost(thePost,evt)
 function createPostLi(post){
   const postLi = document.createElement("li"),
     datePosted = post.post["created_at"].slice(0, 10);
+  postLi.classList += 'post-li';
   postLi.setAttribute("id", post.post.id);
 
   postLi.innerHTML = 
@@ -375,14 +376,16 @@ function createPostLi(post){
     </div>
     <span class='post-author-span'>by ${post.author.name} (${post.author.username}) </span>
     <div class='post-content-div'>${post.post.content} </div>
+    <span class="acknowledgers-span"></span>
+
     <span class="acknowledge-span">
-      <img src="images/checkmark-grey.png" style="width:20px" class="acknowledge-checkmark">
+      <img src="images/checkmark-grey.png" style="width:15px" class="acknowledge-checkmark">
       <span class="acknowledge-text">Acknowledge</span>
     </span>
-    <br>
-    <span class="acknowledgers-span"></span>
-    <br>
-    <button class="comment-btn">Comments</button>
+    <span class="comment-btn-span">
+      <button class="comment-btn">Comments</button>
+    </span>
+    
     <div class="comments-container" hidden>
       <form class="comment-form">
         <input type="text" placeholder="Add a new comment...">
