@@ -490,13 +490,41 @@ main{
 	height: 50%;
 	width:100%;
 	border-radius: 5px;
-	padding: 20px;
+	padding:20px;
 	background-color: rgb(245, 245, 245);
 	display:flex;
 	flex-direction: column;
 	justify-content: space-around;
 	align-items: center;
 	}
+
+	#left-selection-container div{
+		display: flex;
+		padding:10px;
+		padding-left: 20px;
+		justify-content: flex-start;
+		align-items: center;
+		gap:30px;
+		width: 100%;
+		transition: 0.3s;
+	}
+
+	#left-selection-container div{
+		color: #282b30;
+	}
+
+
+
+	#left-selection-container div:nth-child(odd){
+		background-color: rgb(235, 235, 235);
+	}
+
+	#left-selection-container div:hover{
+		background-color:#318fb5;
+		color:white;
+		cursor:pointer;
+	}
+	
 	
 	#title-and-checkbox{
 		display:flex;
@@ -1128,4 +1156,9 @@ height:40%;
 
 #photo-and-info-div {
 	display: flex;
+}
+.document-created-date{
+	font-family: 'Roboto', sans-serif;
+	font-weight: 300;
+	color:rgb(150, 150, 150)
 }
