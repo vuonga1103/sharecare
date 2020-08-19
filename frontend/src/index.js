@@ -375,7 +375,7 @@ function createPostLi(post){
       <span class='post-title-span'>${post.post.title}</span>
       <span class='post-important-span' style="display:none">IMPORTANT</span>
     </div>
-    <span class='post-author-span'>by ${post.author.name} (${post.author.username}) </span>
+    <span class='post-author-span'>by ${post.author.name} </span>
     <div class='post-content-div'>${post.post.content} </div>
     <span class="acknowledgers-span"></span>
 
@@ -447,8 +447,9 @@ function createPostLi(post){
     
     deletePostSpan.addEventListener("click", () => { 
       swal({
-        title: "Are you sure?",
-        text: "Once deleted, you will not be able to recover this!",
+        // title: "Are you sure you want to delete this post?",
+        // text: "Once deleted, you will not be able to recover this!",
+        text: "Are you sure you want to delete this post?",
         icon: "warning",
         buttons: true,
         dangerMode: true,
@@ -456,7 +457,7 @@ function createPostLi(post){
       .then((willDelete) => {
         if (willDelete) {
           deletePost(post)
-          swal("Your post was deleted succesfully!", {
+          swal("Your post was deleted.", {
             icon: "success",
           });
         } 
@@ -707,8 +708,9 @@ function createCommentLi(commentObj) {
     const commentDeleteBtn = commentLi.querySelector(".comment-delete");
     commentDeleteBtn.addEventListener("click", () => {    
       swal({
-        title: "Are you sure?",
-        text: "Once deleted, you will not be able to recover this!",
+        // title: "Are you sure?",
+        // text: "Once deleted, you will not be able to recover this!",
+        text: "Are you sure you want to delete this comment?",
         icon: "warning",
         buttons: true,
         dangerMode: true,
@@ -716,7 +718,7 @@ function createCommentLi(commentObj) {
       .then((willDelete) => {
         if (willDelete) {
           deleteComment(commentLi)
-          swal("Your comment was deleted succesfully!", {
+          swal("Your comment was deleted.", {
             icon: "success",
           });
         } 
@@ -801,7 +803,7 @@ function createNewPost(evt) {
     .then(errorOrPost => {
       if (Array.isArray(errorOrPost)) {
         swal({
-          title: "Posting unsuccessful!",
+          title: "Posting Unsuccessful!",
           text: errorOrPost.join('\n'),
           icon: "error",
         });
@@ -1197,7 +1199,11 @@ function editMyInfo(evt) {
     .then(response => response.json())
     .then(result => {
       if (Array.isArray(result)) {
-        alert(...result)
+        swal({
+          title: "Edit Post Error!",
+          text: "Please make sure all fields are filled out!",
+          icon: "error",
+        });
       } else {
         loggedInCaregiver = result;
         renderMyInfoInCenter();
