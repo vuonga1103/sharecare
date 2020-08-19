@@ -978,31 +978,62 @@ logoutSelectionBtn.addEventListener("click", logCaregiverOut)
 function renderTeamInCenter(){
   centerDashboardContainer.innerHTML = `
     <div class="team-container">
-      <h1 class="team-title">${currentCareReceiver.name}'s Team</h1>
+      <div class="team-header">
+        <h1 class="team-title">${currentCareReceiver.name}'s Team</h1>
+      </div>
+      
       <div class="cgs-container"></div>
     </div>
   `
 
   const caregiversContainer = centerDashboardContainer.querySelector(".cgs-container"),
     teamTitle = centerDashboardContainer.querySelector(".team-title"),
-    teamContainer = centerDashboardContainer.querySelector(".team-container");
+    teamContainer = centerDashboardContainer.querySelector(".team-container"),
+    teamHeader = centerDashboardContainer.querySelector(".team-header");
 
   getCaregiversAndAppendToCaregiversContainer(caregiversContainer);
 
   if (loggedInCaregiver.level === "primary") {
-    const newCGFormDiv = document.createElement("div");
-    const addNewCGBtn = document.createElement("button");
-    newCGFormDiv.id = 'new-cg-form-container';
-    addNewCGBtn.id = 'add-new-cg-btn';
-    addNewCGBtn.innerText = 'Add a New Caregiver';
-    newCGFormDiv.append(addNewCGBtn);
-
-    teamContainer.insertBefore(newCGFormDiv, caregiversContainer);
+    teamHeader.innerHTML += `
+      <span>
+        <button class="add-new-cg-btn">Add New Caregiver</button>
+      </span>
+    `
+    const addNewCGBtn = document.querySelector(".add-new-cg-btn");
     
-    addNewCGBtn.addEventListener("click", () => addCGFormToFormDiv(newCGFormDiv))
+    addNewCGBtn.addEventListener("click", displayAddCGForm)
   }
-
+//ANH
 }
+
+function displayAddCGForm(){
+  let addCGFormModal = new tingle.modal({
+    footer: false,
+    stickyFooter: false,
+    closeMethods: ['overlay', 'button', 'escape'],
+    closeLabel: "Close",
+    cssClass: ['custom-class-1', 'custom-class-2'],
+    });
+    
+  addCGFormModal.setContent(`
+    <div id="new-cg-form-div">
+      <form id="new-cg-form">
+        Enter New Caregiver's Info
+        <input type="text" id="sec-cg-name" placeholder="Name">
+        <input type="text" id="sec-cg-username" placeholder="Username">
+        <input type="text" id="sec-cg-email" placeholder="Email">
+        <input type="text" id="sec-cg-role" placeholder="Role (i.e. therapist, aide, etc.)">
+        <button type="submit">Add to Team</button>
+      </form>
+    </div>
+  `)
+
+  addCGFormModal.open()
+
+  const newCGForm = document.querySelector("#new-cg-form");
+  newCGForm.addEventListener("submit", createNewSecondaryCaregiver)
+}
+
 
 // Get all caregivers associated with this care receiver, create an Li for each and append to the Ul
 function getCaregiversAndAppendToCaregiversContainer(caregiversContainer) {
@@ -1018,7 +1049,6 @@ function createCaregiverEl(caregiver){
   const caregiverEl = document.createElement("div");
   caregiverEl.className = 'cg-div';
   caregiverEl.innerHTML = `
-
     <div class="cg-img">
       <img src="https://i.pinimg.com/originals/07/25/2c/07252c3b10758b816009a3a5c787b45f.jpg">
     </div>
@@ -1028,8 +1058,7 @@ function createCaregiverEl(caregiver){
       👤 Username - ${caregiver.username}<br>
       💌 Email - <a href="mailto:${caregiver.email}"> ${caregiver.email}</a><br>
       🧩 Role - ${currentCareReceiver.name}'s ${caregiver.role}<br>
-    </div>
-    
+    </div>   
   `
   // Add span title, if CG is primary, then add that, if not just have name displayed
   const cgInfoEl = caregiverEl.querySelector(".cg-info");
@@ -1045,29 +1074,30 @@ function createCaregiverEl(caregiver){
     cgInfoEl.append(removeCGBtn)
 
     removeCGBtn.addEventListener("click", () => {
-      deleteCaregiver(caregiver)
+      swal({
+        // title: "Are you sure you want to delete this post?",
+        // text: "Once deleted, you will not be able to recover this!",
+        text: "Are you sure you want to remove this caregiver?",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+      })
+      .then((willDelete) => {
+        if (willDelete) {
+          deleteCaregiver(caregiver)
+          swal("Caregiver was removed.", {
+            icon: "success",
+          });
+        } 
+      });
     })
   }
 
   return caregiverEl;
 }
 
-// display new CG form on form div
-function addCGFormToFormDiv(newCGFormDiv){
-  newCGFormDiv.innerHTML = `
-    <form id="new-cg-form">
-      Enter New Caregiver's Info
-      <input type="text" id="sec-cg-name" placeholder="Name">
-      <input type="text" id="sec-cg-username" placeholder="Username">
-      <input type="text" id="sec-cg-email" placeholder="Email">
-      <input type="text" id="sec-cg-role" placeholder="Role (i.e. therapist, aide, etc.)">
-      <input type="submit">
-    </form>
-  `
-  const newCGForm = newCGFormDiv.querySelector("#new-cg-form");
 
-  newCGForm.addEventListener("submit", createNewSecondaryCaregiver)
-}
+
 
 // Creates a new secondary CG and add them to the caregiversContainer, if not successfully created, display message that says so
 function createNewSecondaryCaregiver(evt) {
@@ -1112,66 +1142,63 @@ function createNewSecondaryCaregiver(evt) {
     });
 }
 
+
 // Delete caregiver and update dom
 function deleteCaregiver(caregiver){
   fetch('http://localhost:3000/caregivers/' + caregiver.id, {
-    method: 'DELETE',
+  method: 'DELETE',
   })
-  .then(response => response.json()) 
-  .then(result => {
-    swal({
-      title: "Caregiver removed!",
-      text: `${caregiver.name} succcessfully removed from team.`,
-      icon: "success",
-    });
-    renderTeamInCenter();
-  })
+    .then(response => response.json()) 
+    .then(result => renderTeamInCenter())
 }
 
 // Display current user's info in the center container
 function renderMyInfoInCenter(){
   centerDashboardContainer.innerHTML = `
-    <div id="my-info-container">
-
-      <div id="photo-and-info-div">
-        
-        <div>
-          <img src="https://i.pinimg.com/originals/07/25/2c/07252c3b10758b816009a3a5c787b45f.jpg">
-        </div>
-      
-        <div>
-          <ul id="my-info-ul">
-            <h1 id="my-info-name">${loggedInCaregiver.name}</h1>
-
-            <li id='my-info-username'>Username: ${loggedInCaregiver.username}</li>
-            <li id='my-info-email'>Email: ${loggedInCaregiver.email}</li>
-            <li id='my-info-role'>Role: ${currentCareReceiver.name}'s ${loggedInCaregiver.role}</li>
-            <li id='my-info-level'>You are a ${loggedInCaregiver.level} caregiver</li><br>
+    <div>
+      <h1 style="text-align: center; margin-bottom: 10px;">My Info</h1>
+      <div id="my-info-container">
+        <div id="photo-and-info-div">
           
-            <button id='my-info-edit-btn'>Edit My Info</button>
-          </ul>            
+          <div>
+            <img src="https://i.pinimg.com/originals/07/25/2c/07252c3b10758b816009a3a5c787b45f.jpg">
+          </div>
+        
+          <div>
+            <ul id="my-info-ul">
+              <h1 id="my-info-name">${loggedInCaregiver.name}</h1>
+
+              <li id='my-info-username'>Username: ${loggedInCaregiver.username}</li>
+              <li id='my-info-email'>Email: ${loggedInCaregiver.email}</li>
+              <li id='my-info-role'>Role: ${currentCareReceiver.name}'s ${loggedInCaregiver.role}</li>
+              <li id='my-info-level'>You are a ${loggedInCaregiver.level} caregiver</li><br>
+            
+              <button id='my-info-edit-btn'>Edit My Info</button>
+            </ul>            
+          </div>
         </div>
-      </div>
-    
       
-      
+        
+        
 
-      <form id='my-info-edit-form' style="display:none;">
-        <label for="my-info-name-input">Name: </label>
-        <input type='text' id='my-info-name-input' name='my-info-name-input' value='${loggedInCaregiver.name}'>
+        <form id='my-info-edit-form' style="display:none;">
+          <label for="my-info-name-input">Name: </label>
+          <input type='text' id='my-info-name-input' name='my-info-name-input' value='${loggedInCaregiver.name}'>
 
-        <label for="my-info-username-input">Username: </label>
-        <input type='text' id='my-info-username-input' name='my-info-username-input' value='${loggedInCaregiver.username}'>
+          <label for="my-info-username-input">Username: </label>
+          <input type='text' id='my-info-username-input' name='my-info-username-input' value='${loggedInCaregiver.username}'>
 
-        <label for="my-info-email-input">Email: </label>
-        <input type='text' id='my-info-email-input' name='my-info-email-input' value='${loggedInCaregiver.email}'>
+          <label for="my-info-email-input">Email: </label>
+          <input type='text' id='my-info-email-input' name='my-info-email-input' value='${loggedInCaregiver.email}'>
 
-        <label for="my-info-role-input">Role: </label>
-        <input type='text' id='my-info-role-input' name='my-info-role-input' value='${loggedInCaregiver.role}'>
+          <label for="my-info-role-input">Role: </label>
+          <input type='text' id='my-info-role-input' name='my-info-role-input' value='${loggedInCaregiver.role}'>
 
-        <input type='submit'>
-      </form>
+          <input type='submit'>
+        </form>
+      </div>  
     </div>
+
   `
 
   const editBtn = document.querySelector("#my-info-edit-btn");
