@@ -328,7 +328,7 @@ function dragAndDropPost(thePost,evt)
       text: "This post is already high priority",
       icon: "info",
     });
-    
+    renderPostsInCenter();
   } else if(thePost.author_id !== loggedInCaregiver.id){
     evt.item.remove()
     swal({
@@ -336,7 +336,7 @@ function dragAndDropPost(thePost,evt)
       text: "This post doesn't belong to you",
       icon: "warning",
     });
-    
+    renderPostsInCenter();
   } else {
     fetch('http://localhost:3000/posts/priority/' + thePost.id, {
     method: 'PATCH',
@@ -459,9 +459,7 @@ function createPostLi(post){
           swal("Your post was deleted succesfully!", {
             icon: "success",
           });
-        } else {
-          swal("Your post is safe for now!");
-        }
+        } 
       });
     })
   }
@@ -721,9 +719,7 @@ function createCommentLi(commentObj) {
           swal("Your comment was deleted succesfully!", {
             icon: "success",
           });
-        } else {
-          swal("Your comment is safe for now!");
-        }
+        } 
       });})
   }
   return commentLi
@@ -1204,7 +1200,6 @@ function renderDocumentsInCenter(){
   <h3>Upload a Document</h3>
     <input type="text" placeholder="Document Title" name="document-title">
     <input type="text" placeholder="Document Description" name="document-description">
-    <label for='document'>Upload document:</label>
     <input type="file" name="document">
     <select name="privacy" id="privacy-select">
       <option value="private">Private</option>
@@ -1224,7 +1219,6 @@ function renderDocumentsInCenter(){
   <h3>Upload a Document</h3>
     <input type="text" placeholder="Document Title" name="document-title">
     <input type="text" placeholder="Document Description" name="document-description">
-    <label for='document'>Upload document:</label>
     <input type="file" name="document">
     <input type="hidden" name="privacy" value="public">
     <input type="submit" value="Submit Document" class="submit">
@@ -1286,10 +1280,17 @@ function fetchAllDocuments(){
   fetch(`http://localhost:3000/caregivers/${currentCareReceiver.id}/care_receiver_documents`)
         .then(response => response.json())
         .then(documentsInfo => {
+          if(loggedInCaregiver.level === "primary"){
           documentsInfo.forEach((documentInfo) => {
             renderDocumentToContainer(documentInfo)
           })
-        })
+        } else {
+          documentsInfo.forEach((documentInfo) => {
+            if(documentInfo.privacy === "public"){
+            renderDocumentToContainer(documentInfo)
+          }
+          })
+        }})
 }
 
 
@@ -1313,7 +1314,8 @@ const documentLi = document.createElement("li"),
   } else {
     documentLiFileIcon.innerHTML = '<img src="https://img.icons8.com/cute-clipart/64/000000/image-file.png"/>'
   }
-    documentCreatedDate.innerText = documentInfo["created_at"].slice(0, 10);
+  documentCreatedDate.classList.add("document-created-date")
+    documentCreatedDate.innerText = `Added on: ${documentInfo["created_at"].slice(0, 10)}`;
     documentLiTitle.innerText = documentInfo.title
     documentLiAuthor.innerText = `by ${documentInfo.author}`
     documentLiDescription.innerText = documentInfo.description
