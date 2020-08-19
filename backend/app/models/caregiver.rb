@@ -5,6 +5,7 @@ class Caregiver < ApplicationRecord
   has_many :posts, :foreign_key => 'author_id', dependent: :destroy
   has_many :acknowledgments, dependent: :destroy
   has_many :documents
+  has_one_attached :photo
 
   # Validations for sign up
   validates :username, uniqueness: true, presence: true

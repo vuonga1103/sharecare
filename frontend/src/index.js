@@ -117,6 +117,7 @@ function createNewPrimaryCaregiver(evt) {
         ? displayRegisterErrors(errorsOrCaregiver)
         : displayCreateCareReceiverForm(errorsOrCaregiver);
     });
+
 }
 
 // Takes an array of errors and display them in registerErrorsUl
@@ -192,6 +193,7 @@ function createCareReceiver(evt, newPrimaryCaregiver) {
       if (Array.isArray(errorOrCareReceiver)) {
         displayCareReceiverError(errorOrCareReceiver) 
       } else {
+        debugger
         currentCareReceiver = errorOrCareReceiver;
         displayDashboard(errorOrCareReceiver);   
       }
@@ -441,9 +443,23 @@ function createPostLi(post){
     editPostSpan.addEventListener('click', (evt) => displayPostEditForm(evt, post))
     
     deletePostSpan.addEventListener("click", () => { 
-      if (confirm("Are you sure you want to delete this post?")) {
-        deletePost(post)
-      }
+      swal({
+        title: "Are you sure?",
+        text: "Once deleted, you will not be able to recover this!",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+      })
+      .then((willDelete) => {
+        if (willDelete) {
+          deletePost(post)
+          swal("Your post was deleted succesfully!", {
+            icon: "success",
+          });
+        } else {
+          swal("Your post is safe for now!");
+        }
+      });
     })
   }
 
@@ -687,10 +703,24 @@ function createCommentLi(commentObj) {
     viewBox="0 0 512 512"
     style=" fill:#000000;"><path fill="#E04F5F" d="M504.1,256C504.1,119,393,7.9,256,7.9C119,7.9,7.9,119,7.9,256C7.9,393,119,504.1,256,504.1C393,504.1,504.1,393,504.1,256z"></path><path fill="#FFF" d="M285,256l72.5-84.2c7.9-9.2,6.9-23-2.3-31c-9.2-7.9-23-6.9-30.9,2.3L256,222.4l-68.2-79.2c-7.9-9.2-21.8-10.2-31-2.3c-9.2,7.9-10.2,21.8-2.3,31L227,256l-72.5,84.2c-7.9,9.2-6.9,23,2.3,31c4.1,3.6,9.2,5.3,14.3,5.3c6.2,0,12.3-2.6,16.6-7.6l68.2-79.2l68.2,79.2c4.3,5,10.5,7.6,16.6,7.6c5.1,0,10.2-1.7,14.3-5.3c9.2-7.9,10.2-21.8,2.3-31L285,256z"></path></svg></span>`
     const commentDeleteBtn = commentLi.querySelector(".comment-delete");
-    commentDeleteBtn.addEventListener("click", () => {
-      if (confirm("Are you sure you want to delete this comment?")) {
-        deleteComment(commentLi)
-      }})
+    commentDeleteBtn.addEventListener("click", () => {    
+      swal({
+        title: "Are you sure?",
+        text: "Once deleted, you will not be able to recover this!",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+      })
+      .then((willDelete) => {
+        if (willDelete) {
+          deleteComment(commentLi)
+          swal("Your comment was deleted succesfully!", {
+            icon: "success",
+          });
+        } else {
+          swal("Your comment is safe for now!");
+        }
+      });})
   }
   return commentLi
 }
@@ -1265,6 +1295,7 @@ const documentsUl = document.querySelector("#documents-list")
 
 const documentLi = document.createElement("li"),
     documentLiTitle = document.createElement("h4"),
+    documentCreatedDate = document.createElement("span"),
     documentLiAuthor = document.createElement("h6"),
     documentLiDescription = document.createElement("p"),
     documentLiPrivacy = document.createElement("span"),
@@ -1278,13 +1309,14 @@ const documentLi = document.createElement("li"),
   } else {
     documentLiFileIcon.innerHTML = '<img src="https://img.icons8.com/cute-clipart/64/000000/image-file.png"/>'
   }
+    documentCreatedDate.innerText = documentInfo["created_at"].slice(0, 10);
     documentLiTitle.innerText = documentInfo.title
     documentLiAuthor.innerText = `by ${documentInfo.author}`
     documentLiDescription.innerText = documentInfo.description
     documentLiPrivacy.innerText = documentInfo.privacy
     documentLiPrivacy.classList.add("document-privacy-span")
     secondaryDocumentInfo.append(documentLiFileIcon,documentLiPrivacy)
-    mainDocumentInfo.append(documentLiTitle,documentLiAuthor,documentLiDescription)
+    mainDocumentInfo.append(documentCreatedDate,documentLiTitle,documentLiAuthor,documentLiDescription)
     documentLi.append(mainDocumentInfo,secondaryDocumentInfo)
 
     documentsUl.prepend(documentLi)
