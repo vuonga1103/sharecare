@@ -188,12 +188,11 @@ function createCareReceiver(evt, newPrimaryCaregiver) {
     body: JSON.stringify(newCareReceiver),
   })
     .then((response) => response.json())
-    .then((errorOrCareReceiver) => {
-      if (Array.isArray(errorOrCareReceiver)) {
-        displayCareReceiverError(errorOrCareReceiver) 
+    .then((errorOrCaregiver) => {
+      if (Array.isArray(errorOrCaregiver)) {
+        displayCareReceiverError(errorOrCaregiver) 
       } else {
-        currentCareReceiver = errorOrCareReceiver;
-        displayDashboard(errorOrCareReceiver);   
+        displayDashboard(errorOrCaregiver);   
       }
     });
 }
@@ -771,7 +770,7 @@ function createNewPost(evt) {
     .then(errorOrPost => {
       if (Array.isArray(errorOrPost)) {
         swal({
-          title: "Posting unsuccesful!",
+          title: "Posting unsuccessful!",
           text: errorOrPost.join('\n'),
           icon: "error",
         });
