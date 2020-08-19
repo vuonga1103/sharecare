@@ -1120,14 +1120,29 @@ function deleteCaregiver(caregiver){
 function renderMyInfoInCenter(){
   centerDashboardContainer.innerHTML = `
     <div id="my-info-container">
-      <h1 id="my-info-name">${loggedInCaregiver.name}</h1>
-      <ul id="my-info-ul">
-        <li id='my-info-username'>Username: ${loggedInCaregiver.username}</li>
-        <li id='my-info-email'>Email: ${loggedInCaregiver.email}</li>
-        <li id='my-info-role'>Role: ${currentCareReceiver.name}'s ${loggedInCaregiver.role}</li>
-        <li id='my-info-level'>You are a ${loggedInCaregiver.level} caregiver</li>
-      </ul>
-      <button id='my-info-edit-btn'>Edit My Info</button>
+
+      <div id="photo-and-info-div">
+        
+        <div>
+          <img src="https://i.pinimg.com/originals/07/25/2c/07252c3b10758b816009a3a5c787b45f.jpg">
+        </div>
+      
+        <div>
+          <ul id="my-info-ul">
+            <h1 id="my-info-name">${loggedInCaregiver.name}</h1>
+
+            <li id='my-info-username'>Username: ${loggedInCaregiver.username}</li>
+            <li id='my-info-email'>Email: ${loggedInCaregiver.email}</li>
+            <li id='my-info-role'>Role: ${currentCareReceiver.name}'s ${loggedInCaregiver.role}</li>
+            <li id='my-info-level'>You are a ${loggedInCaregiver.level} caregiver</li><br>
+          
+            <button id='my-info-edit-btn'>Edit My Info</button>
+          </ul>            
+        </div>
+      </div>
+    
+      
+      
 
       <form id='my-info-edit-form' style="display:none;">
         <label for="my-info-name-input">Name: </label>
