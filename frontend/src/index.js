@@ -1220,7 +1220,6 @@ function renderDocumentsInCenter(){
     <input type="text" placeholder="Document Title" name="document-title">
     <input type="text" placeholder="Document Description" name="document-description">
     <input type="file" name="document">
-    <input type="hidden" name="privacy" value="public">
     <input type="submit" value="Submit Document" class="submit">
   </form>
     <ul id="documents-list">
@@ -1242,7 +1241,12 @@ function documentUploadFetching(evt)
 
   const documentTitle = evt.target['document-title'].value
   const documentDescription = evt.target['document-description'].value
-  const documentPrivacy = evt.target['privacy'].value
+  let documentPrivacy = ""
+  if(loggedInCaregiver.level === "primary"){
+    documentPrivacy = evt.target['privacy'].value
+} else {
+    documentPrivacy = "public"
+}
   const documentFile = evt.target['document'].files[0]
 
 

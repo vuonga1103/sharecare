@@ -113,8 +113,11 @@ input {
 	transition :0.5s;
 }
 
-input:focus{
+input[type="text"]:focus{
 	background: #f7d6bf;
+}
+
+input:focus{
 	outline: none;
 }
 
@@ -496,6 +499,9 @@ main{
 	flex-direction: column;
 	justify-content: space-around;
 	align-items: center;
+	overflow:scroll;
+		overflow-y: auto;
+		overflow-x: hidden;
 	}
 
 	#left-selection-container div{
@@ -507,6 +513,9 @@ main{
 		gap:30px;
 		width: 100%;
 		transition: 0.3s;
+		font-size: 16px;
+		
+		
 	}
 
 	#left-selection-container div{
