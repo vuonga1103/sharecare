@@ -977,17 +977,17 @@ logoutSelectionBtn.addEventListener("click", logCaregiverOut)
 // Will display team info in center container; will show options for adding of new CG and deletion of CGs if logged-in CG is primary
 function renderTeamInCenter(){
   centerDashboardContainer.innerHTML = `
-    <div id="team-container">
-      <h1 id="team-title">${currentCareReceiver.name}'s Team</h1>
-      <ul id="cg-ul"></ul>
+    <div class="team-container">
+      <h1 class="team-title">${currentCareReceiver.name}'s Team</h1>
+      <div class="cgs-container"></div>
     </div>
   `
 
-  const caregiversUl = centerDashboardContainer.querySelector("#cg-ul"),
-    teamTitle = centerDashboardContainer.querySelector("#team-title"),
-    teamContainer = centerDashboardContainer.querySelector("#team-container");
+  const caregiversContainer = centerDashboardContainer.querySelector(".cgs-container"),
+    teamTitle = centerDashboardContainer.querySelector(".team-title"),
+    teamContainer = centerDashboardContainer.querySelector(".team-container");
 
-  getCaregiversAndAppendToCaregiversUl(caregiversUl);
+  getCaregiversAndAppendToCaregiversContainer(caregiversContainer);
 
   if (loggedInCaregiver.level === "primary") {
     const newCGFormDiv = document.createElement("div");
@@ -997,7 +997,7 @@ function renderTeamInCenter(){
     addNewCGBtn.innerText = 'Add a New Caregiver';
     newCGFormDiv.append(addNewCGBtn);
 
-    teamContainer.insertBefore(newCGFormDiv, caregiversUl);
+    teamContainer.insertBefore(newCGFormDiv, caregiversContainer);
     
     addNewCGBtn.addEventListener("click", () => addCGFormToFormDiv(newCGFormDiv))
   }
@@ -1005,37 +1005,51 @@ function renderTeamInCenter(){
 }
 
 // Get all caregivers associated with this care receiver, create an Li for each and append to the Ul
-function getCaregiversAndAppendToCaregiversUl(caregiversUl) {
+function getCaregiversAndAppendToCaregiversContainer(caregiversContainer) {
   fetch(`http://localhost:3000/care-receivers/${currentCareReceiver.id}/my_caregivers`)
     .then(response => response.json())
     .then(result => {
-      result.caregivers.forEach(cg => caregiversUl.append(createCaregiverLi(cg)))
+      result.caregivers.forEach(cg => caregiversContainer.append(createCaregiverEl(cg)))
     });
 }
 
 // create an Li for caregiver, return the Li
-function createCaregiverLi(caregiver){
-  const caregiverLi = document.createElement("li");
-  caregiverLi.innerHTML = `
-    Name: ${caregiver.name} <br>
-    Username: ${caregiver.username}<br>
-    Role: ${caregiver.role}<br>
-    Level: ${caregiver.level}<br>
+function createCaregiverEl(caregiver){
+  const caregiverEl = document.createElement("div");
+  caregiverEl.className = 'cg-div';
+  caregiverEl.innerHTML = `
+
+    <div class="cg-img">
+      <img src="https://i.pinimg.com/originals/07/25/2c/07252c3b10758b816009a3a5c787b45f.jpg">
+    </div>
+
+    <div class="cg-info">
+      <span>${caregiver.name}</span>
+      👤 Username - ${caregiver.username}<br>
+      💌 Email - <a href="mailto:${caregiver.email}"> ${caregiver.email}</a><br>
+      🧩 Role - ${currentCareReceiver.name}'s ${caregiver.role}<br>
+    </div>
+    
   `
-  
+  // Add span title, if CG is primary, then add that, if not just have name displayed
+  const cgInfoEl = caregiverEl.querySelector(".cg-info");
+
+  if (caregiver.level === "primary") {
+    cgInfoEl.firstElementChild.innerHTML += ` (${caregiver.level.charAt(0).toUpperCase() + caregiver.level.slice(1)} Caregiver)`
+  }
+
   // Add button to delete other CGs if logged in CG is primary
   if (loggedInCaregiver.level === "primary" && caregiver.id !== loggedInCaregiver.id) {
     const removeCGBtn = document.createElement("button");
     removeCGBtn.innerText = "Remove"
-    caregiverLi.append(removeCGBtn)
+    cgInfoEl.append(removeCGBtn)
 
     removeCGBtn.addEventListener("click", () => {
       deleteCaregiver(caregiver)
     })
   }
-  
 
-  return caregiverLi;
+  return caregiverEl;
 }
 
 // display new CG form on form div
@@ -1055,10 +1069,10 @@ function addCGFormToFormDiv(newCGFormDiv){
   newCGForm.addEventListener("submit", createNewSecondaryCaregiver)
 }
 
-// Creates a new secondary CG and add them to the caregiversUl, if not successfully created, display message that says so
+// Creates a new secondary CG and add them to the caregiversContainer, if not successfully created, display message that says so
 function createNewSecondaryCaregiver(evt) {
   evt.preventDefault();
-  const caregiversUl = evt.target.parentElement.parentElement.querySelector("#cg-ul");
+  const caregiversContainer = evt.target.parentElement.parentElement.querySelector(".cgs-container");
   const nameInput = evt.target['sec-cg-name'].value,
     usernameInput = evt.target['sec-cg-username'].value,
     emailInput = evt.target['sec-cg-email'].value,
@@ -1092,7 +1106,7 @@ function createNewSecondaryCaregiver(evt) {
           text: "Caregiver Succesfully added",
           icon: "success",
         });
-        caregiversUl.append(createCaregiverLi(errorsOrCaregiver));
+        caregiversContainer.append(createCaregiverEl(errorsOrCaregiver));
         evt.target.reset();
       }
     });

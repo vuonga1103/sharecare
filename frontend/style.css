@@ -1129,7 +1129,7 @@ height:40%;
 
 #my-info-container {
 	font-family: 'Roboto', sans-serif;
-	padding:20px;
+	padding: 20px;
 	background: white;
 	box-shadow: 0 1px 1px rgba(0,0,0,0.09), 
 	0 2px 2px rgba(0,0,0,0.09), 
@@ -1160,14 +1160,71 @@ height:40%;
 	background-color: #3282b8;
 	border: none;
 	margin: auto;
-  position: absolute;
 }
 
 #photo-and-info-div {
 	display: flex;
 }
+
 .document-created-date{
 	font-family: 'Roboto', sans-serif;
 	font-weight: 300;
 	color:rgb(150, 150, 150)
+}
+
+/* TEAM DIVS CSS */
+.cgs-container {
+	overflow: scroll;
+	overflow-y: auto;
+	overflow-x: hidden;
+	height: 55%;
+	margin-top: 20px;
+	border-radius: 5px;
+	background-color: rgb(245, 245, 245);
+	padding-bottom: 40px; */
+	position: relative;
+}
+
+.cg-div {
+	display: flex;
+	align-items: center;
+	font-family: 'Roboto', sans-serif;
+	padding: 20px;
+	margin: 30px;
+	border-radius: 5px;
+	background: white;
+	box-shadow: 0 1px 1px rgba(0,0,0,0.09), 
+	0 2px 2px rgba(0,0,0,0.09), 
+	0 4px 4px rgba(0,0,0,0.09), 
+	0 8px 8px rgba(0,0,0,0.09), 
+	0 16px 16px rgba(0,0,0,0.09), 
+	0 32px 32px rgba(0,0,0,0.09);
+	position: relative;
+}
+
+.cg-img img {
+	border-radius: 50%;
+	width: 100px; 
+	height: 100px;
+	object-fit: cover;
+}
+
+.cg-info {
+	margin-left: 20px;
+}
+
+.cg-info span {
+	display: block;
+	font-weight: 600;
+	font-size: 18px;
+}
+
+.cg-info button {
+	background-color: #f78976;
+	border: none;
+	margin: auto;
+	padding: 10px;
+	position: absolute;
+	right: 15px;
+	bottom: 15px;
 }
