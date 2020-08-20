@@ -260,6 +260,7 @@ function displayDashboard(caregiver) {
   displayImportantPosts();
   
   fetchInfoForCareReceiver();
+  
 }
 
 // Displays all posts associated with the logged in caregiver's carereceiver; if there are no posts, display message saying so
@@ -941,6 +942,7 @@ function fetchInfoForCareReceiver(){
     .then(response => response.json())
     .then(theCareReceiver => {
       currentCareReceiver = theCareReceiver;
+      createCareReceiverWebsocketConnection(currentCareReceiver.id);
       addCareReceiverToTheDom(theCareReceiver)
     });
 
@@ -1512,4 +1514,87 @@ function deleteDocument(documentInfo){
       fetchAllDocuments()
     })
   }
+
+
+
+
+
+
+  // WEBSOCKET
+
+  function createCareReceiverWebsocketConnection(careReceiverId) {
+    socket = new WebSocket('ws://localhost:3000/cable');
+
+    socket.onopen = function(event) {
+      console.log('WebSocket is connected.');
+
+      const msg = {
+        command: 'subscribe',
+        identifier: JSON.stringify({
+          id: careReceiverId,
+          channel: 'CareReceiverChannel'
+        }),
+      } 
+
+      socket.send(JSON.stringify(msg));
+    };
+
+    socket.onclose = function(event) {
+      console.log('WebSocket is closed.');
+    };
+
+    socket.onmessage = function(event) {            
+      const response = event.data;
+      const msg = JSON.parse(response);
+      
+      // Ignores pings.
+      if (msg.type === "ping") {
+          return;
+      }
+      console.log("FROM RAILS: ", msg);
+      
+      // Renders any newly created messages onto the page.
+      if (msg.message) {
+          const messagesContainer = document.querySelector(".messages-container");
+
+          messagesContainer.innerHTML += msg.message;
+
+          // FIX THIS UP LATERRRRRRRRRRRRRRR
+      }   
+    };
+
+    socket.onerror = function(error) {
+      debugger
+      console.log('WebSocket Error: ' + error);
+    };
+
+  }
+
+  const newMessageForm = document.querySelector("#new-message-form");
+
+  // Allow users to submit new messages
+  newMessageForm.addEventListener('submit', event => {
+    event.preventDefault();
+
+    fetch(`http://localhost:3000/messages`,{
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+            content: event.target[0].value,
+            care_receiver_id: currentCareReceiver.id
+        })
+    })
+    // .then(response => response.json())
+    // .then(messageObject => {
+    //   const messagesContainer = document.querySelector(".messages-container");
+
+    //   messagesContainer.innerHTML += messageObject.content;
+    // })
+
+
+    newMessageForm.reset();
+})
 

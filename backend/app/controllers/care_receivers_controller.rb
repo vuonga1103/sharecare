@@ -89,6 +89,11 @@ class CareReceiversController < ApplicationController
     end
   end
 
+  def messages
+    care_receiver = CareReceiver.find_by(id: params[:id])
+    render json: care_receiver, include: [:messages]
+  end
+
   private
   # Params to that user input, used to create a new care receiver upon caregiver registration
   def care_receiver_params

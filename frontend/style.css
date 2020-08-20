@@ -1440,3 +1440,14 @@ gap:10px;
 	padding-top: 10%;
 	padding-bottom: 10%;
 }
+
+
+/* CHATBOX STYLING */
+
+.chatbox {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	background-color: grey;
+	z-index: 5000;
+}

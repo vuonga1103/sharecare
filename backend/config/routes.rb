@@ -20,6 +20,7 @@ Rails.application.routes.draw do
   get '/care-receivers/:id/posts', to: 'care_receivers#posts'
   get '/care-receivers/:id/important_posts', to: 'care_receivers#important_posts'
   get '/care-receivers/:id/my_caregivers', to: 'care_receivers#my_caregivers'
+  get '/care-receivers/:id/messages', to: 'care_receivers#messages'
   
   # /POSTS ROUTES
   post '/posts', to: 'posts#create'
@@ -37,4 +38,8 @@ Rails.application.routes.draw do
   # /COMMENTS ROUTES
   post '/comments', to: 'comments#create'
   delete '/comments/:id', to: 'comments#destroy'
+
+  resources :messages, only: [:create]
+
+  mount ActionCable.server => '/cable'
 end
