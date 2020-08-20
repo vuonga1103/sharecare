@@ -94,6 +94,10 @@ button.ghost {
 	border-color: #FFFFFF;
 }
 
+/* .sortable-ghost{
+	background-color:#f78976;
+} */
+
 form {
 	display: flex;
 	align-items: center;
@@ -539,6 +543,11 @@ main{
     0 8px 8px rgba(0,0,0,0.09), 
     0 16px 16px rgba(0,0,0,0.09), 
     0 32px 32px rgba(0,0,0,0.09);
+	}
+
+	#left-selection-container div:active{
+		background-color:#5e9db6;
+		transform: scale(0.9);
 	}
 	
 	

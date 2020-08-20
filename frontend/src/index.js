@@ -19,6 +19,7 @@ const registerBtn = document.querySelector("#register-btn"),
   rightBottomContainer = document.querySelector("#right-bottom-container"),
   leftCareReceiverContainer = document.querySelector("#left-carereceiver-container"),
   postsSelectionBtn = document.querySelector("#posts-selection-btn"),
+  leftSelectionContainer = document.querySelector('#left-selection-container'),
   teamSelectionBtn = document.querySelector("#team-selection-btn"),
   documentsSelectionBtn = document.querySelector("#documents-selection-btn"),
   myInfoSelectionBtn = document.querySelector("#my-info-selection-btn"),
@@ -43,6 +44,11 @@ dashboard.style.display = "none";
   new Sortable(leftMenuContainer, {
     animation: 150,
   });
+
+  new Sortable(leftSelectionContainer, {
+    animation: 150,
+    // ghostClass: "sortable-ghost"
+  });
   
   
 
@@ -62,7 +68,6 @@ Sortable.create(importantPostsUl,{
     },
   animation: 100,
   onEnd: function (evt){
-    debugger
     // debugger
   }
 });
@@ -375,7 +380,7 @@ function createPostLi(post){
       <span class='post-title-span'>${post.post.title}</span>
       <span class='post-important-span' style="display:none">IMPORTANT</span>
     </div>
-    <span class='post-author-span'>by ${post.author.name} </span>
+    <span class='post-author-span'>by ${post.author.name} (${post.author.username}) </span>
     <div class='post-content-div'>${post.post.content} </div>
     <span class="acknowledgers-span"></span>
 
@@ -447,9 +452,8 @@ function createPostLi(post){
     
     deletePostSpan.addEventListener("click", () => { 
       swal({
-        // title: "Are you sure you want to delete this post?",
-        // text: "Once deleted, you will not be able to recover this!",
-        text: "Are you sure you want to delete this post?",
+        title: "Are you sure?",
+        text: "Once deleted, you will not be able to recover this!",
         icon: "warning",
         buttons: true,
         dangerMode: true,
@@ -457,7 +461,7 @@ function createPostLi(post){
       .then((willDelete) => {
         if (willDelete) {
           deletePost(post)
-          swal("Your post was deleted.", {
+          swal("Your post was deleted succesfully!", {
             icon: "success",
           });
         } 
@@ -708,9 +712,8 @@ function createCommentLi(commentObj) {
     const commentDeleteBtn = commentLi.querySelector(".comment-delete");
     commentDeleteBtn.addEventListener("click", () => {    
       swal({
-        // title: "Are you sure?",
-        // text: "Once deleted, you will not be able to recover this!",
-        text: "Are you sure you want to delete this comment?",
+        title: "Are you sure?",
+        text: "Once deleted, you will not be able to recover this!",
         icon: "warning",
         buttons: true,
         dangerMode: true,
@@ -718,7 +721,7 @@ function createCommentLi(commentObj) {
       .then((willDelete) => {
         if (willDelete) {
           deleteComment(commentLi)
-          swal("Your comment was deleted.", {
+          swal("Your comment was deleted succesfully!", {
             icon: "success",
           });
         } 
@@ -803,7 +806,7 @@ function createNewPost(evt) {
     .then(errorOrPost => {
       if (Array.isArray(errorOrPost)) {
         swal({
-          title: "Posting Unsuccessful!",
+          title: "Posting unsuccessful!",
           text: errorOrPost.join('\n'),
           icon: "error",
         });
@@ -1118,29 +1121,14 @@ function deleteCaregiver(caregiver){
 function renderMyInfoInCenter(){
   centerDashboardContainer.innerHTML = `
     <div id="my-info-container">
-
-      <div id="photo-and-info-div">
-        
-        <div>
-          <img src="https://i.pinimg.com/originals/07/25/2c/07252c3b10758b816009a3a5c787b45f.jpg">
-        </div>
-      
-        <div>
-          <ul id="my-info-ul">
-            <h1 id="my-info-name">${loggedInCaregiver.name}</h1>
-
-            <li id='my-info-username'>Username: ${loggedInCaregiver.username}</li>
-            <li id='my-info-email'>Email: ${loggedInCaregiver.email}</li>
-            <li id='my-info-role'>Role: ${currentCareReceiver.name}'s ${loggedInCaregiver.role}</li>
-            <li id='my-info-level'>You are a ${loggedInCaregiver.level} caregiver</li><br>
-          
-            <button id='my-info-edit-btn'>Edit My Info</button>
-          </ul>            
-        </div>
-      </div>
-    
-      
-      
+      <h1 id="my-info-name">${loggedInCaregiver.name}</h1>
+      <ul id="my-info-ul">
+        <li id='my-info-username'>Username: ${loggedInCaregiver.username}</li>
+        <li id='my-info-email'>Email: ${loggedInCaregiver.email}</li>
+        <li id='my-info-role'>Role: ${currentCareReceiver.name}'s ${loggedInCaregiver.role}</li>
+        <li id='my-info-level'>You are a ${loggedInCaregiver.level} caregiver</li>
+      </ul>
+      <button id='my-info-edit-btn'>Edit My Info</button>
 
       <form id='my-info-edit-form' style="display:none;">
         <label for="my-info-name-input">Name: </label>
@@ -1199,11 +1187,7 @@ function editMyInfo(evt) {
     .then(response => response.json())
     .then(result => {
       if (Array.isArray(result)) {
-        swal({
-          title: "Edit Post Error!",
-          text: "Please make sure all fields are filled out!",
-          icon: "error",
-        });
+        alert(...result)
       } else {
         loggedInCaregiver = result;
         renderMyInfoInCenter();
@@ -1339,6 +1323,7 @@ const documentLi = document.createElement("li"),
   } else {
     documentLiFileIcon.innerHTML = '<img src="https://img.icons8.com/cute-clipart/64/000000/image-file.png"/>'
   }
+
   documentCreatedDate.classList.add("document-created-date")
     documentCreatedDate.innerText = `Added on: ${documentInfo["created_at"].slice(0, 10)}`;
     documentLiTitle.innerText = documentInfo.title
