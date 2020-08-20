@@ -1,5 +1,5 @@
 // STABLE ELEMENTS
-
+const webSocketUrl = 'ws://localhost:3000/cable'
 const registerBtn = document.querySelector("#register-btn"),
   loginDiv = document.querySelector("div#login"),
   getHtmlTag = document.querySelector("html")
@@ -23,6 +23,9 @@ const registerBtn = document.querySelector("#register-btn"),
   teamSelectionBtn = document.querySelector("#team-selection-btn"),
   documentsSelectionBtn = document.querySelector("#documents-selection-btn"),
   myInfoSelectionBtn = document.querySelector("#my-info-selection-btn"),
+  closeChatbox = document.querySelector(".close-chatbox")
+  chatboxIcon = document.querySelector("#click-for-chatbox"),
+  chatbox = document.querySelector(".chatbox")
   logoutSelectionBtn = document.querySelector("#logout-selection-btn");
 let loggedInCaregiver;
 let currentCareReceiver;
@@ -942,6 +945,7 @@ function fetchInfoForCareReceiver(){
     .then(response => response.json())
     .then(theCareReceiver => {
       currentCareReceiver = theCareReceiver;
+      debugger
       createCareReceiverWebsocketConnection(currentCareReceiver.id);
       addCareReceiverToTheDom(theCareReceiver)
     });
@@ -1523,8 +1527,7 @@ function deleteDocument(documentInfo){
   // WEBSOCKET
 
   function createCareReceiverWebsocketConnection(careReceiverId) {
-    socket = new WebSocket('ws://localhost:3000/cable');
-
+    socket = new WebSocket(webSocketUrl);
     socket.onopen = function(event) {
       console.log('WebSocket is connected.');
 
@@ -1556,8 +1559,8 @@ function deleteDocument(documentInfo){
       // Renders any newly created messages onto the page.
       if (msg.message) {
           const messagesContainer = document.querySelector(".messages-container");
-
-          messagesContainer.innerHTML += msg.message;
+          debugger
+          messagesContainer.innerHTML += msg.message.content;
 
           // FIX THIS UP LATERRRRRRRRRRRRRRR
       }   
@@ -1597,4 +1600,18 @@ function deleteDocument(documentInfo){
 
     newMessageForm.reset();
 })
+
+chatboxIcon.addEventListener("click",(evt) => {
+  chatbox.style.display="flex"
+  chatboxIcon.style.display="none"
+  closeChatbox.style.display=""
+})
+
+closeChatbox.addEventListener("click",(evt) => {
+  chatbox.style.display="none"
+  chatboxIcon.style.display=""
+  closeChatbox.style.display="none"
+})
+
+
 

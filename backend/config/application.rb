@@ -23,6 +23,7 @@ Bundler.require(*Rails.groups)
 module Sharecare
   class Application < Rails::Application
     config.action_dispatch.default_headers.clear
+    config.action_cable.mount_path = '/cable'
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 6.0
 

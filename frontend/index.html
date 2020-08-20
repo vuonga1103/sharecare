@@ -16,14 +16,19 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-
-    <div class="chatbox">
+    <div style="display:none;" class="close-chatbox">
+      <img src="https://img.icons8.com/officel/40/000000/close-window.png"/>
+    </div>
+    <div id="click-for-chatbox">
+      <img id="chatbox-image" src="https://img.icons8.com/cotton/80/000000/chat.png"/>
+    </div>
+    <div style="display:none;" class="chatbox">
       <div class="messages-container">
       </div>
 
       <form id="new-message-form">
         <input type="text">
-        <input type="submit" value="send">
+        <input type="submit" value="Send">
       </form>
 
     </div>

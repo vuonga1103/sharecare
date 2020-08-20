@@ -1445,9 +1445,191 @@ gap:10px;
 /* CHATBOX STYLING */
 
 .chatbox {
-	position: absolute;
-	top: 50%;
-	left: 50%;
+	position: fixed;
+	width:20%;
+	bottom: 0%;
+	right: 1%;
 	background-color: grey;
 	z-index: 5000;
+	height: 40%;
+	display: flex;
+	flex-direction: column;
+	-webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
+    background-color: rgba(199, 199, 199, 0.5);  
+	border-radius: 5px;
+	box-shadow: 0 1px 1px rgba(0,0,0,0.13), 
+    0 2px 2px rgba(0,0,0,0.09), 
+    0 4px 4px rgba(0,0,0,0.09), 
+    0 8px 8px rgba(0,0,0,0.09), 
+    0 16px 16px rgba(0,0,0,0.09), 
+	0 32px 32px rgba(0,0,0,0.09);
+	-webkit-animation: swing-in-bottom-fwd 0.7s cubic-bezier(0.175, 0.885, 0.320, 1.275) both;
+	        animation: swing-in-bottom-fwd 0.7s cubic-bezier(0.175, 0.885, 0.320, 1.275) both;
+
 }
+
+.messages-container{
+	height:90%;
+	margin-bottom: 10px;
+	margin:10px;
+	background-color: white;
+	border-radius: 5px;
+	
+}
+
+#new-message-form{
+	height:10%;
+	width:auto;
+	display:flex;
+	flex-direction: row;
+	padding: 10px;
+	margin-bottom:10px;
+
+}
+#new-message-form input[type="text"]{
+	width:80%;
+	margin:0;
+	border-radius: 5px;
+	
+}
+
+#new-message-form input[type="submit"]{
+	background-color: #ec7762;
+	margin-left: 5px;
+	border-radius: 5px;
+	color:white;
+	width:20%;
+
+	
+}
+
+@-webkit-keyframes slide-in-bottom {
+	0% {
+	  -webkit-transform: translateY(1000px);
+			  transform: translateY(1000px);
+	  opacity: 0;
+	}
+	100% {
+	  -webkit-transform: translateY(0);
+			  transform: translateY(0);
+	  opacity: 1;
+	}
+  }
+  @keyframes slide-in-bottom {
+	0% {
+	  -webkit-transform: translateY(1000px);
+			  transform: translateY(1000px);
+	  opacity: 0;
+	}
+	100% {
+	  -webkit-transform: translateY(0);
+			  transform: translateY(0);
+	  opacity: 1;
+	}
+  }
+  
+
+  #click-for-chatbox{
+	position: fixed;
+	bottom: 0%;
+	right: 1%;
+	transform: scale(1);
+	transition:0.5s ease;
+	height:auto;
+	width:auto;
+	-webkit-animation: slide-in-blurred-right 0.4s cubic-bezier(0.230, 1.000, 0.320, 1.000) both;
+	animation: slide-in-blurred-right 0.4s cubic-bezier(0.230, 1.000, 0.320, 1.000) both;
+  }
+
+  #click-for-chatbox:hover{
+	transform: scale(1.2);
+	cursor:pointer;
+  }
+
+  .close-chatbox{
+	position: fixed;
+	bottom: 41%;
+	right: 1%;
+	z-index: 5001;
+	-webkit-animation: slide-in-blurred-right 0.4s cubic-bezier(0.230, 1.000, 0.320, 1.000) both;
+	        animation: slide-in-blurred-right 0.4s cubic-bezier(0.230, 1.000, 0.320, 1.000) both;
+  }
+
+@-webkit-keyframes swing-in-bottom-fwd {
+	0% {
+	  -webkit-transform: rotateX(100deg);
+			  transform: rotateX(100deg);
+	  -webkit-transform-origin: bottom;
+			  transform-origin: bottom;
+	  opacity: 0;
+	}
+	100% {
+	  -webkit-transform: rotateX(0);
+			  transform: rotateX(0);
+	  -webkit-transform-origin: bottom;
+			  transform-origin: bottom;
+	  opacity: 1;
+	}
+  }
+  @keyframes swing-in-bottom-fwd {
+	0% {
+	  -webkit-transform: rotateX(100deg);
+			  transform: rotateX(100deg);
+	  -webkit-transform-origin: bottom;
+			  transform-origin: bottom;
+	  opacity: 0;
+	}
+	100% {
+	  -webkit-transform: rotateX(0);
+			  transform: rotateX(0);
+	  -webkit-transform-origin: bottom;
+			  transform-origin: bottom;
+	  opacity: 1;
+	}
+  }
+
+@-webkit-keyframes slide-in-blurred-right {
+	0% {
+	  -webkit-transform: translateX(1000px) scaleX(2.5) scaleY(0.2);
+			  transform: translateX(1000px) scaleX(2.5) scaleY(0.2);
+	  -webkit-transform-origin: 0% 50%;
+			  transform-origin: 0% 50%;
+	  -webkit-filter: blur(40px);
+			  filter: blur(40px);
+	  opacity: 0;
+	}
+	100% {
+	  -webkit-transform: translateX(0) scaleY(1) scaleX(1);
+			  transform: translateX(0) scaleY(1) scaleX(1);
+	  -webkit-transform-origin: 50% 50%;
+			  transform-origin: 50% 50%;
+	  -webkit-filter: blur(0);
+			  filter: blur(0);
+	  opacity: 1;
+	}
+  }
+  @keyframes slide-in-blurred-right {
+	0% {
+	  -webkit-transform: translateX(1000px) scaleX(2.5) scaleY(0.2);
+			  transform: translateX(1000px) scaleX(2.5) scaleY(0.2);
+	  -webkit-transform-origin: 0% 50%;
+			  transform-origin: 0% 50%;
+	  -webkit-filter: blur(40px);
+			  filter: blur(40px);
+	  opacity: 0;
+	}
+	100% {
+	  -webkit-transform: translateX(0) scaleY(1) scaleX(1);
+			  transform: translateX(0) scaleY(1) scaleX(1);
+	  -webkit-transform-origin: 50% 50%;
+			  transform-origin: 50% 50%;
+	  -webkit-filter: blur(0);
+			  filter: blur(0);
+	  opacity: 1;
+	}
+  }
+  
+  
+  
+  
