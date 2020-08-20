@@ -249,6 +249,11 @@ function displayDashboard(caregiver) {
   // Assign global loggedInCaregiver to be the caregiver who just logged in
   loggedInCaregiver = caregiver;
 
+  // If the loggedInCaregiver doesn't have a photo, set neutral photo
+  if (!loggedInCaregiver["photo_url"]) {
+    loggedInCaregiver["photo_url"] = "https://cdn1.iconfinder.com/data/icons/user-pictures/100/unknown-512.png"
+  }
+
   dashboard.hidden = false; // Displays the dashboard
   fetchAllCaregivers();
   renderPostsInCenter();
@@ -394,7 +399,7 @@ function createPostLi(post){
     
     <div class="comments-container" hidden>
     <div class= "comments-form-span">
-      <span class='comment-cg-img'><img src="https://cdn3.iconfinder.com/data/icons/users-23/64/_Male_Profile_Round_Circle_Users-512.png" width="40px" ></span>
+      <span class='comment-cg-img'><img src="${loggedInCaregiver.photo_url}"></span>
         <form class="comment-form">
           <input type="text" placeholder="Add a new comment...">
         </form>
@@ -403,6 +408,7 @@ function createPostLi(post){
       </ul>
     </div>
   `
+
     // If the post's priority is high, unhide the important span
     if (post.post.priority === "high") {
       const importantSpan = postLi.querySelector(".post-important-span");
@@ -519,7 +525,9 @@ function displayPostEditForm(evt, post) {
   editPostTitle.value = post.post.title;
   editPostContent.value = post.post.content;
   (post.post.priority === "high") ? (editPostCheckbox.checked = true) : (editPostCheckbox.checked = false)
+
   editModal.open()
+
   // Add event listener on the form
   editPostForm.addEventListener("submit", (evt) => {
     editModal.close()
@@ -885,8 +893,8 @@ function fetchAllCaregivers(){
   fetch(`http://localhost:3000/care-receivers/${careReceiverId}/my_caregivers`)
     .then(response => response.json())
     .then(caregivers => {
-      caregivers["caregivers"].sort((a, b) => a.level.localeCompare(b.level));
-      caregivers["caregivers"].forEach(caregiver => {
+      caregivers.sort((a, b) => a.level.localeCompare(b.level));
+      caregivers.forEach(caregiver => {
         addAllCaregiversToTheContainer(caregiver)})
     });
 }
@@ -980,88 +988,150 @@ logoutSelectionBtn.addEventListener("click", logCaregiverOut)
 // Will display team info in center container; will show options for adding of new CG and deletion of CGs if logged-in CG is primary
 function renderTeamInCenter(){
   centerDashboardContainer.innerHTML = `
-    <div id="team-container">
-      <h1 id="team-title">${currentCareReceiver.name}'s Team</h1>
-      <ul id="cg-ul"></ul>
+    <div class="team-container">
+      <div class="team-header">
+        <h1 class="team-title">${currentCareReceiver.name}'s Team</h1>
+      </div>
+      
+      <div class="cgs-container"></div>
     </div>
   `
 
-  const caregiversUl = centerDashboardContainer.querySelector("#cg-ul"),
-    teamTitle = centerDashboardContainer.querySelector("#team-title"),
-    teamContainer = centerDashboardContainer.querySelector("#team-container");
+  const caregiversContainer = centerDashboardContainer.querySelector(".cgs-container"),
+    teamTitle = centerDashboardContainer.querySelector(".team-title"),
+    teamContainer = centerDashboardContainer.querySelector(".team-container"),
+    teamHeader = centerDashboardContainer.querySelector(".team-header");
 
-  getCaregiversAndAppendToCaregiversUl(caregiversUl);
+  getCaregiversAndAppendToCaregiversContainer(caregiversContainer);
 
   if (loggedInCaregiver.level === "primary") {
-    const newCGFormDiv = document.createElement("div");
-    const addNewCGBtn = document.createElement("button");
-    newCGFormDiv.id = 'new-cg-form-container';
-    addNewCGBtn.id = 'add-new-cg-btn';
-    addNewCGBtn.innerText = 'Add a New Caregiver';
-    newCGFormDiv.append(addNewCGBtn);
-
-    teamContainer.insertBefore(newCGFormDiv, caregiversUl);
+    teamHeader.innerHTML += `
+      <span>
+        <button class="add-new-cg-btn">Add New Caregiver</button>
+      </span>
+    `
+    const addNewCGBtn = document.querySelector(".add-new-cg-btn");
     
-    addNewCGBtn.addEventListener("click", () => addCGFormToFormDiv(newCGFormDiv))
+    addNewCGBtn.addEventListener("click", displayAddCGForm)
   }
-
 }
 
+function displayAddCGForm(){
+  let addCGFormModal = new tingle.modal({
+    footer: false,
+    stickyFooter: false,
+    closeMethods: ['overlay', 'button', 'escape'],
+    closeLabel: "Close",
+    cssClass: ['custom-class-1', 'custom-class-2'],
+    });
+    
+  addCGFormModal.setContent(`
+    <div id="new-cg-form-div">
+      <form id="new-cg-form">
+        Enter New Caregiver's Info
+        <input type="text" id="sec-cg-name" placeholder="Name">
+        <input type="text" id="sec-cg-username" placeholder="Username">
+        <input type="text" id="sec-cg-email" placeholder="Email">
+        <input type="text" id="sec-cg-role" placeholder="Role (i.e. therapist, aide, etc.)">
+        <button type="submit">Add to Team</button>
+      </form>
+    </div>
+  `)
+
+  addCGFormModal.open()
+
+  const newCGForm = document.querySelector("#new-cg-form");
+  newCGForm.addEventListener("submit", (evt) => {
+    addCGFormModal.close();
+    createNewSecondaryCaregiver(evt);
+  })
+}
+
+
 // Get all caregivers associated with this care receiver, create an Li for each and append to the Ul
-function getCaregiversAndAppendToCaregiversUl(caregiversUl) {
+function getCaregiversAndAppendToCaregiversContainer(caregiversContainer) {
   fetch(`http://localhost:3000/care-receivers/${currentCareReceiver.id}/my_caregivers`)
     .then(response => response.json())
     .then(result => {
-      result.caregivers.forEach(cg => caregiversUl.append(createCaregiverLi(cg)))
+      result.forEach(cg => caregiversContainer.append(createCaregiverEl(cg)))
     });
 }
 
 // create an Li for caregiver, return the Li
-function createCaregiverLi(caregiver){
-  const caregiverLi = document.createElement("li");
-  caregiverLi.innerHTML = `
-    Name: ${caregiver.name} <br>
-    Username: ${caregiver.username}<br>
-    Role: ${caregiver.role}<br>
-    Level: ${caregiver.level}<br>
+function createCaregiverEl(caregiver){
+  const caregiverEl = document.createElement("div");
+  caregiverEl.className = 'cg-div';
+  caregiverEl.innerHTML = `
+    <div class="cg-img">
+      <img src="https://cdn1.iconfinder.com/data/icons/user-pictures/100/unknown-512.png">
+    </div>
+
+    <div class="cg-info">
+      <span>${caregiver.name}</span>
+      <div class="team-info-div">
+        <img src="https://img.icons8.com/cotton/25/000000/name--v2.png"/> <h6>Username: </h6>
+        <h6>${caregiver.username}</h6>
+      </div>
+      <div class="team-info-div">
+        <img src="https://img.icons8.com/cotton/25/000000/secured-letter--v3.png"/> <h6>Email: </h6>
+        <a href="mailto:${caregiver.email}"> ${caregiver.email}</a>
+      </div>
+      <div class="team-info-div">
+        <img src="https://img.icons8.com/cotton/22/000000/puzzle.png"/> <h6 style="margin-left:3px;">Role: </h6>
+        <h6>${currentCareReceiver.name}'s ${caregiver.role}</h6>
+      </div>
+    </div>   
   `
-  
+
+  // If the caregiver has a photo_url, add that photo 
+  const cgImg = caregiverEl.querySelector(".cg-img img");
+  if (caregiver['photo_url']) {
+    cgImg.src = caregiver['photo_url']
+  }
+
+  // Add span title, if CG is primary, then add that, if not just have name displayed
+  const cgInfoEl = caregiverEl.querySelector(".cg-info");
+
+  if (caregiver.level === "primary") {
+    cgInfoEl.firstElementChild.innerHTML += ` (${caregiver.level.charAt(0).toUpperCase() + caregiver.level.slice(1)} Caregiver)`
+  }
+
   // Add button to delete other CGs if logged in CG is primary
   if (loggedInCaregiver.level === "primary" && caregiver.id !== loggedInCaregiver.id) {
     const removeCGBtn = document.createElement("button");
     removeCGBtn.innerText = "Remove"
-    caregiverLi.append(removeCGBtn)
+    cgInfoEl.append(removeCGBtn)
 
     removeCGBtn.addEventListener("click", () => {
-      deleteCaregiver(caregiver)
+      swal({
+        // title: "Are you sure you want to delete this post?",
+        // text: "Once deleted, you will not be able to recover this!",
+        text: "Are you sure you want to remove this caregiver?",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+      })
+      .then((willDelete) => {
+        if (willDelete) {
+          deleteCaregiver(caregiver)
+          swal("Caregiver was removed.", {
+            icon: "success",
+          });
+        } 
+      });
     })
   }
-  
 
-  return caregiverLi;
+  return caregiverEl;
 }
 
-// display new CG form on form div
-function addCGFormToFormDiv(newCGFormDiv){
-  newCGFormDiv.innerHTML = `
-    <form id="new-cg-form">
-      Enter New Caregiver's Info
-      <input type="text" id="sec-cg-name" placeholder="Name">
-      <input type="text" id="sec-cg-username" placeholder="Username">
-      <input type="text" id="sec-cg-email" placeholder="Email">
-      <input type="text" id="sec-cg-role" placeholder="Role (i.e. therapist, aide, etc.)">
-      <input type="submit">
-    </form>
-  `
-  const newCGForm = newCGFormDiv.querySelector("#new-cg-form");
 
-  newCGForm.addEventListener("submit", createNewSecondaryCaregiver)
-}
 
-// Creates a new secondary CG and add them to the caregiversUl, if not successfully created, display message that says so
+
+// Creates a new secondary CG and add them to the caregiversContainer, if not successfully created, display message that says so
 function createNewSecondaryCaregiver(evt) {
   evt.preventDefault();
-  const caregiversUl = evt.target.parentElement.parentElement.querySelector("#cg-ul");
+  const caregiversContainer = document.querySelector(".cgs-container");
   const nameInput = evt.target['sec-cg-name'].value,
     usernameInput = evt.target['sec-cg-username'].value,
     emailInput = evt.target['sec-cg-email'].value,
@@ -1095,57 +1165,68 @@ function createNewSecondaryCaregiver(evt) {
           text: "Caregiver Succesfully added",
           icon: "success",
         });
-        caregiversUl.append(createCaregiverLi(errorsOrCaregiver));
+        caregiversContainer.append(createCaregiverEl(errorsOrCaregiver));
         evt.target.reset();
       }
     });
 }
 
+
 // Delete caregiver and update dom
 function deleteCaregiver(caregiver){
   fetch('http://localhost:3000/caregivers/' + caregiver.id, {
-    method: 'DELETE',
+  method: 'DELETE',
   })
-  .then(response => response.json()) 
-  .then(result => {
-    swal({
-      title: "Caregiver removed!",
-      text: `${caregiver.name} succcessfully removed from team.`,
-      icon: "success",
-    });
-    renderTeamInCenter();
-  })
+    .then(response => response.json()) 
+    .then(result => renderTeamInCenter())
 }
 
 // Display current user's info in the center container
 function renderMyInfoInCenter(){
   centerDashboardContainer.innerHTML = `
-    <div id="my-info-container">
-      <h1 id="my-info-name">${loggedInCaregiver.name}</h1>
-      <ul id="my-info-ul">
-        <li id='my-info-username'>Username: ${loggedInCaregiver.username}</li>
-        <li id='my-info-email'>Email: ${loggedInCaregiver.email}</li>
-        <li id='my-info-role'>Role: ${currentCareReceiver.name}'s ${loggedInCaregiver.role}</li>
-        <li id='my-info-level'>You are a ${loggedInCaregiver.level} caregiver</li>
-      </ul>
-      <button id='my-info-edit-btn'>Edit My Info</button>
+    <div class="my-info-container-parent">
+      <h1 style="text-align: center; margin-bottom: 10px;">My Info</h1>
+      <div id="my-info-container">
+        <div id="photo-and-info-div">
+          
+          <div id="photo-div">
+            <img id='cg-photo-img' src="${loggedInCaregiver.photo_url}">
+            <span id='change-photo-span'>
+            <img src="https://img.icons8.com/cotton/75/000000/compact-camera.png"/>
+            </span>
+          </div>
+        
+          <div class="my-info-main-div">
+          <h1 id="my-info-name">${loggedInCaregiver.name}</h1>
+            <ul id="my-info-ul">
+              <li id='my-info-username'><img src="https://img.icons8.com/cotton/35/000000/name--v2.png">Username: <h5>${loggedInCaregiver.username}</h5></li>
+              <li id='my-info-email'><img src="https://img.icons8.com/cotton/35/000000/secured-letter--v3.png">Email: <h5>${loggedInCaregiver.email}</h5></li>
+              <li id='my-info-role'><img style="margin-right:23px;" src="https://img.icons8.com/cotton/32/000000/puzzle.png">Role: <h5>${currentCareReceiver.name}'s ${loggedInCaregiver.role}</h5></li>
+              <li id='my-info-level'>You are a ${loggedInCaregiver.level} caregiver</li>
+            </ul>
+            <button id='my-info-edit-btn'>Edit My Info</button>            
+          </div>
+        </div>
+      
+        
+        <form id='my-info-edit-form' style="display:none;">
+          <label for="my-info-name-input">Name: </label>
+          <input type='text' id='my-info-name-input' name='my-info-name-input' value='${loggedInCaregiver.name}'>
 
-      <form id='my-info-edit-form' style="display:none;">
-        <label for="my-info-name-input">Name: </label>
-        <input type='text' id='my-info-name-input' name='my-info-name-input' value='${loggedInCaregiver.name}'>
+          <label for="my-info-username-input">Username: </label>
+          <input type='text' id='my-info-username-input' name='my-info-username-input' value='${loggedInCaregiver.username}'>
 
-        <label for="my-info-username-input">Username: </label>
-        <input type='text' id='my-info-username-input' name='my-info-username-input' value='${loggedInCaregiver.username}'>
+          <label for="my-info-email-input">Email: </label>
+          <input type='text' id='my-info-email-input' name='my-info-email-input' value='${loggedInCaregiver.email}'>
 
-        <label for="my-info-email-input">Email: </label>
-        <input type='text' id='my-info-email-input' name='my-info-email-input' value='${loggedInCaregiver.email}'>
+          <label for="my-info-role-input">Role: </label>
+          <input type='text' id='my-info-role-input' name='my-info-role-input' value='${loggedInCaregiver.role}'>
 
-        <label for="my-info-role-input">Role: </label>
-        <input type='text' id='my-info-role-input' name='my-info-role-input' value='${loggedInCaregiver.role}'>
-
-        <input type='submit'>
-      </form>
+          <input type='submit' class="submit">
+        </form>
+      </div>  
     </div>
+
   `
 
   const editBtn = document.querySelector("#my-info-edit-btn");
@@ -1153,6 +1234,57 @@ function renderMyInfoInCenter(){
 
   const editMyInfoForm = document.querySelector("#my-info-edit-form")
   editMyInfoForm.addEventListener("submit", editMyInfo)
+
+  const photoUpdateEl = document.querySelector("#change-photo-span");
+  photoUpdateEl.addEventListener("click", displayPhotoUploadForm)
+}
+
+// Displays photo upload form in modal
+function displayPhotoUploadForm(){
+  let photoUploadModal = new tingle.modal({
+    footer: false,
+    stickyFooter: false,
+    closeMethods: ['overlay', 'button', 'escape'],
+    closeLabel: "Close",
+    cssClass: ['custom-class-1', 'custom-class-2'],
+    });
+    
+  photoUploadModal.setContent(`
+    <form style="padding:20px; width:700px;" id="photo-upload-form">
+      <h4>Change Your Profile Photo</h4>
+      <input type="file" id="profile-photo" accept="image/png, image/jpeg">
+      <input type="submit" class="submit" value="upload">
+    </form>
+  `)
+
+  photoUploadModal.open();
+  
+  const photoUploadForm = document.querySelector("#photo-upload-form");
+  photoUploadForm.addEventListener("submit", (evt) => {
+    photoUploadModal.close();
+    uploadPhoto(evt);
+  });
+}
+
+// Upload a photo to the database
+function uploadPhoto(evt) {
+  evt.preventDefault();
+
+  const photoFile = evt.target['profile-photo'].files[0];
+  const formData = new FormData();
+
+  formData.append('photo', photoFile);
+
+  fetch(`http://localhost:3000/caregivers/${loggedInCaregiver.id}/upload_photo`, {
+    method: 'POST',
+    headers: { 'Accept': 'application/json'},
+    body: formData
+  })
+    .then(response => response.json())
+    .then(photoObj => {
+      loggedInCaregiver["photo_url"] = photoObj["photo_url"];
+      renderMyInfoInCenter();
+    });
 }
 
 // Toggle display of my info edit display form

@@ -11,6 +11,7 @@ Rails.application.routes.draw do
   post '/caregivers/upload_document', to: 'caregivers#upload_document'
   delete '/documents/:id', to: 'documents#destroy'
   get 'caregivers/:id/care_receiver_documents', to: 'caregivers#care_receiver_documents'
+  post '/caregivers/:id/upload_photo', to: 'caregivers#upload_photo'
 
 
   # /CARE-RECEIVERS ROUTES

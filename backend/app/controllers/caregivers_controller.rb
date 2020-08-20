@@ -9,10 +9,21 @@ class CaregiversController < ApplicationController
   # Create a primary caregiver on registration using inputs user entered, send back new primary caregiver if valid, if not send back errors
   def create_primary
     
-    new_caregiver = Caregiver.create(caregiver_params)
+    new_caregiver = Caregiver.create(caregiver_params);
+
+    caregiver_with_photo = {
+      care_receiver_id: new_caregiver.care_receiver_id,
+      email: new_caregiver.email,
+      id: new_caregiver.id,
+      level: new_caregiver.level,
+      name: new_caregiver.name,
+      role: new_caregiver.role,
+      username: new_caregiver.username, 
+      photo_url: false
+    }
 
     if new_caregiver.valid?
-      render json: new_caregiver
+      render json: caregiver_with_photo
     else
       render json: new_caregiver.errors.full_messages
     end
@@ -22,8 +33,23 @@ class CaregiversController < ApplicationController
   def login
     caregiver_found = Caregiver.find_by(username: params[:username], email: params[:email])
 
+    caregiver_found_with_photo = {
+      care_receiver_id: caregiver_found.care_receiver_id,
+      email: caregiver_found.email,
+      id: caregiver_found.id,
+      level: caregiver_found.level,
+      name: caregiver_found.name,
+      role: caregiver_found.role,
+      username: caregiver_found.username, 
+      photo_url: false
+    }
+
+    if caregiver_found.photo.attached?
+      caregiver_found_with_photo[:photo_url] = url_for(caregiver_found.photo)
+    end
+
     if caregiver_found
-      render json: caregiver_found
+      render json: caregiver_found_with_photo
     else
       render json: ["Invalid and/or email"]
     end
@@ -31,11 +57,26 @@ class CaregiversController < ApplicationController
 
   # Edit a caregiver's info, if caregiver is not valid with updated info, send back errors, otherwise send back the caregiver object
   def edit
-    caregiver = Caregiver.find_by(id: params[:id])
-    caregiver.update(caregiver_params)
+    caregiver_found = Caregiver.find_by(id: params[:id])
+    caregiver_found.update(caregiver_params)
+
+    caregiver_found_with_photo = {
+      care_receiver_id: caregiver_found.care_receiver_id,
+      email: caregiver_found.email,
+      id: caregiver_found.id,
+      level: caregiver_found.level,
+      name: caregiver_found.name,
+      role: caregiver_found.role,
+      username: caregiver_found.username, 
+      photo_url: false
+    }
+
+    if caregiver_found.photo.attached?
+      caregiver_found_with_photo[:photo_url] = url_for(caregiver_found.photo)
+    end
     
-    if caregiver.valid?
-      render json: caregiver
+    if caregiver_found.valid?
+      render json: caregiver_found_with_photo
     else
       render json: caregiver.errors.full_messages
     end
@@ -47,6 +88,16 @@ class CaregiversController < ApplicationController
     caregiver.destroy
     render json: caregiver
   end
+
+  def upload_photo
+    caregiver = Caregiver.find_by(id:params[:id])
+
+    caregiver.update(photo: params[:photo])
+
+    render json: {photo_url: url_for(caregiver.photo)}
+  end
+
+
   def upload_document
     new_document = Document.create(upload_document_params)
     
