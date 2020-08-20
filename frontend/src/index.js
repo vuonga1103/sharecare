@@ -244,6 +244,11 @@ function displayDashboard(caregiver) {
   // Assign global loggedInCaregiver to be the caregiver who just logged in
   loggedInCaregiver = caregiver;
 
+  // If the loggedInCaregiver doesn't have a photo, set neutral photo
+  if (!loggedInCaregiver["photo_url"]) {
+    loggedInCaregiver["photo_url"] = "https://cdn1.iconfinder.com/data/icons/user-pictures/100/unknown-512.png"
+  }
+
   dashboard.hidden = false; // Displays the dashboard
   fetchAllCaregivers();
   renderPostsInCenter();
@@ -389,7 +394,7 @@ function createPostLi(post){
     
     <div class="comments-container" hidden>
     <div class= "comments-form-span">
-      <span class='comment-cg-img'><img src="https://cdn3.iconfinder.com/data/icons/users-23/64/_Male_Profile_Round_Circle_Users-512.png" width="40px" ></span>
+      <span class='comment-cg-img'><img src="${loggedInCaregiver.photo_url}"></span>
         <form class="comment-form">
           <input type="text" placeholder="Add a new comment...">
         </form>
@@ -398,6 +403,7 @@ function createPostLi(post){
       </ul>
     </div>
   `
+
     // If the post's priority is high, unhide the important span
     if (post.post.priority === "high") {
       const importantSpan = postLi.querySelector(".post-important-span");
@@ -515,7 +521,9 @@ function displayPostEditForm(evt, post) {
   editPostTitle.value = post.post.title;
   editPostContent.value = post.post.content;
   (post.post.priority === "high") ? (editPostCheckbox.checked = true) : (editPostCheckbox.checked = false)
+
   editModal.open()
+
   // Add event listener on the form
   editPostForm.addEventListener("submit", (evt) => {
     editModal.close()
@@ -882,8 +890,8 @@ function fetchAllCaregivers(){
   fetch(`http://localhost:3000/care-receivers/${careReceiverId}/my_caregivers`)
     .then(response => response.json())
     .then(caregivers => {
-      caregivers["caregivers"].sort((a, b) => a.level.localeCompare(b.level));
-      caregivers["caregivers"].forEach(caregiver => {
+      caregivers.sort((a, b) => a.level.localeCompare(b.level));
+      caregivers.forEach(caregiver => {
         addAllCaregiversToTheContainer(caregiver)})
     });
 }
@@ -1003,7 +1011,6 @@ function renderTeamInCenter(){
     
     addNewCGBtn.addEventListener("click", displayAddCGForm)
   }
-//ANH
 }
 
 function displayAddCGForm(){
@@ -1043,7 +1050,7 @@ function getCaregiversAndAppendToCaregiversContainer(caregiversContainer) {
   fetch(`http://localhost:3000/care-receivers/${currentCareReceiver.id}/my_caregivers`)
     .then(response => response.json())
     .then(result => {
-      result.caregivers.forEach(cg => caregiversContainer.append(createCaregiverEl(cg)))
+      result.forEach(cg => caregiversContainer.append(createCaregiverEl(cg)))
     });
 }
 
@@ -1053,16 +1060,32 @@ function createCaregiverEl(caregiver){
   caregiverEl.className = 'cg-div';
   caregiverEl.innerHTML = `
     <div class="cg-img">
-      <img src="https://i.pinimg.com/originals/07/25/2c/07252c3b10758b816009a3a5c787b45f.jpg">
+      <img src="https://cdn1.iconfinder.com/data/icons/user-pictures/100/unknown-512.png">
     </div>
 
     <div class="cg-info">
       <span>${caregiver.name}</span>
-      👤 Username - ${caregiver.username}<br>
-      💌 Email - <a href="mailto:${caregiver.email}"> ${caregiver.email}</a><br>
-      🧩 Role - ${currentCareReceiver.name}'s ${caregiver.role}<br>
+      <div class="team-info-div">
+        <img src="https://img.icons8.com/cotton/25/000000/name--v2.png"/> <h6>Username: </h6>
+        <h6>${caregiver.username}</h6>
+      </div>
+      <div class="team-info-div">
+        <img src="https://img.icons8.com/cotton/25/000000/secured-letter--v3.png"/> <h6>Email: </h6>
+        <a href="mailto:${caregiver.email}"> ${caregiver.email}</a>
+      </div>
+      <div class="team-info-div">
+        <img src="https://img.icons8.com/cotton/22/000000/puzzle.png"/> <h6 style="margin-left:3px;">Role: </h6>
+        <h6>${currentCareReceiver.name}'s ${caregiver.role}</h6>
+      </div>
     </div>   
   `
+
+  // If the caregiver has a photo_url, add that photo 
+  const cgImg = caregiverEl.querySelector(".cg-img img");
+  if (caregiver['photo_url']) {
+    cgImg.src = caregiver['photo_url']
+  }
+
   // Add span title, if CG is primary, then add that, if not just have name displayed
   const cgInfoEl = caregiverEl.querySelector(".cg-info");
 
@@ -1139,7 +1162,6 @@ function createNewSecondaryCaregiver(evt) {
           text: "Caregiver Succesfully added",
           icon: "success",
         });
-        
         caregiversContainer.append(createCaregiverEl(errorsOrCaregiver));
         evt.target.reset();
       }
@@ -1165,9 +1187,9 @@ function renderMyInfoInCenter(){
         <div id="photo-and-info-div">
           
           <div id="photo-div">
-            <img src="https://i.pinimg.com/originals/07/25/2c/07252c3b10758b816009a3a5c787b45f.jpg">
+            <img id='cg-photo-img' src="${loggedInCaregiver.photo_url}">
             <span id='change-photo-span'>
-              <img src="https://img.icons8.com/plasticine/100/000000/camera.png"/>
+            <img src="https://img.icons8.com/cotton/75/000000/compact-camera.png"/>
             </span>
           </div>
         
@@ -1186,8 +1208,6 @@ function renderMyInfoInCenter(){
         </div>
       
         
-        
-
         <form id='my-info-edit-form' style="display:none;">
           <label for="my-info-name-input">Name: </label>
           <input type='text' id='my-info-name-input' name='my-info-name-input' value='${loggedInCaregiver.name}'>
@@ -1220,7 +1240,50 @@ function renderMyInfoInCenter(){
 
 // Displays photo upload form in modal
 function displayPhotoUploadForm(){
-  console.log("hi!!!")
+  let photoUploadModal = new tingle.modal({
+    footer: false,
+    stickyFooter: false,
+    closeMethods: ['overlay', 'button', 'escape'],
+    closeLabel: "Close",
+    cssClass: ['custom-class-1', 'custom-class-2'],
+    });
+    
+  photoUploadModal.setContent(`
+    <form style="padding:20px; width:700px;" id="photo-upload-form">
+      <h4>Change Your Profile Photo</h4>
+      <input type="file" id="profile-photo" accept="image/png, image/jpeg">
+      <input type="submit" class="submit" value="upload">
+    </form>
+  `)
+
+  photoUploadModal.open();
+  
+  const photoUploadForm = document.querySelector("#photo-upload-form");
+  photoUploadForm.addEventListener("submit", (evt) => {
+    photoUploadModal.close();
+    uploadPhoto(evt);
+  });
+}
+
+// Upload a photo to the database
+function uploadPhoto(evt) {
+  evt.preventDefault();
+
+  const photoFile = evt.target['profile-photo'].files[0];
+  const formData = new FormData();
+
+  formData.append('photo', photoFile);
+
+  fetch(`http://localhost:3000/caregivers/${loggedInCaregiver.id}/upload_photo`, {
+    method: 'POST',
+    headers: { 'Accept': 'application/json'},
+    body: formData
+  })
+    .then(response => response.json())
+    .then(photoObj => {
+      loggedInCaregiver["photo_url"] = photoObj["photo_url"];
+      renderMyInfoInCenter();
+    });
 }
 
 // Toggle display of my info edit display form

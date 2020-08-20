@@ -1100,6 +1100,13 @@ height:40%;
 
 }
 
+.comment-cg-img img {
+	border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+}
+
 .comment-form{
 	width: 800px;
 	padding:0px;
@@ -1131,6 +1138,7 @@ height:40%;
 .comment-delete {
 	float: right;
 }
+
 
 /* MY INFO STYLING */
 
@@ -1177,21 +1185,43 @@ height:40%;
 	position: relative;
 }
 
+#cg-photo-img {
+	border-radius: 50%;
+	height: 250px;
+  width: 250px;
+	object-fit: cover;
+	transition: 0.3s ease;
+	opacity:1;
+}
+
+.team-info-div{
+	display:flex;
+	align-items: center;
+}
+
 #change-photo-span {
 	position: absolute;
-	top: 1px;
-	right: 3px;
-	visibility: hidden;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+	opacity:0;
+	transition: 0.3s ease;
+}
+
+#photo-div:hover #cg-photo-img{
+	opacity: 0.5;
 }
 
 #photo-div:hover #change-photo-span {
 	visibility: visible;
 	cursor: pointer;
+	opacity: 1;
 }
 
-#change-photo-span img {
-	width: 50px;
-}
+/* #change-photo-span img {
+	width: 40px;
+} */
 
 .document-created-date{
 	font-family: 'Roboto', sans-serif;
@@ -1218,6 +1248,7 @@ height:40%;
 	font-family: 'Roboto', sans-serif;
 	padding: 20px;
 	margin: 30px;
+	gap:20px;
 	border-radius: 5px;
 	background: white;
 	box-shadow: 0 1px 1px rgba(0,0,0,0.09), 
@@ -1237,7 +1268,37 @@ height:40%;
 }
 
 .cg-info {
-	margin-left: 20px;
+	align-self: flex-start;
+	/* margin-left: 20px; */
+}
+.cg-info img{
+	margin-right: 10px;
+	gap:14px;
+}
+
+.cg-info span{
+	margin-bottom: 10px;
+}
+
+.cg-info h6{
+	font-size: 17px;
+	font-family: 'Roboto', sans-serif;
+	font-weight:400;
+	color:rgb(175, 175, 175);
+	margin:0;
+}
+.team-info-div{
+	margin-bottom: 5px;
+}
+
+.team-info-div :last-child{
+	margin:0;
+	margin-left: 5px;
+	font-size: 15px;
+	font-family: 'Roboto', sans-serif;
+	font-weight:500;
+	color:rgb(48, 48, 48);
+	
 }
 
 .cg-info span {
@@ -1249,8 +1310,12 @@ height:40%;
 .cg-info button {
 	background-color: #f78976;
 	border: none;
+	border-radius: 7px;
+	font-family: 'Roboto', sans-serif;
+	font-size:14 px;
+	font-weight: 400;
 	margin: auto;
-	padding: 10px;
+	padding:6px 13px;
 	position: absolute;
 	right: 15px;
 	bottom: 15px;

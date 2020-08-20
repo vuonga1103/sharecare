@@ -7,7 +7,24 @@ class CareReceiversController < ApplicationController
       caregiver = Caregiver.find(params[:caregiver_id])
       new_care_receiver.caregivers << caregiver
       new_care_receiver.save
-      render json: caregiver
+      
+      caregiver_with_photo = {
+        care_receiver_id: new_care_receiver.id,
+        email: caregiver.email,
+        id: caregiver.id,
+        level: caregiver.level,
+        name: caregiver.name,
+        role: caregiver.role,
+        username: caregiver.username, 
+        photo_url: false
+      }
+
+      if caregiver.photo.attached?
+        ccaregiver_with_photo[:photo_url] = url_for(caregiver.photo)
+      end
+
+      render json: caregiver_with_photo
+      
     else
       render json: new_care_receiver.errors.full_messages
     end
@@ -35,7 +52,27 @@ class CareReceiversController < ApplicationController
 
   def my_caregivers
     care_receiver_found = CareReceiver.find_by(id: params[:id])
-    render json: care_receiver_found, include: :caregivers
+
+    cgs_with_photo = care_receiver_found.caregivers.map do |cg|
+      cg_with_photo = {
+        care_receiver_id: cg.care_receiver_id,
+        email: cg.email,
+        id: cg.id,
+        level: cg.level,
+        name: cg.name,
+        role: cg.role,
+        username: cg.username, 
+        photo_url: false
+      }
+
+      if cg.photo.attached?
+        cg_with_photo[:photo_url] = url_for(cg.photo)
+      end
+
+      cg_with_photo
+    end
+
+    render json: cgs_with_photo
   end
 
   #return important posts made by the caregivers associated with the caregivers
