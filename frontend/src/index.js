@@ -263,9 +263,9 @@ function displayDashboard(caregiver) {
   fetchAllCaregivers();
   renderPostsInCenter();
   displayImportantPosts();
-  
   fetchInfoForCareReceiver();
   chatboxIcon.style.display=""
+  
   
 }
 
@@ -951,6 +951,7 @@ function fetchInfoForCareReceiver(){
       currentCareReceiver = theCareReceiver;
       createCareReceiverWebsocketConnection(currentCareReceiver.id);
       addCareReceiverToTheDom(theCareReceiver)
+      fetchAllMessages()
     });
 
 }
@@ -1641,7 +1642,7 @@ function setTheMessagesToChatbox(messages){
     chatSenderMessage.innerText=messages.content
     chatSenderMessage.classList.add("convo-message")
     chatMessage.append(chatSenderName,chatSenderMessage)
-    messagesContainer.append(chatMessage)
+    messagesContainer.prepend(chatMessage)
 
     } else {
       chatMessage.classList.add("chat-messages-other-li")
@@ -1655,15 +1656,19 @@ function setTheMessagesToChatbox(messages){
     chatSenderMessage.innerText=messages.content
     chatSenderMessage.classList.add("convo-message")
     chatMessage.append(chatSenderName,chatSenderMessage)
-    messagesContainer.append(chatMessage)
+    messagesContainer.prepend(chatMessage)
 
 
     }
 
+}
 
-
-
-
+function fetchAllMessages() {
+  fetch(`http://localhost:3000/care-receivers/${currentCareReceiver.id}/messages`)
+    .then(response => response.json())
+    .then(result => {
+      result.messages.forEach(message => setTheMessagesToChatbox(message))
+    });
 }
 
 
