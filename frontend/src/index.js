@@ -336,6 +336,7 @@ function renderPostsInCenter() {
         result.reverse().forEach(post => postsUl.append(createPostLi(post)))
       } else {
         postsUl.append(result.message)
+        postsUl.classList.add("no-document-show")
       }
     });
 }
@@ -388,11 +389,12 @@ function dragAndDropPost(thePost,evt)
 
 // Responsible for creating an Li for each individual post, which has all post's info (title, content, date) AND acknowledgement and comment functions; the the post belongs to the user, then show button to edit
 function createPostLi(post){
+
   const postLi = document.createElement("li"),
     datePosted = post.post["created_at"].slice(0, 10);
   postLi.classList += 'post-li';
   postLi.setAttribute("id", post.post.id);
-
+  
   postLi.innerHTML = 
   `
     <span class='post-date-span'>Posted on ${datePosted}</span>
@@ -836,6 +838,7 @@ function createNewPost(evt) {
       } else {
         if (!postsUl.firstElementChild) {
           postsUl.innerHTML = '';
+          postsUl.classList.remove("no-document-show")
         }
         postsUl.prepend(createPostLi(errorOrPost));
         displayImportantPosts();
@@ -843,6 +846,7 @@ function createNewPost(evt) {
       }
     });   
 }
+
 
 //fetches all important posts that are part of the care receiver that is active right now. if there is no important posts, display message saying so
 
@@ -1455,6 +1459,7 @@ function fetchAllDocuments(){
     .then(documentsInfo => {
       if (documentsInfo.length === 0) {
         const docList = document.querySelector("#documents-list");
+        docList.classList.add("no-document-show")
         docList.innerText = "No documents to display right now."
       } else {
         if(loggedInCaregiver.level === "primary"){
@@ -1478,6 +1483,8 @@ function renderDocumentToContainer(documentInfo){
 
   if (!documentsUl.firstElementChild) {
     documentsUl.innerHTML = '';
+    const docList = document.querySelector("#documents-list");
+    docList.classList.remove("no-document-show")
   }
 
 const documentLi = document.createElement("li"),

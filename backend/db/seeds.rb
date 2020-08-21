@@ -39,10 +39,10 @@ jenny = Caregiver.create({
   level: "primary"
 })
 
-donat = Caregiver.create({
-  name: "Donat",
-  username: "donat",
-  email: "donat@donat.com",
+john = Caregiver.create({
+  name: "John",
+  username: "john",
+  email: "john@john.com",
   care_receiver: jack,
   role: "paraprofessional",
   level: "secondary"
@@ -57,7 +57,7 @@ post1 = Post.create({
 
 post2 = Post.create({
   title: "Jack's medication change",
-  content: "Hi all, wanted you to know that we went to the doctor today and there is a change in Jack's medications. I will pack them in his lunchbox. Donat, please have him take it at noon. Please acknowledge this post so I know you have seen it. Thanks!",
+  content: "Hi all, wanted you to know that we went to the doctor today and there is a change in Jack's medications. I will pack them in his lunchbox. John, please have him take it at noon. Please acknowledge this post so I know you have seen it. Thanks!",
   priority: "high",
   author: jenny
 })
@@ -70,12 +70,12 @@ comment1 = Comment.create({
 
 comment2 = Comment.create({
   content: "Nice! Looks like somebody doesn't need me to tie his shoes anymore!",
-  commenter: donat,
+  commenter: john,
   post: post1
 })
 
 acknowledgment1 = Acknowledgment.create({
-  caregiver: donat,
+  caregiver: john,
   post: post1
 })
 
