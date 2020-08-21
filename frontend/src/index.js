@@ -263,6 +263,7 @@ function displayDashboard(caregiver) {
   displayImportantPosts();
   
   fetchInfoForCareReceiver();
+  chatboxIcon.style.display=""
   
 }
 
