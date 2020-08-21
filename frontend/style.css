@@ -1478,11 +1478,18 @@ gap:10px;
 }
 
 .messages-container{
+	list-style-type: none;
 	height:90%;
+	padding:15px;
 	margin-bottom: 10px;
 	margin:10px;
 	background-color: white;
 	border-radius: 5px;
+	display:flex;
+	flex-direction: column;
+	overflow:scroll;
+	overflow-y: auto;
+	overflow-x:hidden;
 	
 }
 
@@ -1495,6 +1502,59 @@ gap:10px;
 	margin-bottom:10px;
 
 }
+
+.chat-messages-my-li{
+max-width: 60%;
+display:flex;
+flex-direction: column;
+flex-wrap: wrap;
+align-self: flex-end;
+margin-bottom: 5px;
+
+}
+
+.chat-messages-other-li{
+	max-width: 60%;
+display:flex;
+flex-wrap: wrap;
+flex-direction: column;
+align-self: flex-start;
+margin-bottom:5px;
+}
+
+.chat-messages-my-li p{
+	background-color: #ec7762;
+	padding:15px;
+	align-self: center;
+	color:white;
+	margin:0;
+	border-radius: 10px;
+}
+
+.chat-messages-my-li span{
+	align-self: flex-end;
+	font-family: 'Open Sans', sans-serif;
+	font-weight: 300;
+	font-size:12px;
+	margin-bottom:2px;
+}
+.chat-messages-other-li span{
+	align-self: flex-start;
+	font-family: 'Open Sans', sans-serif;
+	font-weight: 300;
+	font-size:12px;
+	margin-bottom:2px;
+}
+
+.chat-messages-other-li p{
+	background-color: #0a95cc;
+	padding:15px;
+	color:white;
+	margin:0;
+	align-self: center;
+	border-radius: 10px;
+}
+
 #new-message-form input[type="text"]{
 	width:80%;
 	margin:0;
@@ -1505,6 +1565,7 @@ gap:10px;
 #new-message-form input[type="submit"]{
 	background-color: #ec7762;
 	margin-left: 5px;
+	text-align: center;
 	border-radius: 5px;
 	color:white;
 	width:20%;
