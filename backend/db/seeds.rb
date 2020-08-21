@@ -21,10 +21,10 @@ jack = CareReceiver.create({
 })
 
 
-anh = Caregiver.create({
-  name: "Anh",
-  username: "anh",
-  email: "anh@anh.com",
+annie = Caregiver.create({
+  name: "Annie",
+  username: "annie",
+  email: "annie@annie.com",
   care_receiver: jack,
   role: "occupational therapist",
   level: "secondary"
@@ -52,7 +52,7 @@ post1 = Post.create({
   title: "Jack did great in therapy today!",
   content: "Hey all! Wanted to let you all know Jack did a FANTASTIC JOB in therapy today. We have been working on tying his shoes and today he did it ALL BY HIMSELF! Please encourage him to continue doing it! :)",
   priority: "low",
-  author: anh
+  author: annie
 })
 
 post2 = Post.create({
