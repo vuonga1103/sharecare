@@ -1564,8 +1564,6 @@ function deleteDocument(documentInfo){
         
         const messagesContainer = document.querySelector(".messages-container");
         messagesContainer.innerHTML += msg.message.content;
-
-        // FIX THIS UP LATERRRRRRRRRRRRRRR
       }   
     };
 
