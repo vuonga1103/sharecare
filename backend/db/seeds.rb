@@ -16,15 +16,15 @@ jack = CareReceiver.create({
   name: "Jack",
   age: 7,
   allergies: "Peanuts, bees",
-  precautions: "Dislikes loud noises",
-  bio: "Jack has ADHD and is on the autism spectrum disorder"
+  precautions: "Dislikes loud noises and scratchy tags",
+  bio: "Jack has ADHD and is on the autism spectrum. He loves hugs and his Blankie"
 })
 
 
-anh = Caregiver.create({
-  name: "Anh",
-  username: "anh",
-  email: "anh@anh.com",
+annie = Caregiver.create({
+  name: "Annie",
+  username: "annie",
+  email: "annie@annie.com",
   care_receiver: jack,
   role: "occupational therapist",
   level: "secondary"
@@ -44,32 +44,32 @@ donat = Caregiver.create({
   username: "donat",
   email: "donat@donat.com",
   care_receiver: jack,
-  role: "teacher",
+  role: "paraprofessional",
   level: "secondary"
 })
 
 post1 = Post.create({
-  title: "update on jack's therapy session",
-  content: "hi jenny, jack had an outburst today and injured his arm in the playground, he was seen by the nurse and everything is ok",
-  priority: "high",
-  author: anh
+  title: "Jack did great in therapy today!",
+  content: "Hey all! Wanted to let you all know Jack did a FANTASTIC JOB in therapy today. We have been working on tying his shoes and today he did it ALL BY HIMSELF! Please encourage him to continue doing it! :)",
+  priority: "low",
+  author: annie
 })
 
 post2 = Post.create({
-  title: "jack's homework for today",
-  content: "hi jenny, please have jack do his math homework from pages 8-9 tonight. thanks!",
-  priority: "low",
-  author: donat
+  title: "Jack's medication change",
+  content: "Hi all, wanted you to know that we went to the doctor today and there is a change in Jack's medications. I will pack them in his lunchbox. Donat, please have him take it at noon. Please acknowledge this post so I know you have seen it. Thanks!",
+  priority: "high",
+  author: jenny
 })
 
 comment1 = Comment.create({
-  content: "ok, thank you so much for letting me know",
+  content: "OMG this is WONDERFUL! Thank you so much for the update",
   commenter: jenny,
   post: post1
 })
 
 comment2 = Comment.create({
-  content: "noted, i'll talk to him about how to manage his anger in class",
+  content: "Nice! Looks like somebody doesn't need me to tie his shoes anymore!",
   commenter: donat,
   post: post1
 })

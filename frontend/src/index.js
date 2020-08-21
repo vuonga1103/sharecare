@@ -400,7 +400,7 @@ function createPostLi(post){
       <span class='post-title-span'>${post.post.title}</span>
       <span class='post-important-span' style="display:none">IMPORTANT</span>
     </div>
-    <span class='post-author-span'>by ${post.author.name} (${post.author.username}) </span>
+    <span class='post-author-span'>by ${post.author.name}</span>
     <div class='post-content-div'>${post.post.content} </div>
     <span class="acknowledgers-span"></span>
 
@@ -834,6 +834,9 @@ function createNewPost(evt) {
           icon: "error",
         });
       } else {
+        if (!postsUl.firstElementChild) {
+          postsUl.innerHTML = '';
+        }
         postsUl.prepend(createPostLi(errorOrPost));
         displayImportantPosts();
         evt.target.reset();
@@ -1182,8 +1185,7 @@ function createNewSecondaryCaregiver(evt) {
         });
       } else {
         swal({
-          title: "Account successfully created",
-          text: "Caregiver Succesfully added",
+          text: "Caregiver succesfully added",
           icon: "success",
         });
         caregiversContainer.append(createCaregiverEl(errorsOrCaregiver));
@@ -1345,7 +1347,13 @@ function editMyInfo(evt) {
         alert(...result)
       } else {
         loggedInCaregiver = result;
+        // If the loggedInCaregiver doesn't have a photo, set neutral photo
+        if (!loggedInCaregiver["photo_url"]) {
+          loggedInCaregiver["photo_url"] = "https://cdn1.iconfinder.com/data/icons/user-pictures/100/unknown-512.png"
+        }
         renderMyInfoInCenter();
+        rightBottomContainer.innerHTML = '';
+        fetchAllCaregivers();
       }
     });
 }
