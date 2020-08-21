@@ -974,9 +974,11 @@ function addCareReceiverToTheDom(theCareReceiver){
         allergySpan.innerText = allergy
         allergiesDiv.append(allergySpan)
     })
+    
 
     theCareReceiverName.innerText = theCareReceiver.name;
     theCareReceiverAge.innerText = theCareReceiver.age
+    theCareReceiverPrecautions
     theCareReceiverPrecautions.innerText = theCareReceiver.precautions;
     theCareReceiverBio.innerText = theCareReceiver.bio;
 
@@ -1427,26 +1429,36 @@ function logCaregiverOut() {
 
 //fetch all the documents for the active care receiver
 function fetchAllDocuments(){
+  
   fetch(`http://localhost:3000/caregivers/${currentCareReceiver.id}/care_receiver_documents`)
-        .then(response => response.json())
-        .then(documentsInfo => {
-          if(loggedInCaregiver.level === "primary"){
+    .then(response => response.json())
+    .then(documentsInfo => {
+      if (documentsInfo.length === 0) {
+        const docList = document.querySelector("#documents-list");
+        docList.innerText = "No documents to display right now."
+      } else {
+        if(loggedInCaregiver.level === "primary"){
           documentsInfo.forEach((documentInfo) => {
             renderDocumentToContainer(documentInfo)
           })
         } else {
           documentsInfo.forEach((documentInfo) => {
-            if(documentInfo.privacy === "public"){
-            renderDocumentToContainer(documentInfo)
-          }
+            if(documentInfo.privacy === "public") {
+              renderDocumentToContainer(documentInfo)
+            }
           })
-        }})
+        }
+      }
+    })
 }
 
 
 function renderDocumentToContainer(documentInfo){
+  const documentsUl = document.querySelector("#documents-list");
 
-const documentsUl = document.querySelector("#documents-list")
+  if (!documentsUl.firstElementChild) {
+    documentsUl.innerHTML = '';
+  }
 
 const documentLi = document.createElement("li"),
     documentLiTitle = document.createElement("h4"),
@@ -1492,7 +1504,6 @@ const documentLi = document.createElement("li"),
           deleteDocument(documentInfo)
           modal.close();
           swal({
-            title: "Document succesfully Deleted",
             text: "This post was succesfully deleted",
             icon: "success",
           });

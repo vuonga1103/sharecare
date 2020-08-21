@@ -32,23 +32,23 @@ class CaregiversController < ApplicationController
   # Find the caregiver by the username and email the user entered, if found, return the caregiver, otherwise, return error
   def login
     caregiver_found = Caregiver.find_by(username: params[:username], email: params[:email])
-
-    caregiver_found_with_photo = {
-      care_receiver_id: caregiver_found.care_receiver_id,
-      email: caregiver_found.email,
-      id: caregiver_found.id,
-      level: caregiver_found.level,
-      name: caregiver_found.name,
-      role: caregiver_found.role,
-      username: caregiver_found.username, 
-      photo_url: false
-    }
-
-    if caregiver_found.photo.attached?
-      caregiver_found_with_photo[:photo_url] = url_for(caregiver_found.photo)
-    end
-
+    
     if caregiver_found
+      caregiver_found_with_photo = {
+        care_receiver_id: caregiver_found.care_receiver_id,
+        email: caregiver_found.email,
+        id: caregiver_found.id,
+        level: caregiver_found.level,
+        name: caregiver_found.name,
+        role: caregiver_found.role,
+        username: caregiver_found.username, 
+        photo_url: false
+      }
+
+      if caregiver_found.photo.attached?
+        caregiver_found_with_photo[:photo_url] = url_for(caregiver_found.photo)
+      end
+
       render json: caregiver_found_with_photo
     else
       render json: ["Invalid and/or email"]
