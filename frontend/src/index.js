@@ -260,6 +260,7 @@ function displayDashboard(caregiver) {
   }
 
   dashboard.hidden = false; // Displays the dashboard
+  moveNavUp();
   fetchAllCaregivers();
   renderPostsInCenter();
   displayImportantPosts();
@@ -267,6 +268,12 @@ function displayDashboard(caregiver) {
   chatboxIcon.style.display=""
   
   
+}
+
+//Move the nav up
+function moveNavUp() {
+  const navBar = document.querySelector("nav");
+  navBar.style['margin-top'] = "20px";
 }
 
 // Displays all posts associated with the logged in caregiver's carereceiver; if there are no posts, display message saying so
