@@ -85,6 +85,7 @@ ActiveRecord::Schema.define(version: 2020_08_20_195903) do
   create_table "messages", force: :cascade do |t|
     t.string "content"
     t.integer "care_receiver_id"
+    t.integer "caregiver_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end

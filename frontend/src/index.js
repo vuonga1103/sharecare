@@ -29,6 +29,7 @@ const registerBtn = document.querySelector("#register-btn"),
   logoutSelectionBtn = document.querySelector("#logout-selection-btn");
 let loggedInCaregiver;
 let currentCareReceiver;
+let allCaregivers;
 
 
 
@@ -898,6 +899,7 @@ function fetchAllCaregivers(){
   fetch(`http://localhost:3000/care-receivers/${careReceiverId}/my_caregivers`)
     .then(response => response.json())
     .then(caregivers => {
+      allCaregivers = [...caregivers]
       caregivers.sort((a, b) => a.level.localeCompare(b.level));
       caregivers.forEach(caregiver => {
         addAllCaregiversToTheContainer(caregiver)})
@@ -946,7 +948,6 @@ function fetchInfoForCareReceiver(){
     .then(response => response.json())
     .then(theCareReceiver => {
       currentCareReceiver = theCareReceiver;
-      debugger
       createCareReceiverWebsocketConnection(currentCareReceiver.id);
       addCareReceiverToTheDom(theCareReceiver)
     });
@@ -1559,16 +1560,16 @@ function deleteDocument(documentInfo){
       
       // Renders any newly created messages onto the page.
       if (msg.message) {
-          const messagesContainer = document.querySelector(".messages-container");
-          debugger
-          messagesContainer.innerHTML += msg.message.content;
+        console.log(msg.message)
+        
+        const messagesContainer = document.querySelector(".messages-container");
+        messagesContainer.innerHTML += msg.message.content;
 
-          // FIX THIS UP LATERRRRRRRRRRRRRRR
+        // FIX THIS UP LATERRRRRRRRRRRRRRR
       }   
     };
 
     socket.onerror = function(error) {
-      debugger
       console.log('WebSocket Error: ' + error);
     };
 
@@ -1587,8 +1588,9 @@ function deleteDocument(documentInfo){
             'Accept': 'application/json'
         },
         body: JSON.stringify({
-            content: event.target[0].value,
-            care_receiver_id: currentCareReceiver.id
+          content: event.target[0].value,
+          care_receiver_id: currentCareReceiver.id,
+          caregiver_id: loggedInCaregiver.id
         })
     })
     // .then(response => response.json())
