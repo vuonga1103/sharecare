@@ -1,5 +1,6 @@
 // STABLE ELEMENTS
 const webSocketUrl = 'ws://localhost:3000/cable'
+const messagesContainer = document.querySelector(".messages-container");
 const registerBtn = document.querySelector("#register-btn"),
   loginDiv = document.querySelector("div#login"),
   getHtmlTag = document.querySelector("html")
@@ -1563,7 +1564,8 @@ function deleteDocument(documentInfo){
         console.log(msg.message)
         
         const messagesContainer = document.querySelector(".messages-container");
-        messagesContainer.innerHTML += msg.message.content;
+        setTheMessagesToChatbox(msg.message)
+        // messagesContainer.innerHTML += msg.message.content;
       }   
     };
 
@@ -1614,5 +1616,43 @@ closeChatbox.addEventListener("click",(evt) => {
   closeChatbox.style.display="none"
 })
 
+
+function setTheMessagesToChatbox(messages){
+  debugger
+    const chatMessage = document.createElement("li")
+
+    if(messages.caregiver_id === loggedInCaregiver.id){
+    chatMessage.classList.add("chat-messages-my-li")
+    
+    const chatSenderName = document.createElement("span"),
+        chatSenderMessage = document.createElement("p");
+        chatSenderName.innerText=loggedInCaregiver.name;
+    chatSenderMessage.innerText=messages.content
+    chatSenderMessage.classList.add("convo-message")
+    chatMessage.append(chatSenderName,chatSenderMessage)
+    messagesContainer.append(chatMessage)
+
+    } else {
+      chatMessage.classList.add("chat-messages-other-li")
+      const chatSenderName = document.createElement("span"),
+        chatSenderMessage = document.createElement("p");
+        
+    const otherCaregiver = allCaregivers.find((caregiver) => {
+      return caregiver.id === messages.caregiver_id
+    });
+    chatSenderName.innerText=otherCaregiver.name;
+    chatSenderMessage.innerText=messages.content
+    chatSenderMessage.classList.add("convo-message")
+    chatMessage.append(chatSenderName,chatSenderMessage)
+    messagesContainer.append(chatMessage)
+
+
+    }
+
+
+
+
+
+}
 
 
