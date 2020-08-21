@@ -3,6 +3,7 @@ const webSocketUrl = 'ws://localhost:3000/cable'
 const messagesContainer = document.querySelector(".messages-container");
 const registerBtn = document.querySelector("#register-btn"),
   loginDiv = document.querySelector("div#login"),
+  htmlBody = document.querySelector("body")
   getHtmlTag = document.querySelector("html")
   registerDiv = document.querySelector("div#register-div"),
   registerForm = document.querySelector("form#register-form"),
@@ -26,7 +27,8 @@ const registerBtn = document.querySelector("#register-btn"),
   myInfoSelectionBtn = document.querySelector("#my-info-selection-btn"),
   closeChatbox = document.querySelector(".close-chatbox")
   chatboxIcon = document.querySelector("#click-for-chatbox"),
-  chatbox = document.querySelector(".chatbox")
+  chatbox = document.querySelector(".chatbox"),
+  loggedInPic = document.querySelector(".logged-in-photo")
   logoutSelectionBtn = document.querySelector("#logout-selection-btn");
 let loggedInCaregiver;
 let currentCareReceiver;
@@ -73,7 +75,6 @@ Sortable.create(importantPostsUl,{
     },
   animation: 100,
   onEnd: function (evt){
-    // debugger
   }
 });
 
@@ -959,6 +960,7 @@ function fetchInfoForCareReceiver(){
       createCareReceiverWebsocketConnection(currentCareReceiver.id);
       addCareReceiverToTheDom(theCareReceiver)
       fetchAllMessages()
+      displayLoggedInPic()
     });
 
 }
@@ -1302,7 +1304,9 @@ function uploadPhoto(evt) {
     .then(response => response.json())
     .then(photoObj => {
       loggedInCaregiver["photo_url"] = photoObj["photo_url"];
+      displayLoggedInPic()
       renderMyInfoInCenter();
+
     });
 }
 
@@ -1637,7 +1641,6 @@ closeChatbox.addEventListener("click",(evt) => {
 
 
 function setTheMessagesToChatbox(messages){
-  debugger
     const chatMessage = document.createElement("li")
 
     if(messages.caregiver_id === loggedInCaregiver.id){
@@ -1678,4 +1681,17 @@ function fetchAllMessages() {
     });
 }
 
+
+function displayLoggedInPic(){
+  loggedInPic.src=loggedInCaregiver.photo_url
+  loggedInPic.style.display="";
+  
+  htmlBody.prepend(loggedInPic)
+
+}
+
+
+loggedInPic.addEventListener("click",(evt) => {
+  renderMyInfoInCenter();
+})
 
