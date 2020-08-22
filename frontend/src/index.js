@@ -29,10 +29,12 @@ const registerBtn = document.querySelector("#register-btn"),
   chatboxIcon = document.querySelector("#click-for-chatbox"),
   chatbox = document.querySelector(".chatbox"),
   loggedInPic = document.querySelector(".logged-in-photo")
-  logoutSelectionBtn = document.querySelector("#logout-selection-btn");
+  logoutSelectionBtn = document.querySelector("#logout-selection-btn"),
+  chatBoxNotifications = document.querySelector("#chatbox-notifications");
 let loggedInCaregiver;
 let currentCareReceiver;
 let allCaregivers;
+let notifications_counter = 0;
 
 
 
@@ -1600,8 +1602,12 @@ function deleteDocument(documentInfo){
       // Renders any newly created messages onto the page.
       if (msg.message) {
         console.log(msg.message)
-        
         const messagesContainer = document.querySelector(".messages-container");
+        if(chatboxIcon.style.display===""){
+          chatBoxNotifications.style.display="";
+          notifications_counter += 1
+          chatBoxNotifications.firstElementChild.innerText=notifications_counter
+        }
         setTheMessagesToChatbox(msg.message)
         // messagesContainer.innerHTML += msg.message.content;
       }   
@@ -1645,6 +1651,8 @@ function deleteDocument(documentInfo){
 chatboxIcon.addEventListener("click",(evt) => {
   chatbox.style.display="flex"
   chatboxIcon.style.display="none"
+  chatBoxNotifications.style.display="none"
+  notifications_counter=0;
   closeChatbox.style.display=""
 })
 
