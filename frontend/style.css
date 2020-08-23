@@ -444,6 +444,29 @@ section #right-menu-container{
 	}
 }
 
+/* @media(max-width: 700px){
+	html{
+		background-image: linear-gradient(to top, #00c6fb 0%, #005bea 100%);
+	}
+
+	nav{
+		margin:0;
+	}
+	nav p{
+		display:none;
+	}
+	nav h1{
+		background:#2d4059;
+		padding:20px;
+		font-size:30px;
+		text-shadow: none;
+	}
+	.logged-in-photo{
+		width: 30px;
+  height: 30px;
+	}
+} */
+
 main{
 	margin-top:50px;
 	vertical-align: bottom;
@@ -591,8 +614,50 @@ main{
 	
 	#title-and-checkbox{
 		display:flex;
+		align-items: center;
 		width:100%;
 		justify-content: space-between;
+	}
+
+	#post-priority-label{
+		background-color: #307ebd;
+		color:white;
+		padding: 10px;
+		width:23%;
+		min-width:120px;
+		display:flex;
+		font-size: 14px;
+		align-items: center;
+		justify-content: center;
+		gap:10px;
+		cursor: pointer;
+	}
+
+	#post-priority{
+		background: #ffffff;
+		-webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+		border:none;
+		width:10px;
+		outline: none;
+		margin:1px;
+		padding:6px;
+		cursor: pointer;
+
+	}
+
+	#post-priority:checked[type="checkbox"]{
+		background: #08ffa0;
+		color:rgb(245, 245, 245);
+		right:0;
+		width:10px;
+		-webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+		border:none;
+		outline: none;
+
 	}
 
 	#priority-posts{
@@ -1455,7 +1520,7 @@ gap:10px;
 	padding:6px 13px;
 	position: absolute;
 	right: 15px;
-	bottom: 15px;
+	top: 15px;
 }
 
 .team-header {
@@ -1815,3 +1880,58 @@ margin-bottom:5px;
 	
 }
 
+#document-upload-label{
+	padding:15px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	width: 100%;
+	color:white;
+	gap:10px;
+	border-radius: 10px;
+	background:#307ebd;
+	display:flex;
+	align-items: center;
+	justify-content: center;
+	transition: 0.5s ease;
+	cursor: pointer;
+}
+
+#document-upload-label span{
+	font-size:14px;
+	font-family: 'Roboto', sans-serif;
+	font-weight:500;
+}
+
+#document-upload-label:hover{
+	background:#318fb5;
+	transform: scale(0.95);
+}
+
+#document-upload-label:active{
+	background:#59d3b8;
+	transform: scale(0.95);
+}
+
+.document-upload-privacy{
+	display:flex;
+	width:100%;
+	gap:10px;
+	margin: 8px 0;
+}
+
+select{
+	background-color:#eee;
+	width:30%;
+	text-align: center;
+	padding:10px;
+	border:none;
+	border-radius: 10px;
+}
+
+select:invalid{
+	color:grey;
+}
+
+select:focus{
+	outline: none;
+}

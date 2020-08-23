@@ -291,11 +291,10 @@ function renderPostsInCenter() {
       <form id="new-post-form">
         <h3>Create a Post</h3>
         <div id="title-and-checkbox">
-        <input style="width:70%;" type="text" id="post-title" placeholder="Enter Title...">
-        <div style="display:flex; flex-direction: row; width:25%; align-items: center;">
-        <input type="checkbox" id="post-priority" name="post-priority">
-        <label for="post-priority">Important</label>
-        </div>
+        <input style="width:75%;" type="text" id="post-title" placeholder="Enter Title...">
+        <label id="post-priority-label" for="post-priority">Important
+        <input  type="checkbox" id="post-priority" name="post-priority">
+        </label>
       </div>
         <input type="text" id="post-content" placeholder="Write a message to your team...">
         <input class="submit" type="submit" value="Add Post">
@@ -528,8 +527,8 @@ function displayPostEditForm(evt, post) {
       <input type="text" id="edit-post-title" name="edit-post-title">
       <label for="edit-post-content">Content</label>
       <input type="text" id="edit-post-content" name="edit-post-content">
-      <label for="edit-post-checkbox">Important</label>
-      <input type="checkbox" id="edit-post-checkbox" name="edit-post-checkbox">
+      <label for="edit-post-checkbox">Important
+      <input type="checkbox" id="edit-post-checkbox" name="edit-post-checkbox"></label>
       <input type="submit" class="submit">
     </form>
   `)
@@ -1281,7 +1280,11 @@ function displayPhotoUploadForm(){
   photoUploadModal.setContent(`
     <form style="padding:20px; width:700px;" id="photo-upload-form">
       <h4>Change Your Profile Photo</h4>
-      <input type="file" id="profile-photo" accept="image/png, image/jpeg">
+      <label id="document-upload-label" for="profile-photo"><span>Add Photo</span><img src="https://img.icons8.com/officel/28/000000/add-image.png"/>
+    <input input type="file" id="profile-photo" accept="image/png, image/jpeg" style="visibility: hidden; opacity: 0;
+    position: absolute;
+    z-index: -1;">
+    </label>
       <input type="submit" class="submit" value="upload">
     </form>
   `)
@@ -1374,11 +1377,19 @@ function renderDocumentsInCenter(){
   <h3>Upload a Document</h3>
     <input type="text" placeholder="Document Title" name="document-title">
     <input type="text" placeholder="Document Description" name="document-description">
-    <input type="file" name="document">
-    <select name="privacy" id="privacy-select">
+    <div class="document-upload-privacy">
+    <label id="document-upload-label" for="document"><span>Upload Document</span><img src="https://img.icons8.com/cotton/28/000000/import-file.png"/>
+    <input type="file" name="document" id="document" style="visibility: hidden; opacity: 0;
+    position: absolute;
+    z-index: -1;">
+    </label>
+    
+    <select required name="privacy" id="privacy-select">
+    <option value="" disabled selected hidden>Select Privacy</option>
       <option value="private">Private</option>
       <option value="public">Public</option>
     </select>
+    </div>
     <input type="submit" value="Submit Document" class="submit">
   </form>
     <ul id="documents-list">
@@ -1393,7 +1404,11 @@ function renderDocumentsInCenter(){
   <h3>Upload a Document</h3>
     <input type="text" placeholder="Document Title" name="document-title">
     <input type="text" placeholder="Document Description" name="document-description">
-    <input type="file" name="document">
+    <label id="document-upload-label" for="document"><span>Upload Document</span><img src="https://img.icons8.com/cotton/28/000000/import-file.png"/>
+    <input type="file" name="document" id="document" style="visibility: hidden; opacity: 0;
+    position: absolute;
+    z-index: -1;">
+    </label>
     <input type="submit" value="Submit Document" class="submit">
   </form>
     <ul id="documents-list">
@@ -1422,6 +1437,7 @@ function documentUploadFetching(evt)
     documentPrivacy = "public"
 }
   const documentFile = evt.target['document'].files[0]
+  debugger
 
 
   const formData = new FormData()
