@@ -13,8 +13,8 @@ Share care is a social platform that streamlines communication among caregivers 
 * [Tools](#tools)
 
 <a name="getting-started"/>
-# Getting Started
 
+## Getting Started
 ### Installing Backend
 * Install [Homebrew](https://brew.sh/) 
 
@@ -49,7 +49,8 @@ Share care is a social platform that streamlines communication among caregivers 
   `$ open index.html`  
  
 <a name="features"/>
-# Features
+
+## Features
 
 ### Creating a Team
 ![Profile photo](https://media4.giphy.com/media/xYOoliohWEyInPa2e4/giphy.gif)
@@ -96,7 +97,8 @@ Share care is a social platform that streamlines communication among caregivers 
 * Customizing look via drag and drop
 
 <a name="tech-stack"/>
-# Tech Stack
+
+## Tech Stack
 * Ruby on Rails
 * PostreSQL
 * Custom HTML/CSS
@@ -106,6 +108,7 @@ Share care is a social platform that streamlines communication among caregivers 
 * Websocket
 
 <a name="tools"/>
-# Tools
+
+## Tools
 * [Tingle](https://tingle.robinparisi.com)
 * [SortableJS](https://github.com/SortableJS/sortablejs)
