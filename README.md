@@ -6,10 +6,10 @@ Share care is a social platform that streamlines communication among caregivers 
 
 ![ShareCare](https://i.ibb.co/j3znnY0/Screen-Shot-2020-09-27-at-12-04-54-PM.png)
 
-## Table of contents
+## Table of Contents
 * [Getting started](#getting-started)
 * [Features](#features)
-* [Tech stack](#tech-stack)
+* [Tech Stack](#tech-stack)
 * [Tools](#tools)
 
 <a name="getting-started"/>
