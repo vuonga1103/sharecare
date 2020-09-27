@@ -40,33 +40,33 @@ Share care is a social platform that streamlines communication among caregivers 
 # Features
 
 ### Creating a Team
-![Profile photo](https://im3.ezgif.com/tmp/ezgif-3-c20eba38de5a.gif)
-![Add caregivers](https://im3.ezgif.com/tmp/ezgif-3-2a467206c504.gif )
+![Profile photo](https://media4.giphy.com/media/xYOoliohWEyInPa2e4/giphy.gif)
+![Add caregivers](https://media1.giphy.com/media/u9us2NoEO78IXGF7wF/giphy.gif)
 
 * Add profile photo
 * Add/remove secondary caregivers to team as a primary caregiver
 
 
 ### Posts
-![Posts](https://im3.ezgif.com/tmp/ezgif-3-0a013965259b.gif )
+![Posts](https://media4.giphy.com/media/RseUIesZMILXFLCIuK/giphy.gif)
 
 * Create/edit/delete posts
 * Set priority of posts via input or drag and drop
 
 
 ### Acknowledgments
-![Acknowledgment](https://im3.ezgif.com/tmp/ezgif-3-8ebfee79a502.gif)
+![Acknowledgment](https://media0.giphy.com/media/6S2RHAlUFxlaSHmCjo/giphy.gif)
 
 * Acknowledge posts written by other users
 
 
 ### Comments
-![Comments](https://im3.ezgif.com/tmp/ezgif-3-fdb4d30c767d.gif)
+![Comments](https://media3.giphy.com/media/aPjHknwlHlCbiNEddC/giphy.gif)
 
 * reate a new comment on a post or delete a comment
 
 ### Upload Documents
-![Uploads](https://im3.ezgif.com/tmp/ezgif-3-d75ee3051117.gif)
+![Uploads](https://media4.giphy.com/media/YTmtxTx43cgdXomBts/giphy.gif)
 
 * Upload document and store via Active Storage
 * Delete uploaded documents
@@ -74,12 +74,12 @@ Share care is a social platform that streamlines communication among caregivers 
 
 
 ### Group Chat
-![Group Chat](https://im3.ezgif.com/tmp/ezgif-3-bd42a0cb787b.gif)
+![Group Chat](https://media1.giphy.com/media/pKjUiZHLAZ4dDNpZsV/giphy.gif)
 
 * Chat in real time with other users with use of Websocket
 
 ### Customization
-![Customization](https://im3.ezgif.com/tmp/ezgif-3-56d12fe02952.gif)
+![Customization](https://media0.giphy.com/media/BGvjA9RCMqyRbjcoB7/giphy.gif)
 
 * Customizing look via drag and drop
 
