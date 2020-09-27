@@ -83,7 +83,7 @@ Share care is a social platform that streamlines communication among caregivers 
 
 * Upload document and store via Active Storage
 * Delete uploaded documents
-* As admin/primary caregiver, can set documents a private
+* As admin/primary caregiver, can set documents as private
 
 
 ### Group Chat
