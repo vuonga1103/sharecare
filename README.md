@@ -63,7 +63,7 @@ Share care is a social platform that streamlines communication among caregivers 
 ### Comments
 ![Comments](https://media3.giphy.com/media/aPjHknwlHlCbiNEddC/giphy.gif)
 
-* reate a new comment on a post or delete a comment
+* Create a new comment on a post or delete a comment
 
 ### Upload Documents
 ![Uploads](https://media4.giphy.com/media/YTmtxTx43cgdXomBts/giphy.gif)
