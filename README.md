@@ -18,6 +18,9 @@ Share care is a social platform that streamlines communication among caregivers 
 * Install [Rails](https://rubyonrails.org/) 
 
   `$ gem install rails`
+* Install [PostreSQL](https://www.postgresql.org/) 
+
+  `$ brew install postgresql`
 * Clone repo and cd into `sharecare/backend`
 * Install dependencies
 
@@ -85,7 +88,7 @@ Share care is a social platform that streamlines communication among caregivers 
 
 # Tech Stack
 * Ruby on Rails
-* SQLite3
+* PostreSQL
 * Custom HTML/CSS
 * Active Record
 * Active Storage
