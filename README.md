@@ -6,6 +6,13 @@ Share care is a social platform that streamlines communication among caregivers 
 
 ![ShareCare](https://i.ibb.co/j3znnY0/Screen-Shot-2020-09-27-at-12-04-54-PM.png)
 
+## Table of contents
+* [Getting started](#getting-started)
+* [Features](#features)
+* [Tech stack](#tech-stack)
+* [Tools](#tools)
+
+<a name="getting-started"/>
 # Getting Started
 
 ### Installing Backend
@@ -25,11 +32,12 @@ Share care is a social platform that streamlines communication among caregivers 
 * Install dependencies
 
   `$ bundle install`
-* Migrate and seed
+* Create migration, migrate and seed
 
-  `$ rails db:migrate`  
-
-  `$ rails db:seed`
+    ```
+    $ rails db:create
+    $ rails db:migrate
+    $ rails db:seed   
 * Start rails server
 
   `$ rails s`  
@@ -39,7 +47,8 @@ Share care is a social platform that streamlines communication among caregivers 
 * Open html file in browser
 
   `$ open index.html`  
-  
+ 
+<a name="features"/>
 # Features
 
 ### Creating a Team
@@ -86,6 +95,7 @@ Share care is a social platform that streamlines communication among caregivers 
 
 * Customizing look via drag and drop
 
+<a name="tech-stack"/>
 # Tech Stack
 * Ruby on Rails
 * PostreSQL
@@ -95,6 +105,7 @@ Share care is a social platform that streamlines communication among caregivers 
 * Native Javascript
 * Websocket
 
+<a name="tools"/>
 # Tools
 * [Tingle](https://tingle.robinparisi.com)
 * [SortableJS](https://github.com/SortableJS/sortablejs)
