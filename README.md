@@ -1,6 +1,6 @@
 # ShareCare
 
-Check out a [brief demo](https://www.youtube.com/watch?v=smRN9G-rqIE&t).
+Check out: [Brief Intro](https://www.youtube.com/watch?v=smRN9G-rqIE&t) | [Full Demo](https://youtu.be/teeuBnSKRM4)
 
 Share care is a social platform that streamlines communication among caregivers who provide care for a common care receiver. Caregivers can create and acknowledge posts, upload profile photos and documents, and chat with one another in real-time. 
 
