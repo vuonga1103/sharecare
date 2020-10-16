@@ -283,7 +283,7 @@ function moveNavUp() {
 function renderPostsInCenter() {
   firstShowScreen.hidden = true;
 
-  getHtmlTag.style = "background: url('https://cdn.aarp.net/content/dam/aarp/work/Work_at_50%2B/2018/11/1140-caregiving-jobs.jpg') no-repeat center center fixed; -webkit-background-size: cover; -moz-background-size: cover; -o-background-size: cover; background-size: cover; transition: 1s; box-shadow: inset 0 0 0 1000px rgba(0,0,0,.3);"
+  getHtmlTag.style = "background: url('https://cdn.aarp.net/content/dam/aarp/work/Work_at_50%2B/2018/11/1140-caregiving-jobs.jpg') no-repeat center center fixed; -webkit-background-size: cover; -moz-background-size: cover; -o-background-size: cover; background-size: cover; transition: 1s; box-shadow: inset 0 0 0 1000px rgba(0,0,0,.4);"
   const care_receiver_id = loggedInCaregiver.care_receiver_id;
   centerDashboardContainer.innerHTML = `
     <div id="new-post-form-container">
@@ -725,10 +725,15 @@ function createCommentLi(commentObj) {
   const commentLi = document.createElement("li");
   commentLi.setAttribute("data-comment-id", `${commentObj.id}`);
   commentLi.classList += "comment-li"
-
-  commentLi.innerHTML = `
+  let caregiverComment = getCommenterPhoto(commentObj['commenter_id']).photo_url
+  if (!caregiverComment){
+    caregiverComment= `https://cdn1.iconfinder.com/data/icons/user-pictures/100/unknown-512.png`
+  }
+  commentLi.innerHTML = `<div class="commenter-li-div">
+    <img style="margin-left:-10px;" class="commenter_avatar" src=${caregiverComment}>
+    <div>
     <span class='comment-content'>${commentObj.content}</span>
-    <span class='comment-commenter'>- ${commentObj['commenter_name']}</span>`
+    <span class='comment-commenter'>- ${commentObj['commenter_name']}</span></div></div>`
 
   if (commentObj['commenter_id'] == loggedInCaregiver.id) {
     commentLi.innerHTML += `<span class='comment-delete'><svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
@@ -754,6 +759,13 @@ function createCommentLi(commentObj) {
       });})
   }
   return commentLi
+}
+
+function getCommenterPhoto(commenterId){
+
+  return allCaregivers.find((caregiver) => {
+    return caregiver.id === commenterId
+  })
 }
 
 // Deletes comment off of server and alter DOM
@@ -1437,7 +1449,6 @@ function documentUploadFetching(evt)
     documentPrivacy = "public"
 }
   const documentFile = evt.target['document'].files[0]
-  debugger
 
 
   const formData = new FormData()
@@ -1589,7 +1600,7 @@ function deleteDocument(documentInfo){
     socket = new WebSocket(webSocketUrl);
     socket.onopen = function(event) {
       console.log('WebSocket is connected.');
-
+     
       const msg = {
         command: 'subscribe',
         identifier: JSON.stringify({
@@ -1597,7 +1608,7 @@ function deleteDocument(documentInfo){
           channel: 'CareReceiverChannel'
         }),
       } 
-
+      debugger
       socket.send(JSON.stringify(msg));
     };
 
@@ -1608,7 +1619,6 @@ function deleteDocument(documentInfo){
     socket.onmessage = function(event) {            
       const response = event.data;
       const msg = JSON.parse(response);
-      
       // Ignores pings.
       if (msg.type === "ping") {
           return;
